@@ -1,28 +1,45 @@
-import React, { useEffect } from 'react';
-import logo from './logo.svg';
+import React, { useEffect, useState } from 'react';
 import './App.css';
+import api from './api/api';
+import { ColorInterface } from './Interface';
+import Header from './components/Header/Header';
+import Footer from './components/Footer/Footer';
+import Main from './components/Main/Main';
 
 function App() {
+  const [colors, setColors] = useState<ColorInterface>({
+    gray: "",
+    blue: "",
+    silver: ""
+  });
+
+  const consultas = async () => {
+    await api.get("query/getHeader").then((response: any) => {
+      console.log(response.data.colors)
+      setColors({
+        gray: response.data.colors[0],
+        blue: response.data.colors[1],
+        silver: response.data.colors[2]
+      });
+    });
+  }
+
   useEffect(() => {
     console.log("teste")
+    consultas();
   }, []);
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="flex flex-col bg-gray-200 h-svh">
+      <Header backgroundColor={colors?.blue} flex justifyContentCenter alignItemsCenter height16 zIndex10 textWhite>
+        <h1>teste</h1>
+      </Header>
+      <Main flex backgroundColor={colors?.silver}>
+        <h1>teste</h1>
+      </Main>
+      <Footer>
+        <h1>teste</h1>
+      </Footer>
     </div>
   );
 }
