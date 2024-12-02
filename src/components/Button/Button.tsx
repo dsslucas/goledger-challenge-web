@@ -11,6 +11,10 @@ const Button: React.FC<ButtonInterface> = (props: ButtonInterface) => {
     if (props.rounded) className += "rounded ";
     if (props.paddingX2) className += "px-2 ";
 
+    if (props.backgroundColor) className += `bg-[${props.backgroundColor}] `;
+    if (props.textWhite) className += `text-white `;
+    if (props.uppercase) className += `uppercase `;
+
     return <button className={className.trim()} key={props.key}>
         {props.children}
     </button>

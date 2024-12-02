@@ -9,9 +9,11 @@ import Section from './components/Section/Section';
 import Aside from './components/Aside/Aside';
 import Button from './components/Button/Button';
 import Divider from './components/Divider/Divider';
+import H1 from './components/H1/H1';
+import CommonColors from "./CommonColors";
 
 function App() {
-  const [colors, setColors] = useState<ColorInterface>({
+  const [apiColors, setApiColors] = useState<ColorInterface>({
     gray: "",
     blue: "",
     silver: ""
@@ -22,7 +24,7 @@ function App() {
   const getHeader = async () => {
     await api.get("/query/getHeader").then((response: any) => {
       console.log(response.data.colors)
-      setColors({
+      setApiColors({
         gray: response.data.colors[0],
         blue: response.data.colors[1],
         silver: response.data.colors[2]
@@ -47,22 +49,25 @@ function App() {
   }, []);
 
   return (
-    <div className="flex flex-col bg-gray-200 h-svh">
-      <Header backgroundColor={colors?.blue} flex justifyContentCenter alignItemsCenter height16 zIndex10 textWhite>
-        <h1>GoLedger Challenger</h1>
+    <div className="flex flex-col h-svh">
+      <Header backgroundColor={apiColors?.blue} flex justifyContentCenter alignItemsCenter height16 zIndex10 textWhite>
+        <H1 text2xl>GoLedger Challenger</H1>
       </Header>
-      <Main flex flexColumn backgroundColor={colors?.silver} gap2>
+      <Main flex flexColumn backgroundColor={apiColors?.silver} gap2 paddingX10>
         <Section flex justifyCenter paddingY2>
           <Divider flex justifyBetween widthOneHalf>
             {schema && schema?.length > 0 && (
               schema.map((element: SchemaSectionInterface, index: number) => {
-                return <Button key={index} border rounded paddingX2 borderColorHover={colors?.gray}>{element.label}</Button>
+                return <Button key={index} border rounded paddingX2 borderColorHover={apiColors?.gray}>{element.label}</Button>
               })
             )}
           </Divider>
         </Section>
-        <Aside flex>
-          <span>teste</span>
+        <Aside flex flexColumn widthFull>
+          <Divider flex justifyBetween>
+            <H1 text2xl>Text 2XL</H1>
+            <Button rounded textWhite uppercase border paddingX2 backgroundColor={CommonColors.success}>Add</Button>
+          </Divider>
         </Aside>
       </Main>
       <Footer>

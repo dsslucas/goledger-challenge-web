@@ -7,4 +7,5 @@ export interface MainInterface {
     alignItemsCenter?: boolean;
     backgroundColor?: string;
     gap2?: boolean;
+    paddingX10?: boolean;
 }

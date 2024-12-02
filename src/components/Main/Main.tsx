@@ -10,7 +10,8 @@ const Main: React.FC<MainInterface> = (props: MainInterface) => {
     if(props.justifyBetween) className += `justify-between `;
     if(props.alignItemsCenter) className += `items-center `;
     if(props.backgroundColor) className += `bg-[${props.backgroundColor}] `;
-    if(props.gap2) className += "gap-2 ";    
+    if(props.gap2) className += "gap-2 ";
+    if(props.paddingX10) className += "px-10 ";
 
     return <main className={className.trim()}>{props.children}</main>
 }
