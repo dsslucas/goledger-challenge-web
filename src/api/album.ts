@@ -1,5 +1,6 @@
 import { ApiInformation } from "../interfaces/ApiInformation";
 import api from "./api";
+import getArtist from "./artists";
 
 const getAlbum = () => {
     const getAllAlbums = async () => {
@@ -13,7 +14,12 @@ const getAlbum = () => {
             });
 
             var data: ApiInformation[] = [];
-            response.data.result.forEach((element: any) => {
+            for(let i=0; i < response.data.result.length; i++){
+                const element = response.data.result[i];
+
+                const artist: any = await getArtist().getArtistInfo(element.artist["@key"]);
+                console.log(artist)
+
                 data.push({
                     assetType: element["@assetType"],
                     key: element["@key"],
@@ -22,9 +28,10 @@ const getAlbum = () => {
                     lastUpdated: element["@lastUpdated"],
                     country: element.country,
                     name: element.name,
-                    year: element.year
+                    year: element.year,
+                    artist: artist
                 })
-            });
+            }
 
             console.log(data);
             return data;

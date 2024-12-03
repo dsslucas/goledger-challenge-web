@@ -35,31 +35,21 @@ const getArtist = () => {
     }
 
     const getArtistInfo = async (id: string) => {
-        await api.post("/query/readAsset", {
-            key: {
-                "@assetType": "artist",
-                "@key": id
-            }
-        })
-            .then((response: any) => {
-                console.log(response.data)
-            })
+        try {
+            const response = await api.post("/query/readAsset", {
+                key: {
+                    "@assetType": "artist",
+                    "@key": id
+                }
+            });
 
-        const data = {
-            artist: {
-
-            },
-            albuns: [{
-
-            }],
-            songs: [{
-
-            }],
-            playlist: [{
-
-            }]
-        };
-
+            console.log(response.data);
+            return response.data;
+        }
+        catch (error) {
+            console.error("Erro ao buscar artista:", error);
+            return [];
+        }
     }
 
     return {

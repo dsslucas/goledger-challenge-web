@@ -135,9 +135,14 @@ function App() {
                     <Divider flex justifyBetween widthFull gapX2 padding2>
                       <Divider>
                         <H2 textXl>{element.name}</H2>
+                        {element.artist != null && (
+                          <Fieldset flex itemsCenter gapX2>
+                            <Span details>{element.artist.name}</Span>
+                          </Fieldset>
+                        )}
                         {element.year != null && (
                           <Fieldset flex itemsCenter gapX2>
-                            <Span>{element.year}</Span>
+                            <Span details>{element.year}</Span>
                           </Fieldset>
                         )}
                         {element.country != null && (
