@@ -17,11 +17,13 @@ import Span from "../../components/Span/Span";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLocationDot } from "@fortawesome/free-solid-svg-icons";
 import Banjo from "../../assets/img/banjo.jpg";
+import { useNavigate } from "react-router";
 
 const Home = () => {
+    const navigation = useNavigate();
+
     const [apiColors, setApiColors] = useState<ColorInterface>();
     const [schema, setSchema] = useState<SchemaSectionInterface[]>();
-    const [loading, setLoading] = useState(true);
 
     // Data
     const [buttonClicked, setButtonClicked] = useState<boolean>(false);
@@ -73,14 +75,19 @@ const Home = () => {
         }
     }
 
-    const handleClickCategory = (event: React.MouseEvent<HTMLButtonElement>, id: string) => {
-        getArtist().getArtistInfo(id);
+    const handleClickCategory = (event: React.MouseEvent<HTMLButtonElement>, id: string, tag: string) => {
+        navigation(`/${tag}`, {
+            state: {
+                id: id,
+            }
+        });
+
+        console.log(tag);
     }
 
     useEffect(() => {
         const fetchData = async () => {
             await Promise.all([getHeader(), getSchema()]);
-            setLoading(false);
         };
 
         fetchData();
@@ -108,7 +115,7 @@ const Home = () => {
                         {getApiData && getApiData.map((element: ApiInformation, key: number) => {
                             return <Button flex flexColumn widthFull
                                 backgroundColor="gray-300"
-                                onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleClickCategory(e, element.key)}
+                                onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleClickCategory(e, element.key, element.assetType)}
                                 key={key}
                             >
                                 <figure className="flex justify-center items-center">
@@ -140,7 +147,7 @@ const Home = () => {
                                         )}
                                         {element.songs != null && element.songs.length > 0 && (
                                             <Fieldset flex itemsCenter gapX2>
-                                                <Span details>{element.songs.length} {element.songs.length == 1 ? 'song' : 'songs'}</Span>
+                                                <Span details>{element.songs.length} {element.songs.length === 1 ? 'song' : 'songs'}</Span>
                                             </Fieldset>
                                         )}
                                     </Divider>

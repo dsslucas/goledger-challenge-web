@@ -8,6 +8,8 @@ import H1 from './components/H1/H1';
 import { BrowserRouter, Routes, Route, Navigate } from "react-router";
 import Home from './Pages/Home/Home';
 import Artist from './Pages/Artist/Artist';
+import Album from './Pages/Album/Album';
+import Playlist from './Pages/Playlist/Playlist';
 
 function App() {
   const [apiColors, setApiColors] = useState<ColorInterface>();
@@ -38,9 +40,9 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/home" index element={<Home />} />
-            <Route path="/artist" element={<Artist />} />
-            <Route path="/album" element={<Artist />} />
-            <Route path="/playlist" element={<Artist />} />
+            <Route path="/artist" element={<Artist />} />            
+            <Route path="/album" element={<Album />} />
+            <Route path="/playlist" element={<Playlist />} />
             <Route path="*" element={<Navigate to="/home" replace />} />
           </Routes>
         </BrowserRouter>
