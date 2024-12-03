@@ -9,7 +9,7 @@ const Album:React.FC<AlbumPageInterface> = () => {
 
     if(id === undefined || id === null) navigation("/home");
 
-    return <></>
+    return <h1>Album</h1>
 }
 
 export default Album;

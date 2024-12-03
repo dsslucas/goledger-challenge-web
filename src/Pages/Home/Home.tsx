@@ -18,7 +18,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLocationDot } from "@fortawesome/free-solid-svg-icons";
 import Banjo from "../../assets/img/banjo.jpg";
 import { useNavigate } from "react-router";
-
+import Figure from "../../components/Figure/Figure";
+import Image from "../../components/Image/Image";
 const Home = () => {
     const navigation = useNavigate();
 
@@ -118,9 +119,9 @@ const Home = () => {
                                 onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleClickCategory(e, element.key, element.assetType)}
                                 key={key}
                             >
-                                <figure className="flex justify-center items-center">
-                                    <img src={Banjo} alt="banjo" className="w-full rounded-t" />
-                                </figure>
+                                <Figure flex justifyCenter itemsCenter>
+                                    <Image src={Banjo} widthFull roundedT/>
+                                </Figure>                                
                                 <Divider flex justifyBetween widthFull gapX2 padding2>
                                     <Divider>
                                         <H2 textXl>{element.name}</H2>

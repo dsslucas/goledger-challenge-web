@@ -8,7 +8,8 @@ const Playlist:React.FC<PlaylistInterface> = () => {
     const id = location.state.id;
 
     if(id === undefined || id === null) navigation("/home");
-    return <></>
+    
+    return <h1>Playlist</h1>
 }
 
 export default Playlist;

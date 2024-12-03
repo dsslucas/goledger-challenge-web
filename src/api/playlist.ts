@@ -56,20 +56,20 @@ const getPlaylist = () => {
             .then((response: any) => {
             })
 
-        const data = {
-            artist: {
+        // const data = {
+        //     artist: {
 
-            },
-            albuns: [{
+        //     },
+        //     albuns: [{
 
-            }],
-            songs: [{
+        //     }],
+        //     songs: [{
 
-            }],
-            playlist: [{
+        //     }],
+        //     playlist: [{
 
-            }]
-        };
+        //     }]
+        // };
 
     }
 
