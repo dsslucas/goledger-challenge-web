@@ -18,7 +18,6 @@ const getAlbum = () => {
                 const element = response.data.result[i];
 
                 const artist: any = await getArtist().getArtistInfo(element.artist["@key"]);
-                console.log(artist)
 
                 data.push({
                     assetType: element["@assetType"],
@@ -49,7 +48,7 @@ const getAlbum = () => {
                     "@key": id
                 }
             });
-            
+
             return response.data;
         }
         catch (error) {

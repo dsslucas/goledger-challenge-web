@@ -34,7 +34,6 @@ function App() {
 
   const getHeader = async () => {
     await api.get("/query/getHeader").then((response: any) => {
-      console.log(response.data.colors)
       setApiColors({
         gray: response.data.colors[0],
         blue: response.data.colors[1],
@@ -46,7 +45,6 @@ function App() {
   const getSchema = async () => {
     await api.get("/query/getSchema")
       .then((response: any) => {
-        console.log(response.data)
         if (Array.isArray(response.data)) {
           setSchema(response.data.filter((element: SchemaSectionInterface) => element.label !== "AssetTypeListData"));
         }
@@ -54,8 +52,6 @@ function App() {
   }
 
   const handleClickAdd = (event: React.MouseEvent<HTMLButtonElement>, tag: string) => {
-    console.log(event)
-    console.log(tag)
   }
 
   const handleClickOption = async (event: React.MouseEvent<HTMLButtonElement>, label: string, tag: string) => {
@@ -81,8 +77,6 @@ function App() {
   }
 
   const handleClickCategory = (event: React.MouseEvent<HTMLButtonElement>, id: string) => {
-    console.log("teste")
-    console.log(id)
     getArtist().getArtistInfo(id);
   }
 
@@ -154,6 +148,11 @@ function App() {
                           <Fieldset flex itemsCenter gapX2>
                             <FontAwesomeIcon icon={faLocationDot} />
                             <Span details>{element.country}</Span>
+                          </Fieldset>
+                        )}
+                        {element.songs != null && element.songs.length > 0 && (
+                          <Fieldset flex itemsCenter gapX2>
+                            <Span details>{element.songs.length} {element.songs.length == 1 ? 'song' : 'songs'}</Span>
                           </Fieldset>
                         )}
                       </Divider>

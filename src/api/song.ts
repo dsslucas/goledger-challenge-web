@@ -34,9 +34,7 @@ const getSong = () => {
                     album: album
                 })
             }
-
-            console.log(data)
-            
+         
             return data;
         }
         catch (error) {
@@ -46,31 +44,20 @@ const getSong = () => {
     }
 
     const getSongInfo = async (id: string) => {
-        await api.post("/query/readAsset", {
-            key: {
-                "@assetType": "song",
-                "@key": id
-            }
-        })
-            .then((response: any) => {
-                console.log(response.data)
-            })
+        try {
+            const response = await api.post("/query/readAsset", {
+                key: {
+                    "@assetType": "song",
+                    "@key": id
+                }
+            });
 
-        const data = {
-            artist: {
-
-            },
-            albuns: [{
-
-            }],
-            songs: [{
-
-            }],
-            playlist: [{
-
-            }]
-        };
-
+            return response.data;
+        }
+        catch (error) {
+            console.error("Erro ao buscar artista:", error);
+            return [];
+        }
     }
 
     return {

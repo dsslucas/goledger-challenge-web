@@ -1,5 +1,6 @@
 import { ApiInformation } from "../interfaces/ApiInformation";
 import api from "./api";
+import getSong from "./song";
 
 const getPlaylist = () => {
     const getAllPlaylists = async () => {
@@ -13,7 +14,17 @@ const getPlaylist = () => {
             });
 
             var data: ApiInformation[] = [];
-            response.data.result.forEach((element: any) => {
+            for(let i=0; i < response.data.result.length; i++){
+                const element = response.data.result[i];
+                const songs: ApiInformation[] = [];
+
+                if(Array.isArray(element.songs)){
+                    for(let j=0; j < element.songs.length; j++){
+                        const eachSong = await getSong().getSongInfo(element["@key"]);
+                        songs.push(eachSong);
+                    }
+                }
+
                 data.push({
                     assetType: element["@assetType"],
                     key: element["@key"],
@@ -22,9 +33,10 @@ const getPlaylist = () => {
                     lastUpdated: element["@lastUpdated"],
                     country: element.country,
                     name: element.name,
-                    year: element.year
+                    year: element.year,
+                    songs: songs
                 })
-            });
+            }
             
             return data;
         }
@@ -42,7 +54,6 @@ const getPlaylist = () => {
             }
         })
             .then((response: any) => {
-                console.log(response.data)
             })
 
         const data = {

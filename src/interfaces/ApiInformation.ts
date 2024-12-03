@@ -9,4 +9,6 @@ export interface ApiInformation {
     year?: number;
     artist?: ApiInformation;
     album?: ApiInformation;
+    songs?: ApiInformation[];
+    private?: boolean;
 }
