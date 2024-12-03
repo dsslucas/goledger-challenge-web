@@ -33,7 +33,6 @@ const getAlbum = () => {
                 })
             }
 
-            console.log(data);
             return data;
         }
         catch (error) {
@@ -42,13 +41,26 @@ const getAlbum = () => {
         }
     }
 
-    const getAlbunsByArtist = async () => {
-        
+    const getAlbumById = async (id: string) => {
+        try {
+            const response = await api.post("/query/readAsset", {
+                key: {
+                    "@assetType": "album",
+                    "@key": id
+                }
+            });
+            
+            return response.data;
+        }
+        catch (error) {
+            console.error("Erro ao buscar album:", error);
+            return [];
+        }
     }
 
     return {
         getAllAlbums,
-        getAlbunsByArtist
+        getAlbumById
     }
 }
 

@@ -140,6 +140,11 @@ function App() {
                             <Span details>{element.artist.name}</Span>
                           </Fieldset>
                         )}
+                        {element.album != null && (
+                          <Fieldset flex itemsCenter gapX2>
+                            <Span details>{element.album.name}</Span>
+                          </Fieldset>
+                        )}
                         {element.year != null && (
                           <Fieldset flex itemsCenter gapX2>
                             <Span details>{element.year}</Span>

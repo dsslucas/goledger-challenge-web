@@ -7,5 +7,6 @@ export interface ApiInformation {
     country: string;
     name: string;
     year?: number;
-    artist?: ApiInformation
+    artist?: ApiInformation;
+    album?: ApiInformation;
 }
