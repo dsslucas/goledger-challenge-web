@@ -4,4 +4,5 @@ export interface AsideInterface {
     flex1?: boolean;
     flexColumn?: boolean;
     widthFull?: boolean;
+    gap2?: boolean;
 }
