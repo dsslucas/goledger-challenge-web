@@ -18,8 +18,20 @@ const getSong = () => {
             for(let i=0; i < response.data.result.length; i++){
                 const element = response.data.result[i];
 
-                const album = await getAlbum().getAlbumById(element.album["@key"]);
-                const artist = await getArtist().getArtistInfo(album.artist["@key"]);
+                console.log("\nInicio da execucao")
+
+                var album;
+                
+                if(element.album){
+                    album = await getAlbum().getAlbumById(element.album["@key"]);
+                }
+                
+                console.log(album)
+
+                var artist;
+                if(album.artist){
+                    artist = await getArtist().getArtistInfo(album.artist["@key"]);
+                }
 
                 data.push({
                     assetType: element["@assetType"],
