@@ -9,6 +9,8 @@ const Input: React.FC<InputInterface> = (props: InputInterface) => {
     if (props.backgroundTransparent) className += "bg-transparent ";
 
     return <input
+        id={props.id}
+        name={props.name}
         type={props.type}
         value={props.value}
         className={className.trim()}

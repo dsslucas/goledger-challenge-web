@@ -1,8 +1,43 @@
-import { ApiInformation } from "../interfaces/ApiInformation";
+import { ApiInformation, ArtistSend } from "../interfaces/ApiInformation";
 import getAlbum from "./album";
 import api from "./api";
 
-const getArtist = () => {
+const artistApi = () => {
+    const postNewArtist = async (request: ArtistSend) => {
+        try {
+            if (request.name === null || request.name === undefined || request.name === "") throw "NO_NAME";
+            if (request.country === null || request.country === undefined || request.country === "") throw "NO_COUNTRY";
+
+            await api.post("/invoke/createAsset", {
+                asset: [{
+                    "@assetType": "artist",
+                    "name": request.name,
+                    "country": request.country
+                }]
+            });
+
+            return {
+                positiveConclusion: true,
+                message: "Artista registrado!"
+            }
+        }
+        catch (error) {
+            console.error(error)
+            if (error === "NO_NAME") return {
+                positiveConclusion: false,
+                message: "É necessário informar o nome do artista."
+            };
+            else if (error === "NO_COUNTRY") return {
+                positiveConclusion: false,
+                message: "É necessário informar o país do artista."
+            };
+            else return {
+                positiveConclusion: false,
+                message: "Erro ao registrar artista." 
+            };
+        }
+    }
+
     const getAllArtists = async () => {
         try {
             const response = await api.post("/query/search", {
@@ -79,10 +114,11 @@ const getArtist = () => {
     }
 
     return {
+        postNewArtist,
         getAllArtists,
         getArtistInfo,
         updateCountryArtist
     }
 }
 
-export default getArtist;
+export default artistApi;

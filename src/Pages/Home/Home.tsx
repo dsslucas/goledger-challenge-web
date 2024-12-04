@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
-import getArtist from "../../api/artists";
 import getPlaylist from "../../api/playlist";
 import { ColorInterface, SchemaSectionInterface } from "../../Interface";
 import getAlbum from "../../api/album";
 import getSong from "../../api/song";
-import { ApiInformation } from "../../interfaces/ApiInformation";
+import { ApiInformation, ArtistSend } from "../../interfaces/ApiInformation";
 import api from "../../api/api";
 import Section from "../../components/Section/Section";
 import Divider from "../../components/Divider/Divider";
@@ -20,6 +19,10 @@ import Banjo from "../../assets/img/banjo.jpg";
 import { useNavigate } from "react-router";
 import Figure from "../../components/Figure/Figure";
 import Image from "../../components/Image/Image";
+import Swal from "sweetalert2";
+import ModalCreate from "../Modal/ModalCreate";
+import { ModalCreateInterface } from "../Modal/Interface";
+import artistApi from "../../api/artists";
 const Home = () => {
     const navigation = useNavigate();
 
@@ -31,6 +34,8 @@ const Home = () => {
     const [buttonClickedLabel, setButtonClickedLabel] = useState<string>("");
 
     const [getApiData, setGetApiData] = useState<ApiInformation[]>([]);
+
+    const [modalCreate, setModalCreate] = useState<boolean>(false);
 
     const getHeader = async () => {
         await api.get("/query/getHeader").then((response: any) => {
@@ -52,6 +57,8 @@ const Home = () => {
     }
 
     const handleClickAdd = (event: React.MouseEvent<HTMLButtonElement>, tag: string) => {
+        console.log("opa joia", tag)
+        setModalCreate(true);
     }
 
     const handleClickOption = async (event: React.MouseEvent<HTMLButtonElement>, label: string, tag: string) => {
@@ -60,7 +67,7 @@ const Home = () => {
 
         switch (tag) {
             case "artist":
-                setGetApiData(await getArtist().getAllArtists());
+                setGetApiData(await artistApi().getAllArtists());
                 break;
             case "album":
                 setGetApiData(await getAlbum().getAllAlbums());
@@ -86,15 +93,86 @@ const Home = () => {
         console.log(tag);
     }
 
-    useEffect(() => {
-        const fetchData = async () => {
-            await Promise.all([getHeader(), getSchema()]);
-        };
+    const handleCancelModalAdd = (event: React.MouseEvent<HTMLButtonElement>) => {
+        setModalCreate(false);
+    }
 
+    const handleConfirmModalAdd = async (event: React.FormEvent) => {
+        event.preventDefault();
+        const form = event.target as HTMLFormElement;
+
+        const formData = new FormData(form);
+        if (buttonClickedLabel.toLowerCase() === "artist") {
+            const name = formData.get('name')?.toString();
+            const country = formData.get('country')?.toString();
+
+            if (name && country) {
+                const data = {
+                    name: name,
+                    country: country
+                }
+
+                await artistApi().postNewArtist(data)
+                    .then((response: any) => {
+                        Swal.fire({
+                            title: response.positiveConclusion ? "Sucesso!" : "Erro!",
+                            text: response.message,
+                            icon: response.positiveConclusion ? "success" : "error",
+                        });
+
+                        if (response.positiveConclusion) {
+                            setModalCreate(false);
+                            fetchData();
+                        }
+                    })
+                    .catch((error: any) => {
+                        console.error(error)
+                        Swal.fire({
+                            title: "Erro!",
+                            text: error.response.message,
+                            icon: "error"
+                        });
+                    })
+            }
+            else if(!name){
+                Swal.fire({
+                    title: "Erro!",
+                    text: "Informe o nome do artista.",
+                    icon: "error"
+                });
+            }
+            else if(!country){
+                Swal.fire({
+                    title: "Erro!",
+                    text: "Informe o país do artista.",
+                    icon: "error"
+                });
+            }
+        }
+    }
+
+    const fetchData = async () => {
+        await Promise.all([getHeader(), getSchema()]);
+        setGetApiData(await artistApi().getAllArtists());
+        setButtonClicked(true);
+        setButtonClickedLabel("Artist");
+    };
+
+    useEffect(() => {
         fetchData();
     }, []);
 
     return <>
+        {modalCreate && (
+            <ModalCreate
+                title={`Add ${String(buttonClickedLabel).charAt(0).toUpperCase() + String(buttonClickedLabel).slice(1)}`}
+                tag={buttonClickedLabel.toLowerCase()}
+                onCancel={handleCancelModalAdd}
+                onConfirm={handleConfirmModalAdd}
+                buttonConfirm={true}
+                buttonConfirmText="Adicionar"
+            />
+        )}
         <Section flex justifyCenter paddingY2>
             <Divider flex justifyBetween widthOneHalf>
                 {schema && schema?.length > 0 && (
@@ -109,7 +187,7 @@ const Home = () => {
                 <>
                     <Divider flex justifyBetween>
                         <H1 text2xl>{buttonClickedLabel}</H1>
-                        <Button rounded textWhite uppercase border paddingX2 backgroundColor="success" onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleClickAdd(e, "teste")}>Add</Button>
+                        <Button rounded textWhite uppercase border paddingX2 backgroundColor="success" onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleClickAdd(e, buttonClickedLabel.toLowerCase())}>Add</Button>
                     </Divider>
 
                     <Divider grid gridColsCategories gap3>
@@ -120,8 +198,8 @@ const Home = () => {
                                 key={key}
                             >
                                 <Figure flex justifyCenter itemsCenter>
-                                    <Image src={Banjo} widthFull roundedT/>
-                                </Figure>                                
+                                    <Image src={Banjo} widthFull roundedT />
+                                </Figure>
                                 <Divider flex justifyBetween widthFull gapX2 padding2>
                                     <Divider>
                                         <H2 textXl>{element.name}</H2>

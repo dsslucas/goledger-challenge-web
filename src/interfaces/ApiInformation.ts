@@ -14,3 +14,8 @@ export interface ApiInformation {
     songs?: ApiInformation[];
     private?: boolean;
 }
+
+export interface ArtistSend {
+    name: string;
+    country: string;
+}

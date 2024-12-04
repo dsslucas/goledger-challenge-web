@@ -169,6 +169,8 @@ const Artist: React.FC<ArtistPageInterface> = () => {
                             <FontAwesomeIcon icon={faLocationDot} />
                             <Input
                                 type="text"
+                                id="artist-country"
+                                name="country"
                                 value={artist.country}
                                 rounded
                                 border
@@ -205,6 +207,8 @@ const Artist: React.FC<ArtistPageInterface> = () => {
                                             <Fieldset flex gapX2 height7>
                                                 <Input
                                                     type="number"
+                                                    id={`album-year-${element["@key"]}`}
+                                                    name={`album-year-${element["@key"]}`}
                                                     value={element.year}
                                                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChangeAlbumYear(e, element["@key"])}
                                                     rounded border backgroundTransparent />
