@@ -23,6 +23,7 @@ const getSong = () => {
 
                 data.push({
                     assetType: element["@assetType"],
+                    "@key": element["@key"],
                     key: element["@key"],
                     lastTouchBy: element["@lastTouchBy"],
                     lastTx: element["@lastTx"],
@@ -60,9 +61,30 @@ const getSong = () => {
         }
     }
 
+    const getSongsByAlbumId = async (id: string) => {
+        try {
+            const response = await api.post("/query/search", {
+                query: {
+                    selector: {
+                        "@assetType": "song"
+                    }
+                }
+            }).then((response: any) => {
+                return response.data.result.filter((element: any) => element.album["@key"] === id);
+            });
+         
+            return response;
+        }
+        catch (error) {
+            console.error(error);
+            return [];
+        }
+    }
+
     return {
         getAllSongs,
-        getSongInfo
+        getSongInfo,
+        getSongsByAlbumId
     }
 }
 

@@ -7,6 +7,7 @@ const Figure: React.FC<FigureInterface> = (props: FigureInterface) => {
     if (props.flex) className += "flex ";
     if (props.justifyCenter) className += "justify-center ";
     if (props.itemsCenter) className += "items-center ";
+    if (props.widthOneSixDesktop) className += "xl:w-24 ";
 
     return <figure className={className.trim()}>
         {props.children}

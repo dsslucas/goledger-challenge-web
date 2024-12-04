@@ -8,7 +8,8 @@ const Aside: React.FC<AsideInterface> = (props: AsideInterface) => {
     if (props.flex1) className += `flex-1 `;
     if (props.flexColumn) className += `flex-col `;
     if (props.widthFull) className += "w-full ";
-    if (props.gap2) className += "gap-2 "
+    if (props.widthFourFiveDesktop) className += "xl:w-4/5 ";
+    if (props.gap2) className += "gap-2 ";
 
     return <aside className={className.trim()}>{props.children}</aside>
 }

@@ -3,4 +3,5 @@ export interface FigureInterface {
     flex?: boolean;
     itemsCenter?: boolean;
     justifyCenter?: boolean;
+    widthOneSixDesktop?: boolean;
 }

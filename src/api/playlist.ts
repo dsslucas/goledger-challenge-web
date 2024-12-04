@@ -27,6 +27,7 @@ const getPlaylist = () => {
 
                 data.push({
                     assetType: element["@assetType"],
+                    "@key": element["@key"],
                     key: element["@key"],
                     lastTouchBy: element["@lastTouchBy"],
                     lastTx: element["@lastTx"],

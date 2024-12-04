@@ -12,4 +12,5 @@ export interface SectionInterface {
     backgroundColor?: string;
     textWhite?: boolean;
     paddingY2?: boolean;
+    widthOneFiveDesktop?: boolean;
 }

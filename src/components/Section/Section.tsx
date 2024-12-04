@@ -15,6 +15,7 @@ const Section: React.FC<SectionInterface> = (props: SectionInterface) => {
     if (props.backgroundColor) className += `bg-[${props.backgroundColor}] `;
     if (props.textWhite) className += "text-white ";
     if (props.paddingY2) className += `py-2 `;
+    if (props.widthOneFiveDesktop) className += "xl:w-1/5 ";
 
     return (
         <>

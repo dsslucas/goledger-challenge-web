@@ -10,9 +10,11 @@ export interface ButtonInterface {
     width25Percent?: boolean;
     border?: boolean;
     rounded?: boolean;
+    roundedB?: boolean;
     padding2?: boolean;
     paddingX2?: boolean;
     backgroundColor?: string;
+    gapX2?: boolean;
 
     successBackgroundColor?: boolean;
     editBackgroundColor?: boolean;

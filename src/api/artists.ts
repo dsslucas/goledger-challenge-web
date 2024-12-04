@@ -1,4 +1,5 @@
 import { ApiInformation } from "../interfaces/ApiInformation";
+import getAlbum from "./album";
 import api from "./api";
 
 const getArtist = () => {
@@ -16,6 +17,7 @@ const getArtist = () => {
             response.data.result.forEach((element: any) => {
                 data.push({
                     assetType: element["@assetType"],
+                    "@key": element["@key"],
                     key: element["@key"],
                     lastTouchBy: element["@lastTouchBy"],
                     lastTx: element["@lastTx"],
@@ -25,7 +27,7 @@ const getArtist = () => {
                     year: element.year
                 })
             })
-            
+
             return data;
         }
         catch (error) {
@@ -43,6 +45,31 @@ const getArtist = () => {
                 }
             });
 
+            const albuns = await getAlbum().getAlbunsByArtistId(id);
+
+            var data = {
+                ...response.data,
+                albuns: albuns
+            }
+
+            return data;
+        }
+        catch (error) {
+            console.error("Erro ao buscar artista:", error);
+            return [];
+        }
+    }
+
+    const updateCountryArtist = async (id: string, value: string) => {
+        try {
+            const response = await api.post("/invoke/updateAsset", {
+                "update": {
+                    "@assetType": "artist",
+                    "@key": id,
+                    "country": value
+                }
+            });
+
             return response.data;
         }
         catch (error) {
@@ -53,7 +80,8 @@ const getArtist = () => {
 
     return {
         getAllArtists,
-        getArtistInfo
+        getArtistInfo,
+        updateCountryArtist
     }
 }
 
