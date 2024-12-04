@@ -15,16 +15,16 @@ const getSong = () => {
             });
 
             var data: ApiInformation[] = [];
-            for(let i=0; i < response.data.result.length; i++){
+            for (let i = 0; i < response.data.result.length; i++) {
                 const element = response.data.result[i];
 
-                var album;                
-                if(element.album){
+                var album;
+                if (element.album) {
                     album = await getAlbum().getAlbumById(element.album["@key"]);
                 }
 
                 var artist;
-                if(album.artist){
+                if (album.artist) {
                     artist = await getArtist().getArtistInfo(album.artist["@key"]);
                 }
 
@@ -42,7 +42,7 @@ const getSong = () => {
                     album: album
                 })
             }
-         
+
             return data;
         }
         catch (error) {
@@ -79,7 +79,7 @@ const getSong = () => {
             }).then((response: any) => {
                 return response.data.result.filter((element: any) => element.album["@key"] === id);
             });
-         
+
             return response;
         }
         catch (error) {
@@ -88,10 +88,33 @@ const getSong = () => {
         }
     }
 
+    const deleteSong = async (id: string) => {
+        try {
+            const response = await api.delete("/invoke/deleteAsset", {
+                data: {
+                    key: {
+                        "@assetType": "song",
+                        "@key": id
+                    }
+                }
+            }).then((response: any) => {
+                console.log(response)
+                return "Som deletado.";
+            });
+
+            return response;
+        }
+        catch (error) {
+            console.error(error);
+            return "Erro ao deletar a música do álbum.";
+        }
+    }
+
     return {
         getAllSongs,
         getSongInfo,
-        getSongsByAlbumId
+        getSongsByAlbumId,
+        deleteSong
     }
 }
 

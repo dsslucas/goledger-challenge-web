@@ -67,7 +67,7 @@ const Artist: React.FC<ArtistPageInterface> = () => {
         if (Array.isArray(songs) && songs.length > 0) {
             return <table className="w-full text-center">
                 <thead>
-                    <tr>
+                    <tr className={`bg-gray-600 text-white`}>
                         <th>#</th>
                         <th>Song</th>
                         <th></th>
@@ -75,10 +75,10 @@ const Artist: React.FC<ArtistPageInterface> = () => {
                 </thead>
                 <tbody>
                     {songs && songs.map((song: ApiInformation, index: number) => {
-                        if (song.album) return <tr key={song["@key"]}>
+                        if (song.album) return <tr key={song["@key"]} className="even:bg-gray-500 even:bg-opacity-30">
                             <td>{index + 1}</td>
                             <td>{song.name}</td>
-                            <td><Button icon deleteBackgroundColor textWhite rounded onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleDeleteSong(e, song["@key"])}><FontAwesomeIcon icon={faTrash} /></Button></td>
+                            <td><Button icon deleteBackgroundColor textWhite rounded onClick={() => null}><FontAwesomeIcon icon={faTrash} /></Button></td>
                         </tr>
                     })}
                 </tbody>
@@ -121,8 +121,8 @@ const Artist: React.FC<ArtistPageInterface> = () => {
         }
     }
 
-    const handleDeleteSong = (event: React.MouseEvent<HTMLButtonElement>, id: string) => {
-        console.log("CLiquei na exclusao da musica");
+    const handleDeleteAlbum = (event: React.MouseEvent<HTMLButtonElement>, id: string) => {
+        console.log("Cliquei na exclusao do album");
         console.log(id)
     }
 
@@ -193,12 +193,12 @@ const Artist: React.FC<ArtistPageInterface> = () => {
                     <Divider flex gap2>
                         {artist && artist.albuns && (
                             artist.albuns.map((element: ApiInformation, key: number) => {
-                                return <Divider flex flexCol backgroundGray border rounded key={key}>
+                                return <Divider flex flexCol backgroundGray border rounded gap2 key={key}>
                                     <Divider flex gapX2>
                                         <Figure flex justifyCenter widthOneSixDesktop>
                                             <Image src={CountryRoads} />
                                         </Figure>
-                                        <Divider flex flexCol>
+                                        <Divider flex flexCol justifyBetween>
                                             <Fieldset flex flexColumn>
                                                 <H1 text3xl>{element.name}</H1>
                                             </Fieldset>
@@ -212,6 +212,9 @@ const Artist: React.FC<ArtistPageInterface> = () => {
                                                     <FontAwesomeIcon icon={faPen} />
                                                 </Button>
                                             </Fieldset>
+                                            <Button onClick={(event: React.MouseEvent<HTMLButtonElement>) => handleDeleteAlbum(event, element["@key"])} deleteBackgroundColor flex justifyCenter itemsCenter textWhite gapX2>
+                                                DELETAR
+                                                <FontAwesomeIcon icon={faTrash} /></Button>
                                         </Divider>
 
                                     </Divider>
