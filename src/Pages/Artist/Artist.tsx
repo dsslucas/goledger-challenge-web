@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { ArtistPageInterface } from "./Interface";
-import { Navigate, useLocation, useNavigate } from "react-router";
+import { Album, ArtistPageInterface } from "./Interface";
+import { Navigate, useLocation } from "react-router";
 import Section from "../../components/Section/Section";
 import H1 from "../../components/H1/H1";
 import getArtist from "../../api/artists";
@@ -19,23 +19,38 @@ import Divider from "../../components/Divider/Divider";
 import { ApiInformation } from "../../interfaces/ApiInformation";
 import Aside from "../../components/Aside/Aside";
 import getAlbum from "../../api/album";
+import getSong from "../../api/song";
 
 const Artist: React.FC<ArtistPageInterface> = () => {
-    const location = useLocation();    
+    const location = useLocation();
 
-    const [data, setData] = useState<ApiInformation>();
+    const [artist, setArtist] = useState<ApiInformation | null>(null);
+    const [songs, setSongs] = useState<ApiInformation[] | null>(null);
 
     const fetchData = async () => {
         try {
-            const response = await getArtist().getArtistInfo(id);
-            console.log("DADOS VINDOS DA API: ", response);
-            setData(response);
+            await getArtist().getArtistInfo(id)
+                .then((response: ApiInformation) => {
+                    setArtist(response)
+                    return response;
+                })
+                .then((response: ApiInformation) => {
+                    response.albuns?.forEach(async (element: ApiInformation) => {
+                        await getSong().getSongsByAlbumId(element["@key"])
+                            .then((returnSongs: ApiInformation[]) => {
+                                console.log(returnSongs)
+                                returnSongs?.forEach((eachSong: ApiInformation) => {
+                                    setSongs((prevSongs) => (prevSongs ? [...prevSongs, eachSong] : [eachSong]));
+                                })
+                            })
+                    })
+                });
         } catch (err) {
             console.error("Erro ao buscar dados do artista: ", err);
         }
     };
 
-    const id:string = location.state?.id;
+    const id: string = location.state?.id;
 
     useEffect(() => {
         fetchData();
@@ -45,13 +60,40 @@ const Artist: React.FC<ArtistPageInterface> = () => {
         return <Navigate to="/home" replace />;
     }
 
+    const renderSongs = (idAlbum: string) => {
+        console.log(idAlbum)
+        console.log(songs)
+
+        if (Array.isArray(songs) && songs.length > 0) {
+            return <table className="w-full text-center">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Song</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {songs && songs.map((song: ApiInformation, index: number) => {
+                        if (song.album) return <tr key={song["@key"]}>
+                            <td>{index + 1}</td>
+                            <td>{song.name}</td>
+                            <td><Button icon deleteBackgroundColor textWhite rounded onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleDeleteSong(e, song["@key"])}><FontAwesomeIcon icon={faTrash} /></Button></td>
+                        </tr>
+                    })}
+                </tbody>
+            </table>;
+        }
+        else return <></>;
+    }
+
     const handleClickChangeArtistLocation = async (event: React.MouseEvent<HTMLButtonElement>, id: string) => {
         try {
-            if (data && data.country) {
-                await getArtist().updateCountryArtist(id, data?.country);
+            if (artist && artist.country) {
+                await getArtist().updateCountryArtist(id, artist?.country);
                 await fetchData();
             }
-            else throw new Error;
+            else throw new Error();
         }
         catch (e) {
             console.error(e);
@@ -64,15 +106,15 @@ const Artist: React.FC<ArtistPageInterface> = () => {
 
     const handleClickChangeAlbumYear = async (event: React.MouseEvent<HTMLButtonElement>, id: string) => {
         try {
-            if (data && data.albuns) {
-                const album: ApiInformation = data.albuns.filter((element: ApiInformation) => element["@key"] === id)[0];
+            if (artist && artist.albuns) {
+                const album: ApiInformation = artist.albuns.filter((element: ApiInformation) => element["@key"] === id)[0];
 
                 if (album.year) {
                     await getAlbum().updateYearAlbum(id, album?.year);
                     await fetchData();
                 }
             }
-            else throw new Error;
+            else throw new Error();
         }
         catch (e) {
             console.error(e);
@@ -81,20 +123,21 @@ const Artist: React.FC<ArtistPageInterface> = () => {
 
     const handleDeleteSong = (event: React.MouseEvent<HTMLButtonElement>, id: string) => {
         console.log("CLiquei na exclusao da musica");
+        console.log(id)
     }
 
     const handleChangeCountryState = (e: React.ChangeEvent<HTMLInputElement>, id: string) => {
-        if (data != undefined) {
-            setData({
-                ...data,
+        if (artist !== undefined && artist?.country !== undefined && e.target.value !== undefined) {
+            setArtist({
+                ...artist,
                 country: e.target.value
             })
         }
     }
 
     const handleChangeAlbumYear = (e: React.ChangeEvent<HTMLInputElement>, id: string) => {
-        if (data && data.albuns != undefined) {
-            var updatedAlbuns: any = data.albuns.map(album => {
+        if (artist && artist.albuns !== undefined) {
+            var updatedAlbuns: any = artist.albuns.map(album => {
                 if (album["@key"] === id) {
                     return {
                         ...album,
@@ -104,113 +147,83 @@ const Artist: React.FC<ArtistPageInterface> = () => {
                 return album;
             });
 
-            setData({
-                ...data,
+            setArtist({
+                ...artist,
                 albuns: updatedAlbuns
             })
         }
     }
 
+    if (!artist && !songs) return <Divider>Loading...</Divider>
+
     return <>
-        {data && (
-            <>
-                <Divider flex paddingY2 gap2>
-                    <Section flex flexCol widthOneFiveDesktop>
-                        <Figure flex justifyCenter itemsCenter>
-                            <Image src={Banjo} roundedT />
-                        </Figure>
-                        <Divider flex flexCol widthFull backgroundGray padding2>
-                            <H2 textXl>{data.name}</H2>
-                            <Fieldset flex itemsCenter gapX2 height7>
-                                <FontAwesomeIcon icon={faLocationDot} />
-                                <Input
-                                    type="text"
-                                    value={data.country}
-                                    rounded
-                                    border
-                                    backgroundTransparent
-                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChangeCountryState(e, data["@key"])}
-                                />
-                                <Button onClick={(event: React.MouseEvent<HTMLButtonElement>) => handleClickChangeArtistLocation(event, data["@key"])} icon editBackgroundColor flex justifyCenter itemsCenter rounded textWhite>
-                                    <FontAwesomeIcon icon={faPen} />
-                                </Button>
-                            </Fieldset>
-                            <Fieldset flex itemsCenter gapX2>
-                                <H2 textXl>Albuns</H2>
-                                <Span>{data.albuns?.length}</Span>
-                            </Fieldset>
-                        </Divider>
-                        <Button onClick={(event: React.MouseEvent<HTMLButtonElement>) => handleClickDeleteArtist(event, data["@key"])} deleteBackgroundColor flex justifyCenter itemsCenter roundedB textWhite gapX2>
-                            DELETAR
-                            <FontAwesomeIcon icon={faTrash} />
-                        </Button>
-                    </Section>
-                    <Aside flex flexColumn widthFourFiveDesktop>
-                        <Divider flex flexCol gap2>
-                            {data && data.albuns && (
-                                data.albuns.map((element: ApiInformation, key: number) => {
-                                    return <Divider flex flexCol backgroundGray border rounded key={key}>
-                                        <Divider flex gapX2>
-                                            <Figure flex justifyCenter widthOneSixDesktop>
-                                                <Image src={CountryRoads} />
-                                            </Figure>
-                                            <Divider flex flexCol>
-                                                <Fieldset flex flexColumn>
-                                                    <H1 text3xl>{element.name}</H1>
-                                                </Fieldset>
-                                                <Fieldset flex gapX2 height7>
-                                                    <Input
-                                                        type="number"
-                                                        value={element.year}
-                                                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChangeAlbumYear(e, element["@key"])}
-                                                        rounded border backgroundTransparent />
-                                                    <Button onClick={(event: React.MouseEvent<HTMLButtonElement>) => handleClickChangeAlbumYear(event, element["@key"])} icon editBackgroundColor flex justifyCenter itemsCenter rounded textWhite>
-                                                        <FontAwesomeIcon icon={faPen} />
-                                                    </Button>
-                                                </Fieldset>
-                                            </Divider>
+        {artist && (
+            <Divider flex paddingY2 gap2>
+                <Section flex flexCol widthOneFiveDesktop>
+                    <Figure flex justifyCenter itemsCenter>
+                        <Image src={Banjo} roundedT />
+                    </Figure>
+                    <Divider flex flexCol widthFull backgroundGray padding2>
+                        <H2 textXl>{artist.name}</H2>
+                        <Fieldset flex itemsCenter gapX2 height7>
+                            <FontAwesomeIcon icon={faLocationDot} />
+                            <Input
+                                type="text"
+                                value={artist.country}
+                                rounded
+                                border
+                                backgroundTransparent
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChangeCountryState(e, artist["@key"])}
+                            />
+                            <Button onClick={(event: React.MouseEvent<HTMLButtonElement>) => handleClickChangeArtistLocation(event, artist["@key"])} icon editBackgroundColor flex justifyCenter itemsCenter rounded textWhite>
+                                <FontAwesomeIcon icon={faPen} />
+                            </Button>
+                        </Fieldset>
+                        <Fieldset flex itemsCenter gapX2>
+                            <H2 textXl>Albuns</H2>
+                            <Span>{artist.albuns?.length}</Span>
+                        </Fieldset>
+                    </Divider>
+                    <Button onClick={(event: React.MouseEvent<HTMLButtonElement>) => handleClickDeleteArtist(event, artist["@key"])} deleteBackgroundColor flex justifyCenter itemsCenter roundedB textWhite gapX2>
+                        DELETAR
+                        <FontAwesomeIcon icon={faTrash} />
+                    </Button>
+                </Section>
+                <Aside flex flexColumn widthFourFiveDesktop>
+                    <Divider flex gap2>
+                        {artist && artist.albuns && (
+                            artist.albuns.map((element: ApiInformation, key: number) => {
+                                return <Divider flex flexCol backgroundGray border rounded key={key}>
+                                    <Divider flex gapX2>
+                                        <Figure flex justifyCenter widthOneSixDesktop>
+                                            <Image src={CountryRoads} />
+                                        </Figure>
+                                        <Divider flex flexCol>
+                                            <Fieldset flex flexColumn>
+                                                <H1 text3xl>{element.name}</H1>
+                                            </Fieldset>
+                                            <Fieldset flex gapX2 height7>
+                                                <Input
+                                                    type="number"
+                                                    value={element.year}
+                                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChangeAlbumYear(e, element["@key"])}
+                                                    rounded border backgroundTransparent />
+                                                <Button onClick={(event: React.MouseEvent<HTMLButtonElement>) => handleClickChangeAlbumYear(event, element["@key"])} icon editBackgroundColor flex justifyCenter itemsCenter rounded textWhite>
+                                                    <FontAwesomeIcon icon={faPen} />
+                                                </Button>
+                                            </Fieldset>
+                                        </Divider>
 
-                                        </Divider>
-                                        <Divider>
-                                            <span>{element.songs?.length}</span>
-                                            {Array.isArray(element.songs) && element.songs?.length > 0 && (
-                                                <table className="w-full">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>#</th>
-                                                            <th>Song</th>
-                                                            <th></th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        {element.songs.map((song: ApiInformation, index: number) => {
-                                                            return <tr key={index}>
-                                                                <td>{index + 1}</td>
-                                                                <td>{song.name}</td>
-                                                                <td>
-                                                                    <Button onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleDeleteSong(e, song["@key"])}>
-                                                                        <FontAwesomeIcon icon={faTrash} />
-                                                                    </Button>
-                                                                </td>
-                                                            </tr>
-                                                        })}
-                                                    </tbody>
-                                                </table>
-                                            )}
-                                        </Divider>
                                     </Divider>
-                                })
-                            )}
-                        </Divider>
-
-                    </Aside>
-
-                    {/* <Figure flex justifyCenter itemsCenter>
-                <Image src={Banjo} />
-            </Figure>
-            <H1>Artista XXXXXXX</H1> */}
-                </Divider>
-            </>
+                                    <Divider>
+                                        {renderSongs(element["@key"])}
+                                    </Divider>
+                                </Divider>
+                            })
+                        )}
+                    </Divider>
+                </Aside>
+            </Divider>
         )}
     </>
 }
