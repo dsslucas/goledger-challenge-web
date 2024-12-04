@@ -18,15 +18,10 @@ const getSong = () => {
             for(let i=0; i < response.data.result.length; i++){
                 const element = response.data.result[i];
 
-                console.log("\nInicio da execucao")
-
-                var album;
-                
+                var album;                
                 if(element.album){
                     album = await getAlbum().getAlbumById(element.album["@key"]);
                 }
-                
-                console.log(album)
 
                 var artist;
                 if(album.artist){

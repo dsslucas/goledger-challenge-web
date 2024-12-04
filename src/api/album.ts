@@ -71,8 +71,7 @@ const getAlbum = () => {
                 // Filter by Artist ID
                 return response.data.result.filter((element: any) => element.artist["@key"] === id);
             }).then((album: ApiInformation[]) => {
-                album.forEach(async (element: any) => {                    
-                    console.log(element["@key"])
+                album.forEach(async (element: any) => {
                     element.songs = await getSong().getSongsByAlbumId(element["@key"]);
                 })
                 return album;

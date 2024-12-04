@@ -10,6 +10,7 @@ import Home from './Pages/Home/Home';
 import Artist from './Pages/Artist/Artist';
 import Album from './Pages/Album/Album';
 import Playlist from './Pages/Playlist/Playlist';
+import Test from './Pages/Test';
 
 function App() {
   const [apiColors, setApiColors] = useState<ColorInterface>();
@@ -43,6 +44,7 @@ function App() {
             <Route path="/artist" element={<Artist />} />            
             <Route path="/album" element={<Album />} />
             <Route path="/playlist" element={<Playlist />} />
+            <Route path="/test" element={<Test />} />
             <Route path="*" element={<Navigate to="/home" replace />} />
           </Routes>
         </BrowserRouter>

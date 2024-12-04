@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ArtistPageInterface } from "./Interface";
-import { useLocation, useNavigate } from "react-router";
+import { Navigate, useLocation, useNavigate } from "react-router";
 import Section from "../../components/Section/Section";
 import H1 from "../../components/H1/H1";
 import getArtist from "../../api/artists";
@@ -21,23 +21,29 @@ import Aside from "../../components/Aside/Aside";
 import getAlbum from "../../api/album";
 
 const Artist: React.FC<ArtistPageInterface> = () => {
-    const navigation = useNavigate();
-    const location = useLocation();
-    const id = location.state.id;
-
-    if (id === undefined || id === null) navigation("/home");
+    const location = useLocation();    
 
     const [data, setData] = useState<ApiInformation>();
 
     const fetchData = async () => {
-        const data = await getArtist().getArtistInfo(id);
-        console.log("DADOS VINDOS DA API: ", data);
-        setData(data);
-    }
+        try {
+            const response = await getArtist().getArtistInfo(id);
+            console.log("DADOS VINDOS DA API: ", response);
+            setData(response);
+        } catch (err) {
+            console.error("Erro ao buscar dados do artista: ", err);
+        }
+    };
+
+    const id:string = location.state?.id;
 
     useEffect(() => {
         fetchData();
-    }, []);
+    }, [id]);
+
+    if (!location.state || !id) {
+        return <Navigate to="/home" replace />;
+    }
 
     const handleClickChangeArtistLocation = async (event: React.MouseEvent<HTMLButtonElement>, id: string) => {
         try {
