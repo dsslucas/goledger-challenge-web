@@ -13,8 +13,12 @@ export interface DividerInterface {
     widthOneSixDesktop?: boolean;
     widthFourFiveDesktop?: boolean;
     padding4?: boolean;
+    maxHeight52?: boolean;
     maxHeight80?: boolean;
     overflowHidden?: boolean;
+    overflowY?: boolean;
+    overflowX?: boolean;
+    overflowXHidden?: boolean;
     grid?: boolean;
     gridColsCategories?: boolean;
     gap2?: boolean;
@@ -25,4 +29,6 @@ export interface DividerInterface {
     backgroundGray?: boolean;
     rounded?: boolean;
     border?: boolean;
+
+
 }

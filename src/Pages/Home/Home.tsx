@@ -26,6 +26,7 @@ import artistApi from "../../api/artists";
 import { Option } from "../../components/Select/Interface";
 import albumApi from "../../api/album";
 import songApi from "../../api/song";
+import playlistApi from "../../api/playlist";
 const Home = () => {
     const navigation = useNavigate();
 
@@ -39,6 +40,7 @@ const Home = () => {
     const [getApiData, setGetApiData] = useState<ApiInformation[]>([]);
     const [artistsList, setArtistsList] = useState<Option[]>([]);
     const [albunsList, setAlbunsList] = useState<Option[]>([]);
+    const [songsList, setSongsList] = useState<ApiInformation[]>([]);
 
     const [modalCreateParams, setModalCreateParams] = useState<ModalCreateInterface>({
         open: false,
@@ -88,7 +90,8 @@ const Home = () => {
             tag: buttonClickedLabel.toLowerCase(),
             buttonConfirm: true,
             buttonConfirmText: "Adicionar",
-            options: renderOption()
+            options: renderOption(),
+            apiData: buttonClickedLabel.toLowerCase() === "playlist" ? songsList : []
         });
     }
 
@@ -255,6 +258,36 @@ const Home = () => {
                     });
                 })
         }
+        else if (buttonClickedLabel.toLowerCase() === "playlist") {
+            const data: any = {
+                name: formData.name,
+                songs: formData.songs,
+                private: formData.private
+            }
+            console.log("ANTES DO ENVIO: ", data)
+
+            await playlistApi().createPlaylist(data)
+                .then((response: any) => {
+                    Swal.fire({
+                        title: response.positiveConclusion ? "Sucesso!" : "Erro!",
+                        text: response.message,
+                        icon: response.positiveConclusion ? "success" : "error",
+                    });
+
+                    if (response.positiveConclusion) {
+                        closeModalAdd();
+                        fetchData();
+                    }
+                })
+                .catch((error: any) => {
+                    console.error(error)
+                    Swal.fire({
+                        title: "Erro!",
+                        text: error.response.message,
+                        icon: "error"
+                    });
+                })
+        }
     }
 
     const fetchData = async () => {
@@ -283,6 +316,9 @@ const Home = () => {
             setAlbunsList(temp);
         })
 
+        const songs = await songApi().getAllSongs();
+        setSongsList(songs);
+
         setButtonClicked(true);
         setButtonClickedLabel("Artist");
     };
@@ -302,6 +338,7 @@ const Home = () => {
                 buttonConfirm={modalCreateParams.buttonConfirm}
                 buttonConfirmText={modalCreateParams.buttonConfirmText}
                 options={modalCreateParams.options}
+                apiData={modalCreateParams.apiData}
             />
         )}
         <Section flex justifyCenter paddingY2>

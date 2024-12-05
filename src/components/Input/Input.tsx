@@ -14,6 +14,7 @@ const Input: React.FC<InputInterface> = (props: InputInterface) => {
         name={props.name}
         type={props.type}
         value={props.value}
+        checked={props.checked}
         className={className.trim()}
         onChange={props.onChange}
     />

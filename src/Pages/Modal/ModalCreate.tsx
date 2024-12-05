@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ModalCreateInputInterface, ModalCreateInterface } from "./Interface";
 import Fieldset from "../../components/Fieldset/Fieldset";
 import Label from "../../components/Label/Label";
@@ -12,18 +12,58 @@ import { faAdd, faTrash } from "@fortawesome/free-solid-svg-icons";
 import Button from "../../components/Button/Button";
 import Span from "../../components/Span/Span";
 import H4 from "../../components/H4/H4";
+import { ApiInformation } from "../../interfaces/ApiInformation";
+import Thead from "../../components/Table/Thead";
+import TableBody from "../../components/Table/Tbody";
+import Tbody from "../../components/Table/Tbody";
+import TableTr from "../../components/Table/Tr";
+import TableTh from "../../components/Table/Th";
+import TableTd from "../../components/Table/Td";
+import Table from "../../components/Table/Table";
 
 const ModalCreate: React.FC<ModalCreateInterface> = (props: ModalCreateInterface) => {
+    const tagArtist = (props.tag === "artist");
+    const tagAlbum = (props.tag === "album")
+    const tagSong = (props.tag === "song");
+    const tagPlaylist = (props.tag === "playlist");
+
     const [formData, setFormData] = useState<ModalCreateInputInterface>({
         name: '',
         country: '',
         idArtist: "",
         idAlbum: "",
         year: undefined,
-        songs: []
+        songs: [],
+        private: false
     });
 
     const [inputs, setInputs] = useState<InputField[]>([{ id: 1, value: '' }]);
+
+    useEffect(() => {
+        console.log(formData)
+    }, [formData])
+
+    const handleSelectSong = (event: React.ChangeEvent<HTMLInputElement>, songId: string) => {
+        const checked: boolean = event.target.checked;
+        var updates = inputs;
+        var newInputData = {
+            id: Date.now(),
+            value: songId
+        }
+
+        if (checked) {
+            updates = [...updates, newInputData];
+        }
+        else {
+            updates = updates.filter((element: InputField) => element.value !== newInputData.value);
+        }
+
+        setInputs(updates);
+        setFormData({
+            ...formData,
+            songs: updates
+        });
+    }
 
     const handleChangeDynamicInputSong = (event: React.ChangeEvent<HTMLInputElement>, id: number) => {
         setInputs(
@@ -46,6 +86,10 @@ const ModalCreate: React.FC<ModalCreateInterface> = (props: ModalCreateInterface
         setInputs(inputs.filter(item => item.id !== id));
     };
 
+    const handleChangePrivate = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setFormData({ ...formData, private: !formData.private})
+    }
+
     const handleChangeEvent = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     }
@@ -59,10 +103,9 @@ const ModalCreate: React.FC<ModalCreateInterface> = (props: ModalCreateInterface
         }
     }
 
-    const tagArtist = (props.tag === "artist");
-    const tagAlbum = (props.tag === "album")
-    const tagSong = (props.tag === "song");
-    const tagPlaylist = (props.tag === "playlist");
+    useEffect(() => {
+        if (tagPlaylist) setInputs([]);
+    }, []);
 
     return <form id="modalAdd" className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50" onSubmit={handleSubmit}>
         <div className="bg-white w-11/12 max-w-xl mx-auto rounded-lg shadow-lg">
@@ -128,7 +171,7 @@ const ModalCreate: React.FC<ModalCreateInterface> = (props: ModalCreateInterface
                             <Fieldset flex flexColumn>
                                 <Label for={`${props.tag}_album`}>Album</Label>
                                 <Select
-                                    id={`${props.tag}_artist`}
+                                    id={`${props.tag}_album`}
                                     name={`idAlbum`}
                                     value={formData.idAlbum}
                                     onChange={handleChangeEvent}
@@ -138,29 +181,51 @@ const ModalCreate: React.FC<ModalCreateInterface> = (props: ModalCreateInterface
                             </Fieldset>
                         </>
                     )}
+                    {tagPlaylist && (
+                        <>
+                            <Fieldset flex flexColumn>
+                                <Label for={`${props.tag}_private`}>Privado</Label>
+                                <Input type="checkbox"
+                                    id={`${props.tag}_private`}
+                                    name={`private`}
+                                    checked={formData.private}
+                                    //value={undefined}
+                                    onChange={handleChangePrivate} border />
+                            </Fieldset>
+                        </>
+                    )}
                 </Divider>
                 {tagPlaylist && (
                     <Divider flex flexCol={tagPlaylist} flex1 gap2>
                         <H4 textXl>Songs</H4>
 
-                        <table className="text-center">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Nome</th>
-                                    <th>Artista</th>
-                                    <th>Album</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td><Input type="checkbox" id="checkbox_0" name="checkbox_0" value={undefined} onChange={() => null}/></td>
-                                    <td>Olhos de Lua</td>
-                                    <td>Zezé</td>
-                                    <td>1993</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <Divider maxHeight52 overflowY overflowXHidden>
+                            <Table textCenter widthFull>
+                                <Thead top0 sticky backgroundGray textWhite>
+                                    <TableTr>
+                                        <TableTh>#</TableTh>
+                                        <TableTh>Nome</TableTh>
+                                        <TableTh>Artista</TableTh>
+                                        <TableTh>Album</TableTh>
+                                    </TableTr>
+                                </Thead>
+                                <Tbody>
+                                    {props.apiData?.map((apiData: ApiInformation, index: number) => {
+                                        return <TableTr key={apiData["@key"]} backgroundStripedGray>
+                                            <TableTd>
+                                                <Input
+                                                    type="checkbox" id={`checkbox_${index}`} name={`checkbox_${index}`}
+                                                    value={undefined}
+                                                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleSelectSong(event, apiData["@key"])} />
+                                            </TableTd>
+                                            <TableTd>{apiData.name}</TableTd>
+                                            <TableTd>{apiData.artist?.name}</TableTd>
+                                            <TableTd>{apiData.album?.name}</TableTd>
+                                        </TableTr>
+                                    })}
+                                </Tbody>
+                            </Table>
+                        </Divider>
                     </Divider>
                 )}
 

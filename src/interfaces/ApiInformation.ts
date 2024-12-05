@@ -33,3 +33,9 @@ export interface SongSend {
     idAlbum: string;
     songs: InputField[];
 }
+
+export interface PlaylistSend {
+    name: string;
+    songs: InputField[];
+    private: boolean;
+}
