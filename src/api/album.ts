@@ -2,20 +2,17 @@ import { InputField } from "../components/Input/Interface";
 import { AlbumSend, ApiInformation } from "../interfaces/ApiInformation";
 import api from "./api";
 import getArtist from "./artists";
+import songApi from "./song";
 import getSong from "./song";
 
 const albumApi = () => {
     const registerNewAlbum = async (request: AlbumSend) => {
-        try {
-            console.log("REQUEST: ", request)
-            
+        try {            
             if (request.idArtist === null || request.idArtist === undefined || request.idArtist === "") throw "NO_ARTIST";
             if (request.name === null || request.name === undefined || request.name === "") throw "NO_NAME";
             if (request.year === null || request.year === undefined || request.year === "") throw "NO_YEAR";
             if (request.songs === null || request.songs === undefined || request.songs.length === 0) throw "NO_SONG";
             if(request.songs.some((element: InputField) => element.value === "" || element.value === null || element.value === undefined)) throw "NO_SONG_NAME";
-
-            
 
             await api.post("/invoke/createAsset", {
                 asset: [{
@@ -28,23 +25,9 @@ const albumApi = () => {
                     "year": Number(request.year)
                 }]
             }).then(async (response: any) => {
-                const albumId = response.data[0]["@key"];
-                console.log(response.data[0])
-                const songs = request.songs.map((song: InputField) => {
-                    return {
-                        "@assetType": "song",
-                        "name": song.value,
-                        "album": {
-                            "@assetType": "album",
-                            "@key": albumId
-                        }
-                    }
-                })
-
-                console.log(songs)
-
-                return await api.post("/invoke/createAsset", {
-                    asset: songs
+                return await songApi().registerSong({
+                    idAlbum: response.data[0]["@key"],
+                    songs: request.songs
                 })
             });
 

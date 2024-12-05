@@ -28,3 +28,8 @@ export interface AlbumSend {
     year: string;
     songs: InputField[];
 }
+
+export interface SongSend {
+    idAlbum: string;
+    songs: InputField[];
+}

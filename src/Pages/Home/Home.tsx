@@ -25,6 +25,7 @@ import { ModalCreateInputInterface, ModalCreateInterface } from "../Modal/Interf
 import artistApi from "../../api/artists";
 import { Option } from "../../components/Select/Interface";
 import albumApi from "../../api/album";
+import songApi from "../../api/song";
 const Home = () => {
     const navigation = useNavigate();
 
@@ -37,6 +38,7 @@ const Home = () => {
 
     const [getApiData, setGetApiData] = useState<ApiInformation[]>([]);
     const [artistsList, setArtistsList] = useState<Option[]>([]);
+    const [albunsList, setAlbunsList] = useState<Option[]>([]);
 
     const [modalCreateParams, setModalCreateParams] = useState<ModalCreateInterface>({
         open: false,
@@ -66,8 +68,19 @@ const Home = () => {
             })
     }
 
-    const handleClickAdd = (event: React.MouseEvent<HTMLButtonElement>, tag: string) => {
+    const handleClickAdd = async (event: React.MouseEvent<HTMLButtonElement>, tag: string) => {
         console.log("opa joia", tag)
+
+        function renderOption() {
+            if (buttonClickedLabel.toLowerCase() === "album") return artistsList;
+            else if (buttonClickedLabel.toLowerCase() === "song") return albunsList;
+            else return [];
+        }
+
+        console.log(renderOption())
+
+        console.log(albunsList)
+
         setModalCreateParams({
             ...modalCreateParams,
             open: true,
@@ -75,7 +88,7 @@ const Home = () => {
             tag: buttonClickedLabel.toLowerCase(),
             buttonConfirm: true,
             buttonConfirmText: "Adicionar",
-            options: artistsList
+            options: renderOption()
         });
     }
 
@@ -107,8 +120,6 @@ const Home = () => {
                 id: id,
             }
         });
-
-        console.log(tag);
     }
 
     const handleCancelModalAdd = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -131,7 +142,7 @@ const Home = () => {
 
         console.log("NO FORMULARIO: ", formData)
 
-        if(!formData) {
+        if (!formData) {
             Swal.fire({
                 title: "Erro!",
                 text: "Os dados não foram enviados por falha interna.",
@@ -184,7 +195,7 @@ const Home = () => {
                 });
             }
         }
-        if (buttonClickedLabel.toLowerCase() === "album") {
+        else if (buttonClickedLabel.toLowerCase() === "album") {
             const data: any = {
                 idArtist: formData.idArtist,
                 name: formData.name,
@@ -215,13 +226,41 @@ const Home = () => {
                     });
                 })
         }
+        else if (buttonClickedLabel.toLowerCase() === "song") {
+            const data: any = {
+                idAlbum: formData.idAlbum,
+                songs: formData.songs
+            }
+            console.log("ANTES DO ENVIO: ", data)
+
+            await songApi().registerSong(data)
+                .then((response: any) => {
+                    Swal.fire({
+                        title: response.positiveConclusion ? "Sucesso!" : "Erro!",
+                        text: response.message,
+                        icon: response.positiveConclusion ? "success" : "error",
+                    });
+
+                    if (response.positiveConclusion) {
+                        closeModalAdd();
+                        fetchData();
+                    }
+                })
+                .catch((error: any) => {
+                    console.error(error)
+                    Swal.fire({
+                        title: "Erro!",
+                        text: error.response.message,
+                        icon: "error"
+                    });
+                })
+        }
     }
 
     const fetchData = async () => {
         await Promise.all([getHeader(), getSchema()]);
         const artists = await artistApi().getAllArtists();
         setGetApiData(artists);
-
         artists.forEach((element: ApiInformation) => {
             var temp = artistsList;
 
@@ -230,6 +269,18 @@ const Home = () => {
                 value: element["@key"]
             })
             setArtistsList(temp);
+        });
+
+        const albuns = await albumApi().getAllAlbums();
+        albuns.forEach((response: ApiInformation) => {
+            var temp = albunsList;
+            console.log(response)
+
+            temp.push({
+                label: response.name,
+                value: response["@key"]
+            })
+            setAlbunsList(temp);
         })
 
         setButtonClicked(true);

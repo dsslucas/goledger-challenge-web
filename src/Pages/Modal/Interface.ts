@@ -20,5 +20,6 @@ export interface ModalCreateInputInterface {
     country?: string;
     year?: number;
     idArtist?: string;
+    idAlbum?: string;
     songs?: InputField[];
 }

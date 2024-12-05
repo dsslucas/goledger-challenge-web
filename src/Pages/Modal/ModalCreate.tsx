@@ -17,6 +17,7 @@ const ModalCreate: React.FC<ModalCreateInterface> = (props: ModalCreateInterface
         name: '',
         country: '',
         idArtist: "",
+        idAlbum: "",
         year: undefined,
         songs: []
     });
@@ -57,7 +58,7 @@ const ModalCreate: React.FC<ModalCreateInterface> = (props: ModalCreateInterface
         }
     }
 
-    console.log(props.tag)
+    console.log(props.options)
 
     return <form id="modalAdd" className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50" onSubmit={handleSubmit}>
         <div className="bg-white w-11/12 max-w-xl mx-auto rounded-lg shadow-lg">
@@ -71,16 +72,18 @@ const ModalCreate: React.FC<ModalCreateInterface> = (props: ModalCreateInterface
                     {props.tag === "album" && (
                         <H2 textXl>Album data</H2>
                     )}
+                    {props.tag !== "song" && (
+                        <Fieldset flex flexColumn>
+                            <Label for={`${props.tag}_name`}>Nome</Label>
+                            <Input
+                                type="text"
+                                id={`${props.tag}_name`}
+                                name={`name`}
+                                value={formData.name}
+                                onChange={handleChangeEvent} border />
+                        </Fieldset>
+                    )}
 
-                    <Fieldset flex flexColumn>
-                        <Label for={`${props.tag}_name`}>Nome</Label>
-                        <Input
-                            type="text"
-                            id={`${props.tag}_name`}
-                            name={`name`}
-                            value={formData.name}
-                            onChange={handleChangeEvent} border />
-                    </Fieldset>
                     {props.tag === "artist" && (
                         <>
                             <Fieldset flex flexColumn>
@@ -116,9 +119,24 @@ const ModalCreate: React.FC<ModalCreateInterface> = (props: ModalCreateInterface
                             </Fieldset>
                         </>
                     )}
+                    {props.tag === "song" && (
+                        <>
+                            <Fieldset flex flexColumn>
+                                <Label for={`${props.tag}_album`}>Album</Label>
+                                <Select
+                                    id={`${props.tag}_artist`}
+                                    name={`idAlbum`}
+                                    value={formData.idAlbum}
+                                    onChange={handleChangeEvent}
+                                    options={props.options}
+                                    border
+                                />
+                            </Fieldset>
+                        </>
+                    )}
                 </Divider>
-                {props.tag === "album" && (
-                    <Divider flex flexCol flex1>
+                {(props.tag === "album" || props.tag === "song") && (
+                    <Divider flex flexCol flex1 gap2>
                         <H2 textXl>Songs</H2>
                         <div className="flex flex-col gap-2 h-full overflow-y-auto">
                             {inputs.map((input, index: number) => (

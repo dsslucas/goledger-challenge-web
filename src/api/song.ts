@@ -1,9 +1,57 @@
-import { ApiInformation } from "../interfaces/ApiInformation";
+import { InputField } from "../components/Input/Interface";
+import { ApiInformation, SongSend } from "../interfaces/ApiInformation";
 import getAlbum from "./album";
 import api from "./api";
 import getArtist from "./artists";
 
-const getSong = () => {
+const songApi = () => {
+    const registerSong = async (request: SongSend) => {
+        try {            
+            if (request.idAlbum === null || request.idAlbum === undefined || request.idAlbum === "") throw "NO_ALBUM";
+            if (request.songs === null || request.songs === undefined || request.songs.length === 0) throw "NO_SONG";
+            if(request.songs.some((element: InputField) => element.value === "" || element.value === null || element.value === undefined)) throw "NO_SONG_NAME";
+
+            const songs = request.songs.map((song: InputField) => {
+                return {
+                    "@assetType": "song",
+                    "name": song.value,
+                    "album": {
+                        "@assetType": "album",
+                        "@key": request.idAlbum
+                    }
+                }
+            })
+
+            await api.post("/invoke/createAsset", {
+                asset: songs
+            })
+
+            return {
+                positiveConclusion: true,
+                message: "Som registrado!"
+            }
+        }
+        catch (error) {
+            console.error(error)
+            if (error === "NO_ALBUM") return {
+                positiveConclusion: false,
+                message: "É necessário informar o álbum."
+            };
+            else if (error === "NO_SONG") return {
+                positiveConclusion: false,
+                message: "É necessário informar pelo menos um som."
+            }
+            else if (error === "NO_SONG_NAME") return {
+                positiveConclusion: false,
+                message: "É necessário informar o nome do som"
+            }            
+            else return {
+                positiveConclusion: false,
+                message: "Erro ao registrar som."
+            };
+        }
+    }
+
     const getAllSongs = async () => {
         try {
             const response = await api.post("/query/search", {
@@ -111,6 +159,7 @@ const getSong = () => {
     }
 
     return {
+        registerSong,
         getAllSongs,
         getSongInfo,
         getSongsByAlbumId,
@@ -118,4 +167,4 @@ const getSong = () => {
     }
 }
 
-export default getSong;
+export default songApi;
