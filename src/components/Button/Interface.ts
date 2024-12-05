@@ -1,5 +1,8 @@
+import { ButtonHTMLAttributes, DetailedHTMLProps } from "react";
+
 export interface ButtonInterface {
     children: React.ReactNode;
+    type: 'button' | 'submit' | 'reset'; 
     flex?: boolean;
     flexColumn?: boolean;
     justifyCenter?: boolean;

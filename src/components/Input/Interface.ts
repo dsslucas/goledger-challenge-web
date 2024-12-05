@@ -8,5 +8,11 @@ export interface InputInterface {
     rounded?: boolean;
     border?: boolean;
     backgroundTransparent?: boolean;
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    width36?: boolean
+}
+
+export interface InputField {
+    id: number;
+    value: string;
 }

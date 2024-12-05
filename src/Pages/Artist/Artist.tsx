@@ -78,7 +78,7 @@ const Artist: React.FC<ArtistPageInterface> = () => {
                         if (song.album) return <tr key={song["@key"]} className="even:bg-gray-500 even:bg-opacity-30">
                             <td>{index + 1}</td>
                             <td>{song.name}</td>
-                            <td><Button icon deleteBackgroundColor textWhite rounded onClick={() => null}><FontAwesomeIcon icon={faTrash} /></Button></td>
+                            <td><Button type="button" icon deleteBackgroundColor textWhite rounded onClick={() => null}><FontAwesomeIcon icon={faTrash} /></Button></td>
                         </tr>
                     })}
                 </tbody>
@@ -177,7 +177,7 @@ const Artist: React.FC<ArtistPageInterface> = () => {
                                 backgroundTransparent
                                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChangeCountryState(e, artist["@key"])}
                             />
-                            <Button onClick={(event: React.MouseEvent<HTMLButtonElement>) => handleClickChangeArtistLocation(event, artist["@key"])} icon editBackgroundColor flex justifyCenter itemsCenter rounded textWhite>
+                            <Button type="button" onClick={(event: React.MouseEvent<HTMLButtonElement>) => handleClickChangeArtistLocation(event, artist["@key"])} icon editBackgroundColor flex justifyCenter itemsCenter rounded textWhite>
                                 <FontAwesomeIcon icon={faPen} />
                             </Button>
                         </Fieldset>
@@ -186,7 +186,7 @@ const Artist: React.FC<ArtistPageInterface> = () => {
                             <Span>{artist.albuns?.length}</Span>
                         </Fieldset>
                     </Divider>
-                    <Button onClick={(event: React.MouseEvent<HTMLButtonElement>) => handleClickDeleteArtist(event, artist["@key"])} deleteBackgroundColor flex justifyCenter itemsCenter roundedB textWhite gapX2>
+                    <Button type="button" onClick={(event: React.MouseEvent<HTMLButtonElement>) => handleClickDeleteArtist(event, artist["@key"])} deleteBackgroundColor flex justifyCenter itemsCenter roundedB textWhite gapX2>
                         DELETAR
                         <FontAwesomeIcon icon={faTrash} />
                     </Button>
@@ -212,11 +212,11 @@ const Artist: React.FC<ArtistPageInterface> = () => {
                                                     value={element.year}
                                                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChangeAlbumYear(e, element["@key"])}
                                                     rounded border backgroundTransparent />
-                                                <Button onClick={(event: React.MouseEvent<HTMLButtonElement>) => handleClickChangeAlbumYear(event, element["@key"])} icon editBackgroundColor flex justifyCenter itemsCenter rounded textWhite>
+                                                <Button type="button" onClick={(event: React.MouseEvent<HTMLButtonElement>) => handleClickChangeAlbumYear(event, element["@key"])} icon editBackgroundColor flex justifyCenter itemsCenter rounded textWhite>
                                                     <FontAwesomeIcon icon={faPen} />
                                                 </Button>
                                             </Fieldset>
-                                            <Button onClick={(event: React.MouseEvent<HTMLButtonElement>) => handleDeleteAlbum(event, element["@key"])} deleteBackgroundColor flex justifyCenter itemsCenter textWhite gapX2>
+                                            <Button type="button" onClick={(event: React.MouseEvent<HTMLButtonElement>) => handleDeleteAlbum(event, element["@key"])} deleteBackgroundColor flex justifyCenter itemsCenter textWhite gapX2>
                                                 DELETAR
                                                 <FontAwesomeIcon icon={faTrash} /></Button>
                                         </Divider>

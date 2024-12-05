@@ -2,6 +2,7 @@ export interface DividerInterface {
     children: React.ReactNode;
     flex?: boolean;
     flexWrap?: boolean;
+    flex1?: boolean;
     flexCol?: boolean;
     itemsCenter?: boolean;
     justifyCenter?: boolean;

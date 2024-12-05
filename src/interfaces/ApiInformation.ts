@@ -1,3 +1,5 @@
+import { InputField } from "../components/Input/Interface";
+
 export interface ApiInformation {
     assetType: string;
     "@key": string;
@@ -18,4 +20,11 @@ export interface ApiInformation {
 export interface ArtistSend {
     name: string;
     country: string;
+}
+
+export interface AlbumSend {
+    idArtist: string;
+    name: string;
+    year: string;
+    songs: InputField[];
 }

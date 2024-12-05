@@ -2,11 +2,12 @@ import React from "react";
 import { InputInterface } from "./Interface";
 
 const Input: React.FC<InputInterface> = (props: InputInterface) => {
-    var className = "";
+    var className = "px-2 ";
 
     if (props.border) className += "border border-solid border-gray-400 ";
     if (props.rounded) className += "rounded ";
     if (props.backgroundTransparent) className += "bg-transparent ";
+    if (props.width36) className += "w-36 ";
 
     return <input
         id={props.id}

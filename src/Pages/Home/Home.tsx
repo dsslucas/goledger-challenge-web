@@ -21,8 +21,10 @@ import Figure from "../../components/Figure/Figure";
 import Image from "../../components/Image/Image";
 import Swal from "sweetalert2";
 import ModalCreate from "../Modal/ModalCreate";
-import { ModalCreateInterface } from "../Modal/Interface";
+import { ModalCreateInputInterface, ModalCreateInterface } from "../Modal/Interface";
 import artistApi from "../../api/artists";
+import { Option } from "../../components/Select/Interface";
+import albumApi from "../../api/album";
 const Home = () => {
     const navigation = useNavigate();
 
@@ -34,8 +36,16 @@ const Home = () => {
     const [buttonClickedLabel, setButtonClickedLabel] = useState<string>("");
 
     const [getApiData, setGetApiData] = useState<ApiInformation[]>([]);
+    const [artistsList, setArtistsList] = useState<Option[]>([]);
 
-    const [modalCreate, setModalCreate] = useState<boolean>(false);
+    const [modalCreateParams, setModalCreateParams] = useState<ModalCreateInterface>({
+        open: false,
+        title: "",
+        tag: "",
+        buttonConfirm: false,
+        buttonConfirmText: "",
+        options: []
+    });
 
     const getHeader = async () => {
         await api.get("/query/getHeader").then((response: any) => {
@@ -58,7 +68,15 @@ const Home = () => {
 
     const handleClickAdd = (event: React.MouseEvent<HTMLButtonElement>, tag: string) => {
         console.log("opa joia", tag)
-        setModalCreate(true);
+        setModalCreateParams({
+            ...modalCreateParams,
+            open: true,
+            title: `Add ${String(buttonClickedLabel).charAt(0).toUpperCase() + String(buttonClickedLabel).slice(1)}`,
+            tag: buttonClickedLabel.toLowerCase(),
+            buttonConfirm: true,
+            buttonConfirmText: "Adicionar",
+            options: artistsList
+        });
     }
 
     const handleClickOption = async (event: React.MouseEvent<HTMLButtonElement>, label: string, tag: string) => {
@@ -94,22 +112,39 @@ const Home = () => {
     }
 
     const handleCancelModalAdd = (event: React.MouseEvent<HTMLButtonElement>) => {
-        setModalCreate(false);
+        closeModalAdd();
     }
 
-    const handleConfirmModalAdd = async (event: React.FormEvent) => {
+    const closeModalAdd = () => {
+        setModalCreateParams({
+            ...modalCreateParams,
+            open: false,
+            title: "",
+            tag: "",
+            buttonConfirm: false,
+            buttonConfirmText: ""
+        });
+    }
+
+    const handleConfirmModalAdd = async (event: React.FormEvent, formData: ModalCreateInputInterface) => {
         event.preventDefault();
-        const form = event.target as HTMLFormElement;
 
-        const formData = new FormData(form);
+        console.log("NO FORMULARIO: ", formData)
+
+        if(!formData) {
+            Swal.fire({
+                title: "Erro!",
+                text: "Os dados não foram enviados por falha interna.",
+                icon: "error"
+            });
+            return false;
+        }
+
         if (buttonClickedLabel.toLowerCase() === "artist") {
-            const name = formData.get('name')?.toString();
-            const country = formData.get('country')?.toString();
-
-            if (name && country) {
+            if (formData?.name && formData?.country) {
                 const data = {
-                    name: name,
-                    country: country
+                    name: formData.name,
+                    country: formData.country
                 }
 
                 await artistApi().postNewArtist(data)
@@ -121,7 +156,7 @@ const Home = () => {
                         });
 
                         if (response.positiveConclusion) {
-                            setModalCreate(false);
+                            closeModalAdd();
                             fetchData();
                         }
                     })
@@ -134,14 +169,14 @@ const Home = () => {
                         });
                     })
             }
-            else if(!name){
+            else if (!formData?.name) {
                 Swal.fire({
                     title: "Erro!",
                     text: "Informe o nome do artista.",
                     icon: "error"
                 });
             }
-            else if(!country){
+            else if (!formData?.country) {
                 Swal.fire({
                     title: "Erro!",
                     text: "Informe o país do artista.",
@@ -149,11 +184,54 @@ const Home = () => {
                 });
             }
         }
+        if (buttonClickedLabel.toLowerCase() === "album") {
+            const data: any = {
+                idArtist: formData.idArtist,
+                name: formData.name,
+                year: formData.year,
+                songs: formData.songs
+            }
+            console.log("ANTES DO ENVIO: ", data)
+
+            await albumApi().registerNewAlbum(data)
+                .then((response: any) => {
+                    Swal.fire({
+                        title: response.positiveConclusion ? "Sucesso!" : "Erro!",
+                        text: response.message,
+                        icon: response.positiveConclusion ? "success" : "error",
+                    });
+
+                    if (response.positiveConclusion) {
+                        closeModalAdd();
+                        fetchData();
+                    }
+                })
+                .catch((error: any) => {
+                    console.error(error)
+                    Swal.fire({
+                        title: "Erro!",
+                        text: error.response.message,
+                        icon: "error"
+                    });
+                })
+        }
     }
 
     const fetchData = async () => {
         await Promise.all([getHeader(), getSchema()]);
-        setGetApiData(await artistApi().getAllArtists());
+        const artists = await artistApi().getAllArtists();
+        setGetApiData(artists);
+
+        artists.forEach((element: ApiInformation) => {
+            var temp = artistsList;
+
+            temp.push({
+                label: element.name,
+                value: element["@key"]
+            })
+            setArtistsList(temp);
+        })
+
         setButtonClicked(true);
         setButtonClickedLabel("Artist");
     };
@@ -163,21 +241,23 @@ const Home = () => {
     }, []);
 
     return <>
-        {modalCreate && (
+        {modalCreateParams.open && artistsList && (
             <ModalCreate
-                title={`Add ${String(buttonClickedLabel).charAt(0).toUpperCase() + String(buttonClickedLabel).slice(1)}`}
-                tag={buttonClickedLabel.toLowerCase()}
+                open={modalCreateParams.open}
+                title={modalCreateParams.title}
+                tag={modalCreateParams.tag}
                 onCancel={handleCancelModalAdd}
-                onConfirm={handleConfirmModalAdd}
-                buttonConfirm={true}
-                buttonConfirmText="Adicionar"
+                onConfirm={(e: React.FormEvent, data: ModalCreateInputInterface) => handleConfirmModalAdd(e, data)}
+                buttonConfirm={modalCreateParams.buttonConfirm}
+                buttonConfirmText={modalCreateParams.buttonConfirmText}
+                options={modalCreateParams.options}
             />
         )}
         <Section flex justifyCenter paddingY2>
             <Divider flex justifyBetween widthOneHalf>
                 {schema && schema?.length > 0 && (
                     schema.map((element: SchemaSectionInterface, index: number) => {
-                        return <Button key={index} border rounded paddingX2 borderColorHover={apiColors?.gray} onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleClickOption(e, element.label, element.tag)}>{element.label}</Button>
+                        return <Button type="button" key={index} border rounded paddingX2 borderColorHover={apiColors?.gray} onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleClickOption(e, element.label, element.tag)}>{element.label}</Button>
                     })
                 )}
             </Divider>
@@ -187,12 +267,12 @@ const Home = () => {
                 <>
                     <Divider flex justifyBetween>
                         <H1 text2xl>{buttonClickedLabel}</H1>
-                        <Button rounded textWhite uppercase border paddingX2 backgroundColor="success" onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleClickAdd(e, buttonClickedLabel.toLowerCase())}>Add</Button>
+                        <Button type="button" rounded textWhite uppercase border paddingX2 backgroundColor="success" onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleClickAdd(e, buttonClickedLabel.toLowerCase())}>Add</Button>
                     </Divider>
 
                     <Divider grid gridColsCategories gap3>
                         {getApiData && getApiData.map((element: ApiInformation, key: number) => {
-                            return <Button flex flexColumn widthFull
+                            return <Button type="button" flex flexColumn widthFull
                                 backgroundColor="gray-300"
                                 onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleClickCategory(e, element.key, element.assetType)}
                                 key={key}
