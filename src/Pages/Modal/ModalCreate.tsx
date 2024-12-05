@@ -11,6 +11,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAdd, faTrash } from "@fortawesome/free-solid-svg-icons";
 import Button from "../../components/Button/Button";
 import Span from "../../components/Span/Span";
+import H4 from "../../components/H4/H4";
 
 const ModalCreate: React.FC<ModalCreateInterface> = (props: ModalCreateInterface) => {
     const [formData, setFormData] = useState<ModalCreateInputInterface>({
@@ -58,7 +59,10 @@ const ModalCreate: React.FC<ModalCreateInterface> = (props: ModalCreateInterface
         }
     }
 
-    console.log(props.options)
+    const tagArtist = (props.tag === "artist");
+    const tagAlbum = (props.tag === "album")
+    const tagSong = (props.tag === "song");
+    const tagPlaylist = (props.tag === "playlist");
 
     return <form id="modalAdd" className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50" onSubmit={handleSubmit}>
         <div className="bg-white w-11/12 max-w-xl mx-auto rounded-lg shadow-lg">
@@ -67,8 +71,8 @@ const ModalCreate: React.FC<ModalCreateInterface> = (props: ModalCreateInterface
                 <H2 textXl>{props.title}</H2>
             </div>
 
-            <div className="flex p-4 gap-2 max-h-80 overflow-hidden">
-                <Divider flex flexCol gap2 flex1>
+            <Divider flex flexCol={tagPlaylist} padding4 gap2 maxHeight80 overflowHidden>
+                <Divider flex flexCol={tagArtist || tagAlbum || tagSong || tagPlaylist} gap2 flex1>
                     {props.tag === "album" && (
                         <H2 textXl>Album data</H2>
                     )}
@@ -84,7 +88,7 @@ const ModalCreate: React.FC<ModalCreateInterface> = (props: ModalCreateInterface
                         </Fieldset>
                     )}
 
-                    {props.tag === "artist" && (
+                    {tagArtist && (
                         <>
                             <Fieldset flex flexColumn>
                                 <Label for={`${props.tag}_country`}>País</Label>
@@ -96,7 +100,7 @@ const ModalCreate: React.FC<ModalCreateInterface> = (props: ModalCreateInterface
                             </Fieldset>
                         </>
                     )}
-                    {props.tag === "album" && (
+                    {tagAlbum && (
                         <>
                             <Fieldset flex flexColumn>
                                 <Label for={`${props.tag}_artist`}>Artista</Label>
@@ -119,7 +123,7 @@ const ModalCreate: React.FC<ModalCreateInterface> = (props: ModalCreateInterface
                             </Fieldset>
                         </>
                     )}
-                    {props.tag === "song" && (
+                    {tagSong && (
                         <>
                             <Fieldset flex flexColumn>
                                 <Label for={`${props.tag}_album`}>Album</Label>
@@ -135,8 +139,33 @@ const ModalCreate: React.FC<ModalCreateInterface> = (props: ModalCreateInterface
                         </>
                     )}
                 </Divider>
-                {(props.tag === "album" || props.tag === "song") && (
-                    <Divider flex flexCol flex1 gap2>
+                {tagPlaylist && (
+                    <Divider flex flexCol={tagPlaylist} flex1 gap2>
+                        <H4 textXl>Songs</H4>
+
+                        <table className="text-center">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Nome</th>
+                                    <th>Artista</th>
+                                    <th>Album</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><Input type="checkbox" id="checkbox_0" name="checkbox_0" value={undefined} onChange={() => null}/></td>
+                                    <td>Olhos de Lua</td>
+                                    <td>Zezé</td>
+                                    <td>1993</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </Divider>
+                )}
+
+                {tagAlbum || tagSong && (
+                    <Divider flex flexCol={tagAlbum || tagSong} flex1 gap2>
                         <H2 textXl>Songs</H2>
                         <div className="flex flex-col gap-2 h-full overflow-y-auto">
                             {inputs.map((input, index: number) => (
@@ -168,7 +197,7 @@ const ModalCreate: React.FC<ModalCreateInterface> = (props: ModalCreateInterface
                         </div>
                     </Divider>
                 )}
-            </div>
+            </Divider>
 
             <div className="flex justify-end border-t p-4 gap-2">
                 <button onClick={props.onCancel} className="bg-gray-100 border border-solid px-4 py-2 rounded hover:bg-gray-200">Fechar</button>
