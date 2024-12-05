@@ -59,8 +59,8 @@ const Artist: React.FC<ArtistPageInterface> = () => {
         return <Navigate to="/home" replace />;
     }
 
-    const renderSongs = (idAlbum: string) => {
-        if (Array.isArray(songs) && songs.length > 0) {
+    const renderSongs = (album: ApiInformation) => {
+        if (album.songs && album.songs?.length > 0) {
             return <table className="w-full text-center">
                 <thead>
                     <tr className={`bg-gray-600 text-white`}>
@@ -70,7 +70,7 @@ const Artist: React.FC<ArtistPageInterface> = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {songs && songs.map((song: ApiInformation, index: number) => {
+                    {album.songs && album.songs.map((song: ApiInformation, index: number) => {
                         if (song.album) return <tr key={song["@key"]} className="even:bg-gray-500 even:bg-opacity-30">
                             <td>{index + 1}</td>
                             <td>{song.name}</td>
@@ -80,7 +80,9 @@ const Artist: React.FC<ArtistPageInterface> = () => {
                 </tbody>
             </table>;
         }
-        else return <></>;
+        else return <Divider flex justifyCenter itemsCenter>
+            <Span>Nothing registered there.</Span>
+        </Divider>
     }
 
     const handleClickChangeArtistLocation = async (event: React.MouseEvent<HTMLButtonElement>, id: string) => {
@@ -184,7 +186,7 @@ const Artist: React.FC<ArtistPageInterface> = () => {
                         </Fieldset>
                     </Divider>
                     <Button type="button" onClick={(event: React.MouseEvent<HTMLButtonElement>) => handleClickDeleteArtist(event, artist["@key"])} deleteBackgroundColor flex justifyCenter itemsCenter roundedB textWhite gapX2>
-                        DELETAR
+                        DELETE
                         <FontAwesomeIcon icon={faTrash} />
                     </Button>
                 </Section>
@@ -215,13 +217,13 @@ const Artist: React.FC<ArtistPageInterface> = () => {
                                                 </Button>
                                             </Fieldset>
                                             <Button type="button" onClick={(event: React.MouseEvent<HTMLButtonElement>) => handleDeleteAlbum(event, element["@key"])} deleteBackgroundColor flex justifyCenter itemsCenter textWhite gapX2>
-                                                DELETAR
+                                                DELETE
                                                 <FontAwesomeIcon icon={faTrash} /></Button>
                                         </Divider>
 
                                     </Divider>
-                                    <Divider>
-                                        {renderSongs(element["@key"])}
+                                    <Divider flex justifyCenter itemsCenter heightFull>
+                                        {renderSongs(element)}
                                     </Divider>
                                 </Divider>
                             })

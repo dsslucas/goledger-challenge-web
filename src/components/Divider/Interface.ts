@@ -13,6 +13,7 @@ export interface DividerInterface {
     widthOneSixDesktop?: boolean;
     widthFourFiveDesktop?: boolean;
     padding4?: boolean;
+    heightFull?: boolean;
     maxHeight52?: boolean;
     maxHeight80?: boolean;
     overflowHidden?: boolean;

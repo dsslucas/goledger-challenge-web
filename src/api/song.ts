@@ -121,14 +121,16 @@ const songApi = () => {
             const response = await api.post("/query/search", {
                 query: {
                     selector: {
-                        "@assetType": "song"
+                        "@assetType": "song",
+                        "album": {
+                            "@assetType": "album",
+                            "@key": id
+                        }
                     }
                 }
-            }).then((response: any) => {
-                return response.data.result.filter((element: any) => element.album["@key"] === id);
             });
 
-            return response;
+            return response.data.result;
         }
         catch (error) {
             console.error(error);

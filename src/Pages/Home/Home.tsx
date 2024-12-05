@@ -73,7 +73,7 @@ const Home = () => {
             title: `Add ${String(buttonClickedLabel).charAt(0).toUpperCase() + String(buttonClickedLabel).slice(1)}`,
             tag: buttonClickedLabel.toLowerCase(),
             buttonConfirm: true,
-            buttonConfirmText: "Adicionar",
+            buttonConfirmText: "Create",
             options: renderOption(),
             apiData: buttonClickedLabel.toLowerCase() === "playlist" ? songsList : []
         });

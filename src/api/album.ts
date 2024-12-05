@@ -11,8 +11,8 @@ const albumApi = () => {
             if (request.idArtist === null || request.idArtist === undefined || request.idArtist === "") throw "NO_ARTIST";
             if (request.name === null || request.name === undefined || request.name === "") throw "NO_NAME";
             if (request.year === null || request.year === undefined || request.year === "") throw "NO_YEAR";
-            if (request.songs === null || request.songs === undefined || request.songs.length === 0) throw "NO_SONG";
-            if(request.songs.some((element: InputField) => element.value === "" || element.value === null || element.value === undefined)) throw "NO_SONG_NAME";
+            // if (request.songs === null || request.songs === undefined || request.songs.length === 0) throw "NO_SONG";
+            // if(request.songs.some((element: InputField) => element.value === "" || element.value === null || element.value === undefined)) throw "NO_SONG_NAME";
 
             await api.post("/invoke/createAsset", {
                 asset: [{
@@ -25,10 +25,15 @@ const albumApi = () => {
                     "year": Number(request.year)
                 }]
             }).then(async (response: any) => {
-                return await songApi().registerSong({
-                    idAlbum: response.data[0]["@key"],
-                    songs: request.songs
-                })
+                if(request.songs.length > 0) {
+                    return await songApi().registerSong({
+                        idAlbum: response.data[0]["@key"],
+                        songs: request.songs
+                    })
+                }
+                else {
+                    return response.data.result;
+                }
             });
 
             return {
@@ -125,18 +130,22 @@ const albumApi = () => {
             const response = await api.post("/query/search", {
                 query: {
                     selector: {
-                        "@assetType": "album"
+                        "@assetType": "album",
+                        "artist": {
+                            "@assetType": "artist",
+                            "@key": id
+                        }
                     }
                 }
-            }).then(async (response: any) => {
-                // Filter by Artist ID
-                return response.data.result.filter((element: any) => element.artist["@key"] === id);
-            }).then((album: ApiInformation[]) => {
-                album.forEach(async (element: any) => {
+            }).then((response: any) => {
+                console.log(response.data.result)
+                response.data.result.forEach(async (element: any) => {
                     element.songs = await getSong().getSongsByAlbumId(element["@key"]);
                 })
-                return album;
+                return response.data.result;
             });
+
+            console.log("RESULTADO: ", response)
 
             return response;
         }

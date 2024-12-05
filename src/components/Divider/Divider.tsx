@@ -26,6 +26,7 @@ const Divider: React.FC<DividerInterface> = (props: DividerInterface) => {
     if (props.rounded) className += "rounded " ;
     if (props.border) className += "border border-solid border-gray-400 ";
     if (props.padding4) className += "p-4 ";
+    if (props.heightFull) className += "h-full ";
     if (props.maxHeight52) className += "max-h-52 ";
     if (props.maxHeight80) className += "max-h-80 ";
     if (props.overflowHidden) className += "overflow-hidden ";
