@@ -39,10 +39,6 @@ const ModalCreate: React.FC<ModalCreateInterface> = (props: ModalCreateInterface
 
     const [inputs, setInputs] = useState<InputField[]>([{ id: 1, value: '' }]);
 
-    useEffect(() => {
-        console.log(formData)
-    }, [formData])
-
     const handleSelectSong = (event: React.ChangeEvent<HTMLInputElement>, songId: string) => {
         const checked: boolean = event.target.checked;
         var updates = inputs;
@@ -98,7 +94,6 @@ const ModalCreate: React.FC<ModalCreateInterface> = (props: ModalCreateInterface
         event.preventDefault();
 
         if (event && formData && props.onConfirm) {
-            console.log("O QUE FOI ENVIADO PARA O MÉTODO: ", formData)
             props.onConfirm(event, formData);
         }
     }
@@ -127,6 +122,7 @@ const ModalCreate: React.FC<ModalCreateInterface> = (props: ModalCreateInterface
                                 id={`${props.tag}_name`}
                                 name={`name`}
                                 value={formData.name}
+                                required
                                 onChange={handleChangeEvent} border />
                         </Fieldset>
                     )}
@@ -139,6 +135,7 @@ const ModalCreate: React.FC<ModalCreateInterface> = (props: ModalCreateInterface
                                     id={`${props.tag}_country`}
                                     name={`country`}
                                     value={formData.country}
+                                    required
                                     onChange={handleChangeEvent} border />
                             </Fieldset>
                         </>
@@ -162,6 +159,7 @@ const ModalCreate: React.FC<ModalCreateInterface> = (props: ModalCreateInterface
                                     id={`${props.tag}_year`}
                                     name={`year`}
                                     value={formData.year}
+                                    required
                                     onChange={handleChangeEvent} border />
                             </Fieldset>
                         </>
@@ -245,6 +243,7 @@ const ModalCreate: React.FC<ModalCreateInterface> = (props: ModalCreateInterface
                                             onChange={(e) => handleChangeDynamicInputSong(e, input.id)}
                                             border rounded
                                             width36
+                                            required
                                         />
                                     </Divider>
                                     <Divider flex gap2>

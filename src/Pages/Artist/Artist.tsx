@@ -38,7 +38,6 @@ const Artist: React.FC<ArtistPageInterface> = () => {
                     response.albuns?.forEach(async (element: ApiInformation) => {
                         await getSong().getSongsByAlbumId(element["@key"])
                             .then((returnSongs: ApiInformation[]) => {
-                                console.log(returnSongs)
                                 returnSongs?.forEach((eachSong: ApiInformation) => {
                                     setSongs((prevSongs) => (prevSongs ? [...prevSongs, eachSong] : [eachSong]));
                                 })
@@ -61,9 +60,6 @@ const Artist: React.FC<ArtistPageInterface> = () => {
     }
 
     const renderSongs = (idAlbum: string) => {
-        console.log(idAlbum)
-        console.log(songs)
-
         if (Array.isArray(songs) && songs.length > 0) {
             return <table className="w-full text-center">
                 <thead>
@@ -101,7 +97,7 @@ const Artist: React.FC<ArtistPageInterface> = () => {
     }
 
     const handleClickDeleteArtist = (event: React.MouseEvent<HTMLButtonElement>, id: string) => {
-        console.log("CLiquei na exclusao");
+        //console.log("CLiquei na exclusao");
     }
 
     const handleClickChangeAlbumYear = async (event: React.MouseEvent<HTMLButtonElement>, id: string) => {
@@ -122,8 +118,8 @@ const Artist: React.FC<ArtistPageInterface> = () => {
     }
 
     const handleDeleteAlbum = (event: React.MouseEvent<HTMLButtonElement>, id: string) => {
-        console.log("Cliquei na exclusao do album");
-        console.log(id)
+        // console.log("Cliquei na exclusao do album");
+        // console.log(id)
     }
 
     const handleChangeCountryState = (e: React.ChangeEvent<HTMLInputElement>, id: string) => {
@@ -174,6 +170,7 @@ const Artist: React.FC<ArtistPageInterface> = () => {
                                 value={artist.country}
                                 rounded
                                 border
+                                required
                                 backgroundTransparent
                                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChangeCountryState(e, artist["@key"])}
                             />
@@ -210,6 +207,7 @@ const Artist: React.FC<ArtistPageInterface> = () => {
                                                     id={`album-year-${element["@key"]}`}
                                                     name={`album-year-${element["@key"]}`}
                                                     value={element.year}
+                                                    required
                                                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChangeAlbumYear(e, element["@key"])}
                                                     rounded border backgroundTransparent />
                                                 <Button type="button" onClick={(event: React.MouseEvent<HTMLButtonElement>) => handleClickChangeAlbumYear(event, element["@key"])} icon editBackgroundColor flex justifyCenter itemsCenter rounded textWhite>

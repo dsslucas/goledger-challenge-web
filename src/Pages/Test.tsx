@@ -68,8 +68,6 @@ const Test: React.FC = () => {
   const renderSongs = (idAlbum: string) => {
     const songsFilteredByIdAlbum = songs.filter((element: any) => element.album["@key"] === idAlbum);
 
-    console.log(songsFilteredByIdAlbum)    
-
     return <ul>
       {songsFilteredByIdAlbum.map((element: any) => {
         return <li key={element["@key"]}>{element.name}</li>

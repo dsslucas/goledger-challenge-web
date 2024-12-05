@@ -146,7 +146,6 @@ const songApi = () => {
                     }
                 }
             }).then((response: any) => {
-                console.log(response)
                 return "Som deletado.";
             });
 

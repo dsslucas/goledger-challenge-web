@@ -5,6 +5,7 @@ export interface InputInterface {
     checked?: boolean;
     id: string;
     name: string;
+    required?: boolean;
     rounded?: boolean;
     border?: boolean;
     backgroundTransparent?: boolean;

@@ -35,7 +35,7 @@ const Home = () => {
 
     // Data
     const [buttonClicked, setButtonClicked] = useState<boolean>(false);
-    const [buttonClickedLabel, setButtonClickedLabel] = useState<string>("");
+    const [buttonClickedLabel, setButtonClickedLabel] = useState<string>("Artist");
 
     const [getApiData, setGetApiData] = useState<ApiInformation[]>([]);
     const [artistsList, setArtistsList] = useState<Option[]>([]);
@@ -51,16 +51,6 @@ const Home = () => {
         options: []
     });
 
-    const getHeader = async () => {
-        await api.get("/query/getHeader").then((response: any) => {
-            setApiColors({
-                gray: response.data.colors[0],
-                blue: response.data.colors[1],
-                silver: response.data.colors[2]
-            });
-        });
-    }
-
     const getSchema = async () => {
         await api.get("/query/getSchema")
             .then((response: any) => {
@@ -71,17 +61,11 @@ const Home = () => {
     }
 
     const handleClickAdd = async (event: React.MouseEvent<HTMLButtonElement>, tag: string) => {
-        console.log("opa joia", tag)
-
         function renderOption() {
             if (buttonClickedLabel.toLowerCase() === "album") return artistsList;
             else if (buttonClickedLabel.toLowerCase() === "song") return albunsList;
             else return [];
         }
-
-        console.log(renderOption())
-
-        console.log(albunsList)
 
         setModalCreateParams({
             ...modalCreateParams,
@@ -95,10 +79,7 @@ const Home = () => {
         });
     }
 
-    const handleClickOption = async (event: React.MouseEvent<HTMLButtonElement>, label: string, tag: string) => {
-        setButtonClicked(true);
-        setButtonClickedLabel(label);
-
+    const renderizeDataCategory = async (tag: string) => {
         switch (tag) {
             case "artist":
                 setGetApiData(await artistApi().getAllArtists());
@@ -115,6 +96,12 @@ const Home = () => {
             default:
                 break;
         }
+    }
+
+    const handleClickOption = async (event: React.MouseEvent<HTMLButtonElement>, label: string, tag: string) => {
+        setButtonClicked(true);
+        setButtonClickedLabel(label);
+        await renderizeDataCategory(tag);
     }
 
     const handleClickCategory = (event: React.MouseEvent<HTMLButtonElement>, id: string, tag: string) => {
@@ -142,8 +129,6 @@ const Home = () => {
 
     const handleConfirmModalAdd = async (event: React.FormEvent, formData: ModalCreateInputInterface) => {
         event.preventDefault();
-
-        console.log("NO FORMULARIO: ", formData)
 
         if (!formData) {
             Swal.fire({
@@ -205,7 +190,6 @@ const Home = () => {
                 year: formData.year,
                 songs: formData.songs
             }
-            console.log("ANTES DO ENVIO: ", data)
 
             await albumApi().registerNewAlbum(data)
                 .then((response: any) => {
@@ -234,7 +218,6 @@ const Home = () => {
                 idAlbum: formData.idAlbum,
                 songs: formData.songs
             }
-            console.log("ANTES DO ENVIO: ", data)
 
             await songApi().registerSong(data)
                 .then((response: any) => {
@@ -264,7 +247,6 @@ const Home = () => {
                 songs: formData.songs,
                 private: formData.private
             }
-            console.log("ANTES DO ENVIO: ", data)
 
             await playlistApi().createPlaylist(data)
                 .then((response: any) => {
@@ -291,9 +273,8 @@ const Home = () => {
     }
 
     const fetchData = async () => {
-        await Promise.all([getHeader(), getSchema()]);
+        await Promise.all([getSchema()]);        
         const artists = await artistApi().getAllArtists();
-        setGetApiData(artists);
         artists.forEach((element: ApiInformation) => {
             var temp = artistsList;
 
@@ -304,10 +285,11 @@ const Home = () => {
             setArtistsList(temp);
         });
 
+        await renderizeDataCategory(buttonClickedLabel.toLowerCase());
+
         const albuns = await albumApi().getAllAlbums();
         albuns.forEach((response: ApiInformation) => {
             var temp = albunsList;
-            console.log(response)
 
             temp.push({
                 label: response.name,
@@ -320,7 +302,6 @@ const Home = () => {
         setSongsList(songs);
 
         setButtonClicked(true);
-        setButtonClickedLabel("Artist");
     };
 
     useEffect(() => {
