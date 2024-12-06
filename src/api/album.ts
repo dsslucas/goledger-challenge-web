@@ -1,6 +1,7 @@
 import { InputField } from "../components/Input/Interface";
 import { AlbumSend, ApiInformation } from "../interfaces/ApiInformation";
 import api from "./api";
+import artistApi from "./artists";
 import getArtist from "./artists";
 import songApi from "./song";
 import getSong from "./song";
@@ -122,6 +123,16 @@ const albumApi = () => {
                     "@assetType": "album",
                     "@key": id
                 }
+            })
+            .then(async (response: any) => {
+                const idArtist = response.data.artist["@key"];
+                const artistInfo = await artistApi().getArtistInfo(idArtist);
+                response.data.artist.name = artistInfo.name;
+                return response;
+            }).then(async (response: any) => {
+                const songs = await songApi().getSongsByAlbumId(response.data["@key"]);
+                response.data.songs = songs;
+                return response;
             });
 
             return response.data;

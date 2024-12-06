@@ -27,6 +27,7 @@ import { Option } from "../../components/Select/Interface";
 import albumApi from "../../api/album";
 import songApi from "../../api/song";
 import playlistApi from "../../api/playlist";
+import { handleConfirmModalAdd } from "../../common/sendModalAdd";
 const Home = () => {
     const navigation = useNavigate();
 
@@ -136,148 +137,12 @@ const Home = () => {
         });
     }
 
-    const handleConfirmModalAdd = async (event: React.FormEvent, formData: ModalCreateInputInterface) => {
-        event.preventDefault();
+    const handleSendModal = async (event: React.FormEvent, formData: ModalCreateInputInterface, tag: string) => {
+        const sendResponse = await handleConfirmModalAdd(event, formData, tag);
 
-        if (!formData) {
-            Swal.fire({
-                title: "Erro!",
-                text: "Os dados não foram enviados por falha interna.",
-                icon: "error"
-            });
-            return false;
-        }
-
-        if (buttonClickedLabel.toLowerCase() === "artist") {
-            if (formData?.name && formData?.country) {
-                const data = {
-                    name: formData.name,
-                    country: formData.country
-                }
-
-                await artistApi().postNewArtist(data)
-                    .then((response: any) => {
-                        Swal.fire({
-                            title: response.positiveConclusion ? "Sucesso!" : "Erro!",
-                            text: response.message,
-                            icon: response.positiveConclusion ? "success" : "error",
-                        });
-
-                        if (response.positiveConclusion) {
-                            closeModalAdd();
-                            fetchData();
-                        }
-                    })
-                    .catch((error: any) => {
-                        console.error(error)
-                        Swal.fire({
-                            title: "Erro!",
-                            text: error.response.message,
-                            icon: "error"
-                        });
-                    })
-            }
-            else if (!formData?.name) {
-                Swal.fire({
-                    title: "Erro!",
-                    text: "Informe o nome do artista.",
-                    icon: "error"
-                });
-            }
-            else if (!formData?.country) {
-                Swal.fire({
-                    title: "Erro!",
-                    text: "Informe o país do artista.",
-                    icon: "error"
-                });
-            }
-        }
-        else if (buttonClickedLabel.toLowerCase() === "album") {
-            const data: any = {
-                idArtist: formData.idArtist,
-                name: formData.name,
-                year: formData.year,
-                songs: formData.songs
-            }
-
-            await albumApi().registerNewAlbum(data)
-                .then((response: any) => {
-                    Swal.fire({
-                        title: response.positiveConclusion ? "Sucesso!" : "Erro!",
-                        text: response.message,
-                        icon: response.positiveConclusion ? "success" : "error",
-                    });
-
-                    if (response.positiveConclusion) {
-                        closeModalAdd();
-                        fetchData();
-                    }
-                })
-                .catch((error: any) => {
-                    console.error(error)
-                    Swal.fire({
-                        title: "Erro!",
-                        text: error.response.message,
-                        icon: "error"
-                    });
-                })
-        }
-        else if (buttonClickedLabel.toLowerCase() === "song") {
-            const data: any = {
-                idAlbum: formData.idAlbum,
-                songs: formData.songs
-            }
-
-            await songApi().registerSong(data)
-                .then((response: any) => {
-                    Swal.fire({
-                        title: response.positiveConclusion ? "Sucesso!" : "Erro!",
-                        text: response.message,
-                        icon: response.positiveConclusion ? "success" : "error",
-                    });
-
-                    if (response.positiveConclusion) {
-                        closeModalAdd();
-                        fetchData();
-                    }
-                })
-                .catch((error: any) => {
-                    console.error(error)
-                    Swal.fire({
-                        title: "Erro!",
-                        text: error.response.message,
-                        icon: "error"
-                    });
-                })
-        }
-        else if (buttonClickedLabel.toLowerCase() === "playlist") {
-            const data: any = {
-                name: formData.name,
-                songs: formData.songs,
-                private: formData.private
-            }
-
-            await playlistApi().createPlaylist(data)
-                .then((response: any) => {
-                    Swal.fire({
-                        title: response.positiveConclusion ? "Sucesso!" : "Erro!",
-                        text: response.message,
-                        icon: response.positiveConclusion ? "success" : "error",
-                    });
-
-                    if (response.positiveConclusion) {
-                        closeModalAdd();
-                        fetchData();
-                    }
-                })
-                .catch((error: any) => {
-                    console.error(error)
-                    Swal.fire({
-                        title: "Erro!",
-                        text: error.response.message,
-                        icon: "error"
-                    });
-                })
+        if (sendResponse) {
+            closeModalAdd();
+            fetchData();
         }
     }
 
@@ -324,7 +189,7 @@ const Home = () => {
                 title={modalCreateParams.title}
                 tag={modalCreateParams.tag}
                 onCancel={handleCancelModalAdd}
-                onConfirm={(e: React.FormEvent, data: ModalCreateInputInterface) => handleConfirmModalAdd(e, data)}
+                onConfirm={(e: React.FormEvent, data: ModalCreateInputInterface) => handleSendModal(e, data, modalCreateParams.tag)}
                 buttonConfirm={modalCreateParams.buttonConfirm}
                 buttonConfirmText={modalCreateParams.buttonConfirmText}
                 options={modalCreateParams.options}
