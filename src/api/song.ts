@@ -139,23 +139,28 @@ const songApi = () => {
     }
 
     const deleteSong = async (id: string) => {
+        console.log("ID NA EXCLUSAO DO SONG: ", id)
         try {
-            const response = await api.delete("/invoke/deleteAsset", {
-                data: {
-                    key: {
-                        "@assetType": "song",
-                        "@key": id
-                    }
+            const response = await api.post("/invoke/deleteAsset", {
+                key: {
+                    "@assetType": "song",
+                    "@key": id
                 }
             }).then((response: any) => {
-                return "Som deletado.";
+                return {
+                    status: true,
+                    message: "Song deleted."
+                };
             });
 
             return response;
         }
         catch (error) {
             console.error(error);
-            return "Erro ao deletar a música do álbum.";
+            return {
+                status: false,
+                message: "Error on delete song."
+            };
         }
     }
 

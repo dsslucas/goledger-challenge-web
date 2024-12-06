@@ -20,6 +20,8 @@ import { ApiInformation } from "../../interfaces/ApiInformation";
 import Aside from "../../components/Aside/Aside";
 import getAlbum from "../../api/album";
 import getSong from "../../api/song";
+import songApi from "../../api/song";
+import Swal from "sweetalert2";
 
 const Artist: React.FC<ArtistPageInterface> = () => {
     const location = useLocation();
@@ -59,6 +61,36 @@ const Artist: React.FC<ArtistPageInterface> = () => {
         return <Navigate to="/home" replace />;
     }
 
+    const handleDeleteSong = async (event: React.MouseEvent<HTMLButtonElement>, idSong: string) => {
+        console.log("cliquei")
+        try {
+            await songApi().deleteSong(idSong)
+                .then((response: any) => {
+                    if (response.status) {
+                        Swal.fire({
+                            title: "Deleted!",
+                            text: response.message,
+                            icon: "success"
+                        });
+                        fetchData();
+                    }
+                    else Swal.fire({
+                        title: "Error!",
+                        text: response.message,
+                        icon: "error"
+                    });;
+                });
+        }
+        catch (error: any) {
+            console.error(error)
+            Swal.fire({
+                title: "Error!",
+                text: "Error on delete song.",
+                icon: "error"
+            });
+        }
+    }
+
     const renderSongs = (album: ApiInformation) => {
         if (album.songs && album.songs?.length > 0) {
             return <table className="w-full text-center">
@@ -74,7 +106,9 @@ const Artist: React.FC<ArtistPageInterface> = () => {
                         if (song.album) return <tr key={song["@key"]} className="even:bg-gray-500 even:bg-opacity-30">
                             <td>{index + 1}</td>
                             <td>{song.name}</td>
-                            <td><Button type="button" icon deleteBackgroundColor textWhite rounded onClick={() => null}><FontAwesomeIcon icon={faTrash} /></Button></td>
+                            <td>
+                                <Button type="button" icon deleteBackgroundColor textWhite rounded onClick={(event: React.MouseEvent<HTMLButtonElement>) => handleDeleteSong(event, song["@key"])}><FontAwesomeIcon icon={faTrash} /></Button>
+                            </td>
                         </tr>
                     })}
                 </tbody>
@@ -98,7 +132,9 @@ const Artist: React.FC<ArtistPageInterface> = () => {
         }
     }
 
-    const handleClickDeleteArtist = (event: React.MouseEvent<HTMLButtonElement>, id: string) => {
+    const handleClickDeleteArtist = async (event: React.MouseEvent<HTMLButtonElement>, id: string) => {
+
+
         //console.log("CLiquei na exclusao");
     }
 
