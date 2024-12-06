@@ -114,12 +114,46 @@ const Home = () => {
         await renderizeDataCategory(tag);
     }
 
-    const handleClickCategory = (event: React.MouseEvent<HTMLButtonElement>, id: string, tag: string) => {
-        navigation(`/${tag}`, {
-            state: {
-                id: id,
+    const handleClickCategory = (event: React.MouseEvent<HTMLButtonElement>, element: ApiInformation) => {
+        var tag = element.assetType;
+        var id = element.key;
+
+        async function redirectToDetailPage(id: string, tag: string) {
+            console.log(id)
+            console.log(tag)
+
+            await navigation(`/${tag}`, {
+                state: {
+                    id: id,
+                }
+            });
+        }
+
+        if (element) {
+            if (element.assetType === "song" && element.album) {
+                tag = "album";
+                id = element.album["@key"];
+
+                redirectToDetailPage(id, tag);
             }
-        });
+            else if (tag === "artist" || tag === "album" || tag === "playlist") {
+                redirectToDetailPage(id, tag);
+            }
+            else {
+                Swal.fire({
+                    title: "Error!",
+                    text: "Error during redirect.",
+                    icon: "error"
+                })
+            }
+        }
+        else {
+            Swal.fire({
+                title: "Error!",
+                text: "Error during redirect.",
+                icon: "error"
+            })
+        }
     }
 
     const handleCancelModalAdd = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -217,7 +251,7 @@ const Home = () => {
                         {getApiData && getApiData.map((element: ApiInformation, key: number) => {
                             return <Button type="button" flex flexColumn widthFull
                                 backgroundColor="gray-300"
-                                onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleClickCategory(e, element.key, element.assetType)}
+                                onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleClickCategory(e, element)}
                                 key={key}
                             >
                                 <Figure flex justifyCenter itemsCenter>
