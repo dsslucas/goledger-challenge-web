@@ -113,11 +113,40 @@ const artistApi = () => {
         }
     }
 
+    const deleteArtist = async (id: string) => {
+        try {
+            if (id === null || id === undefined || id == "") throw "NO_ID";
+
+            await api.post("/invoke/deleteAsset", {
+                "key": {
+                    "@assetType": "artist",
+                    "@key": id
+                },
+                "cascade": true
+            });
+
+            return {
+                status: true,
+                message: "Artist deleted."
+            };
+        }
+        catch (error) {
+            var message = "Error on delete artist.";
+            if (error === "NO_ID") message = "No id found for delete.";
+
+            return {
+                status: false,
+                message: message
+            };
+        }
+    }
+
     return {
         postNewArtist,
         getAllArtists,
         getArtistInfo,
-        updateCountryArtist
+        updateCountryArtist,
+        deleteArtist
     }
 }
 

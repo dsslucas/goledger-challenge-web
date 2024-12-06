@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Album, ArtistPageInterface } from "./Interface";
-import { Navigate, useLocation } from "react-router";
+import { Navigate, useLocation, useNavigate } from "react-router";
 import Section from "../../components/Section/Section";
 import H1 from "../../components/H1/H1";
 import getArtist from "../../api/artists";
@@ -23,9 +23,11 @@ import getSong from "../../api/song";
 import songApi from "../../api/song";
 import Swal from "sweetalert2";
 import albumApi from "../../api/album";
+import artistApi from "../../api/artists";
 
 const Artist: React.FC<ArtistPageInterface> = () => {
     const location = useLocation();
+    const navigate = useNavigate();
 
     const [artist, setArtist] = useState<ApiInformation | null>(null);
     const [songs, setSongs] = useState<ApiInformation[] | null>(null);
@@ -63,7 +65,6 @@ const Artist: React.FC<ArtistPageInterface> = () => {
     }
 
     const handleDeleteSong = async (event: React.MouseEvent<HTMLButtonElement>, idSong: string) => {
-        console.log("cliquei")
         try {
             await songApi().deleteSong(idSong)
                 .then((response: any) => {
@@ -79,7 +80,7 @@ const Artist: React.FC<ArtistPageInterface> = () => {
                         title: "Error!",
                         text: response.message,
                         icon: "error"
-                    });;
+                    });
                 });
         }
         catch (error: any) {
@@ -134,9 +135,32 @@ const Artist: React.FC<ArtistPageInterface> = () => {
     }
 
     const handleClickDeleteArtist = async (event: React.MouseEvent<HTMLButtonElement>, id: string) => {
-
-
-        //console.log("CLiquei na exclusao");
+        try {
+            await artistApi().deleteArtist(id)
+                .then((response: any) => {
+                    if (response.status) {
+                        Swal.fire({
+                            title: "Deleted!",
+                            text: response.message,
+                            icon: "success"
+                        });
+                        navigate("/home");
+                    }
+                    else Swal.fire({
+                        title: "Error!",
+                        text: response.message,
+                        icon: "error"
+                    });
+                });
+        }
+        catch (error: any) {
+            console.error(error)
+            Swal.fire({
+                title: "Error!",
+                text: "Error on delete artist.",
+                icon: "error"
+            });
+        }
     }
 
     const handleClickChangeAlbumYear = async (event: React.MouseEvent<HTMLButtonElement>, id: string) => {
@@ -146,21 +170,21 @@ const Artist: React.FC<ArtistPageInterface> = () => {
 
                 if (album.year) {
                     await getAlbum().updateYearAlbum(id, album?.year)
-                    .then((response: any) => {
-                        if (response.status) {
-                            Swal.fire({
-                                title: "Updated!",
+                        .then((response: any) => {
+                            if (response.status) {
+                                Swal.fire({
+                                    title: "Updated!",
+                                    text: response.message,
+                                    icon: "success"
+                                });
+                                fetchData();
+                            }
+                            else Swal.fire({
+                                title: "Error!",
                                 text: response.message,
-                                icon: "success"
+                                icon: "error"
                             });
-                            fetchData();
-                        }
-                        else Swal.fire({
-                            title: "Error!",
-                            text: response.message,
-                            icon: "error"
                         });
-                    });
                 }
             }
             else throw new Error();
