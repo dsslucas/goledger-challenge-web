@@ -80,21 +80,30 @@ const Home = () => {
     }
 
     const renderizeDataCategory = async (tag: string) => {
-        switch (tag) {
-            case "artist":
-                setGetApiData(await artistApi().getAllArtists());
-                break;
-            case "album":
-                setGetApiData(await getAlbum().getAllAlbums());
-                break;
-            case "song":
-                setGetApiData(await getSong().getAllSongs());
-                break;
-            case "playlist":
-                setGetApiData(await getPlaylist().getAllPlaylists());
-                break;
-            default:
-                break;
+        try {
+            switch (tag) {
+                case "artist":
+                    setGetApiData(await artistApi().getAllArtists());
+                    break;
+                case "album":
+                    setGetApiData(await getAlbum().getAllAlbums());
+                    break;
+                case "song":
+                    setGetApiData(await getSong().getAllSongs());
+                    break;
+                case "playlist":
+                    setGetApiData(await getPlaylist().getAllPlaylists());
+                    break;
+                default:
+                    break;
+            }
+        }
+        catch (error: any) {
+            Swal.fire({
+                title: "Error!",
+                text: "Error during list search.",
+                icon: "error"
+            });
         }
     }
 
@@ -273,7 +282,7 @@ const Home = () => {
     }
 
     const fetchData = async () => {
-        await Promise.all([getSchema()]);        
+        await Promise.all([getSchema()]);
         const artists = await artistApi().getAllArtists();
         artists.forEach((element: ApiInformation) => {
             var temp = artistsList;

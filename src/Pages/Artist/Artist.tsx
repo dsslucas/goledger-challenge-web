@@ -22,6 +22,7 @@ import getAlbum from "../../api/album";
 import getSong from "../../api/song";
 import songApi from "../../api/song";
 import Swal from "sweetalert2";
+import albumApi from "../../api/album";
 
 const Artist: React.FC<ArtistPageInterface> = () => {
     const location = useLocation();
@@ -144,20 +145,65 @@ const Artist: React.FC<ArtistPageInterface> = () => {
                 const album: ApiInformation = artist.albuns.filter((element: ApiInformation) => element["@key"] === id)[0];
 
                 if (album.year) {
-                    await getAlbum().updateYearAlbum(id, album?.year);
-                    await fetchData();
+                    await getAlbum().updateYearAlbum(id, album?.year)
+                    .then((response: any) => {
+                        if (response.status) {
+                            Swal.fire({
+                                title: "Updated!",
+                                text: response.message,
+                                icon: "success"
+                            });
+                            fetchData();
+                        }
+                        else Swal.fire({
+                            title: "Error!",
+                            text: response.message,
+                            icon: "error"
+                        });
+                    });
                 }
             }
             else throw new Error();
         }
         catch (e) {
             console.error(e);
+            Swal.fire({
+                title: "Error!",
+                text: "Error on update album year.",
+                icon: "error"
+            });
         }
     }
 
-    const handleDeleteAlbum = (event: React.MouseEvent<HTMLButtonElement>, id: string) => {
-        // console.log("Cliquei na exclusao do album");
-        // console.log(id)
+    const handleDeleteAlbum = async (event: React.MouseEvent<HTMLButtonElement>, idAlbum: string) => {
+        console.log("Cliquei na exclusao do album");
+        console.log(idAlbum)
+        try {
+            await albumApi().deleteAlbum(idAlbum)
+                .then((response: any) => {
+                    if (response.status) {
+                        Swal.fire({
+                            title: "Deleted!",
+                            text: response.message,
+                            icon: "success"
+                        });
+                        fetchData();
+                    }
+                    else Swal.fire({
+                        title: "Error!",
+                        text: response.message,
+                        icon: "error"
+                    });
+                });
+        }
+        catch (error: any) {
+            console.error(error)
+            Swal.fire({
+                title: "Error!",
+                text: "Error on delete album.",
+                icon: "error"
+            });
+        }
     }
 
     const handleChangeCountryState = (e: React.ChangeEvent<HTMLInputElement>, id: string) => {

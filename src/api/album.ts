@@ -7,7 +7,7 @@ import getSong from "./song";
 
 const albumApi = () => {
     const registerNewAlbum = async (request: AlbumSend) => {
-        try {            
+        try {
             if (request.idArtist === null || request.idArtist === undefined || request.idArtist === "") throw "NO_ARTIST";
             if (request.name === null || request.name === undefined || request.name === "") throw "NO_NAME";
             if (request.year === null || request.year === undefined || request.year === "") throw "NO_YEAR";
@@ -25,7 +25,7 @@ const albumApi = () => {
                     "year": Number(request.year)
                 }]
             }).then(async (response: any) => {
-                if(request.songs.length > 0) {
+                if (request.songs.length > 0) {
                     return await songApi().registerSong({
                         idAlbum: response.data[0]["@key"],
                         songs: request.songs
@@ -62,7 +62,7 @@ const albumApi = () => {
             else if (error === "NO_SONG_NAME") return {
                 positiveConclusion: false,
                 message: "É necessário informar o nome do som"
-            }            
+            }
             else return {
                 positiveConclusion: false,
                 message: "Erro ao registrar álbum."
@@ -104,12 +104,19 @@ const albumApi = () => {
         }
         catch (error) {
             console.error(error);
+            var message = "Error on get albuns.";
             return [];
+            // return {
+            //     status: false,
+            //     message: message
+            // };
         }
     }
 
     const getAlbumById = async (id: string) => {
         try {
+            if (id === null || id === undefined || id == "") throw "NO_ID";
+
             const response = await api.post("/query/readAsset", {
                 key: {
                     "@assetType": "album",
@@ -120,13 +127,21 @@ const albumApi = () => {
             return response.data;
         }
         catch (error) {
-            console.error("Erro ao buscar album:", error);
-            return [];
+            console.error(error);
+            var message = "Error on get album.";
+            if (error === "NO_ID") message = "No id found for getting album data.";
+
+            return {
+                status: false,
+                message: message
+            };
         }
     }
 
     const getAlbunsByArtistId = async (id: string) => {
         try {
+            if (id === null || id === undefined || id == "") throw "NO_ID";
+
             const response = await api.post("/query/search", {
                 query: {
                     selector: {
@@ -150,13 +165,22 @@ const albumApi = () => {
             return response;
         }
         catch (error) {
-            console.error("Erro ao buscar album:", error);
-            return [];
+            console.error(error);
+            var message = "Error on get album.";
+            if (error === "NO_ID") message = "No id found for getting data.";
+
+            return {
+                status: false,
+                message: message
+            };
         }
     }
 
     const updateYearAlbum = async (id: string, value: number) => {
         try {
+            if (id === null || id === undefined || id == "") throw "NO_ID";
+            if (value === null || value === undefined) throw "NO_VALUE";
+
             const response = await api.post("/invoke/updateAsset", {
                 "update": {
                     "@assetType": "album",
@@ -165,11 +189,50 @@ const albumApi = () => {
                 }
             });
 
-            return response.data;
+            return {
+                status: true,
+                message: "Year updated."
+            };
         }
         catch (error) {
-            console.error("Erro ao atualizar album:", error);
-            return [];
+            console.error(error);
+
+            var message = "Error on delete album.";
+            if (error === "NO_ID") message = "No id found for update.";
+            if (error === "NO_VALUE") message = "The value is not given for update.";
+
+            return {
+                status: false,
+                message: message
+            };
+        }
+    }
+
+    const deleteAlbum = async (id: string) => {
+        try {
+            if (id === null || id === undefined || id == "") throw "NO_ID";
+
+            const response = await api.post("/invoke/deleteAsset", {
+                "key": {
+                    "@assetType": "album",
+                    "@key": id
+                },
+                "cascade": true
+            });
+
+            return {
+                status: true,
+                message: "Album deleted."
+            };
+        }
+        catch (error) {
+            var message = "Error on delete album.";
+            if (error === "NO_ID") message = "No id found for delete.";
+
+            return {
+                status: false,
+                message: message
+            };
         }
     }
 
@@ -178,7 +241,8 @@ const albumApi = () => {
         getAllAlbums,
         getAlbumById,
         getAlbunsByArtistId,
-        updateYearAlbum
+        updateYearAlbum,
+        deleteAlbum
     }
 }
 
