@@ -155,11 +155,12 @@ const Playlist: React.FC<PlaylistInterface> = () => {
         }
     }
 
-    const handleDeletePlaylist = async (event: React.MouseEvent<HTMLButtonElement>, idAlbum: string) => {
-
+    const handleDeletePlaylist = async (event: React.MouseEvent<HTMLButtonElement>, idPlaylist: string) => {
         try {
-            await playlistApi().deletePlaylist(idAlbum)
+            setLoading(true);
+            await playlistApi().deletePlaylist(idPlaylist)
                 .then((response: any) => {
+                    setLoading(false);
                     if (response.status) {
                         Swal.fire({
                             title: "Deleted!",
@@ -177,17 +178,16 @@ const Playlist: React.FC<PlaylistInterface> = () => {
         }
         catch (error: any) {
             console.error(error)
+            setLoading(false);
             Swal.fire({
                 title: "Error!",
-                text: "Error on delete album.",
+                text: "Error on delete playlist.",
                 icon: "error"
             });
         }
     }
 
     const handleDeleteSong = async (event: React.MouseEvent<HTMLButtonElement>, idPlaylist: string, idSong: string) => {
-        console.log("ID SONG", idSong)
-        console.log("ID PLAYLIST", idPlaylist)
         try {
             await playlistApi().deletePlaylistSong(idPlaylist, idSong)
                 .then((response: any) => {

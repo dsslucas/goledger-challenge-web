@@ -284,7 +284,18 @@ const playlistApi = () => {
         try {
             if (id === null || id === undefined || id == "") throw "NO_ID";
 
+            await api.post("/invoke/deleteAsset", {
+                "key": {
+                    "@assetType": "playlist",
+                    "@key": id       
+                },
+                "tag": "cascade"
+            })
 
+            return {
+                status: true,
+                message: "Playlist deleted!"
+            };
         }
         catch (error: any) {
             console.error(error);
