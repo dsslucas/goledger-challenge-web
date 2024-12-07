@@ -27,7 +27,10 @@ const ModalCreate: React.FC<ModalCreateInterface> = (props: ModalCreateInterface
     const tagSong = (props.tag === "song");
     const tagPlaylist = (props.tag === "playlist");
 
-    console.log(props.tag)
+    const rootElement = document.getElementById('root') as HTMLElement;
+
+    if(props.open) rootElement.style.overflow = 'hidden';
+    else rootElement.style.overflow = 'auto';
 
     const [formData, setFormData] = useState<ModalCreateInputInterface>({
         name: '',

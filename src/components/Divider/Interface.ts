@@ -32,5 +32,9 @@ export interface DividerInterface {
     rounded?: boolean;
     border?: boolean;
 
-
+    loadingAnimateDefault?: boolean;
+    loadingOpen?: boolean;
+    loadingClose?: boolean;
+    animatePulse?: boolean;
+    textWhite?: boolean;
 }

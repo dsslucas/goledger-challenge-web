@@ -28,6 +28,7 @@ import albumApi from "../../api/album";
 import songApi from "../../api/song";
 import playlistApi from "../../api/playlist";
 import { handleConfirmModalAdd } from "../../common/sendModalAdd";
+import renderizeLoading from "../../common/renderizeLoading";
 const Home = () => {
     const navigation = useNavigate();
 
@@ -55,6 +56,7 @@ const Home = () => {
 
     const getSchema = async () => {
         try {
+            setLoading(true);
             await api.get("/query/getSchema")
                 .then((response: any) => {
                     if (Array.isArray(response.data)) {
@@ -68,6 +70,9 @@ const Home = () => {
                 text: "Error on search schema.",
                 icon: "error"
             });
+        }
+        finally {
+            setLoading(false);
         }
     }
 
@@ -121,6 +126,9 @@ const Home = () => {
                 text: "Error during list search.",
                 icon: "error"
             });
+        }
+        finally {
+            setLoading(false);
         }
     }
 
@@ -189,16 +197,30 @@ const Home = () => {
     }
 
     const handleSendModal = async (event: React.FormEvent, formData: ModalCreateInputInterface, tag: string) => {
-        const sendResponse = await handleConfirmModalAdd(event, formData, tag);
+        try {
+            const sendResponse = await handleConfirmModalAdd(event, formData, tag);
 
-        if (sendResponse) {
-            closeModalAdd();
-            fetchData();
+            if (sendResponse) {
+                closeModalAdd();
+                fetchData();
+            }
+        }
+        catch (error) {
+            console.error(error);
+            Swal.fire({
+                title: "Error!",
+                text: "Error while send the request.",
+                icon: "error"
+            });
+        }
+        finally {
+            setLoading(false);
         }
     }
 
     const fetchData = async () => {
         try {
+            setLoading(true);
             const artists = await artistApi().getAllArtists();
             artists.forEach((element: ApiInformation) => {
                 var temp = artistsList;
@@ -238,6 +260,9 @@ const Home = () => {
                 icon: "error"
             })
         }
+        finally {
+            setLoading(false);
+        }
     };
 
     useEffect(() => {
@@ -246,9 +271,9 @@ const Home = () => {
         fetchData();
     }, []);
 
-    if (loading) return <Divider>Loading...</Divider>
-
     return <>
+        {renderizeLoading(loading)}
+
         {modalCreateParams.open && artistsList && (
             <ModalCreate
                 open={modalCreateParams.open}

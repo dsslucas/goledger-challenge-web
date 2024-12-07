@@ -36,60 +36,34 @@ interface Song {
 }
 
 const Test: React.FC = () => {
-  const [artist, setArtist] = useState<Artist | null>(null);
-  const [songs, setSongs] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await getArtist().getArtistInfo("artist:2988d4f2-5fa1-5f87-98a4-81c8b6df0bd6");
-        setArtist(response);
+    setTimeout(() => {
+      console.log("ativei o loading")
+      setIsLoading(!isLoading)
+    }, 5000); // 10 segundos
+  }, [])
 
-        const songs = await getSong().getAllSongs();
-        setSongs(songs);
-      } catch (error) {
-        console.error('Error fetching artist data:', error);
-      }
-    };
+  useEffect(() => {
+    if (isLoading) {
+      const timeout = setTimeout(() => {
+        console.log("desativei o loading")
+        setIsLoading(false);
+      }, 5000); // 10 segundos
 
-    fetchData();
-  }, []);
-
-  const renderAlbum = (id: string) => {
-    const album = artist?.albuns.filter((element: Album) => element["@key"] === id)[0];
-    if (!album) return <></>
-
-    return <li key={album["@key"]}>
-      <span>{album.name} - {album.year}</span>
-      {renderSongs(album["@key"])}
-    </li>
-  }
-
-  const renderSongs = (idAlbum: string) => {
-    const songsFilteredByIdAlbum = songs.filter((element: any) => element.album["@key"] === idAlbum);
-
-    return <ul>
-      {songsFilteredByIdAlbum.map((element: any) => {
-        return <li key={element["@key"]}>{element.name}</li>
-      })}
-    </ul>
-  }
-
-  if (!artist || !songs) return <h1>Aguarde</h1>;
+      return () => clearTimeout(timeout);
+    }
+  }, [isLoading]);
 
   return (
-    <div>
-      <h1>{artist?.name}</h1>
-      <p>Country: {artist?.country}</p>
-      {/* {JSON.stringify(artist)} */}
-      <br />
-      <h2>Albums:</h2>
-      {/* {JSON.stringify(artist.albuns)} */}
-      <ul>
-        {artist.albuns.map((element: Album) => {
-          return renderAlbum(element["@key"])
-        })}
-      </ul>
+    <div
+      className={`fixed inset-0 bg-gray-800 flex justify-center items-center z-[100] transition-transform duration-500 z-100 ${
+        isLoading ? 'translate-y-0' : '-translate-y-full'
+      }`}
+    >
+      {/* Conteúdo do loading */}
+      <div className="text-white animate-pulse">Carregando...</div>
     </div>
   );
 };

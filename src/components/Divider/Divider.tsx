@@ -11,7 +11,6 @@ const Divider: React.FC<DividerInterface> = (props: DividerInterface) => {
     if (props.itemsCenter) className += "items-center ";
     if (props.justifyCenter) className += "justify-center ";
     if (props.justifyBetween) className += "justify-between ";
-
     if (props.widthOneHalf) className += `w-1/2 `;
     if (props.widthFull) className += "w-full ";
     if (props.widthOneFiveDesktop) className += "xl:w-1/5 ";
@@ -24,7 +23,7 @@ const Divider: React.FC<DividerInterface> = (props: DividerInterface) => {
     if (props.padding2) className += "p-2 ";
     if (props.paddingY2) className += "py-2 ";
     if (props.backgroundGray) className += "bg-gray-300 ";
-    if (props.rounded) className += "rounded " ;
+    if (props.rounded) className += "rounded ";
     if (props.border) className += "border border-solid border-gray-400 ";
     if (props.padding4) className += "p-4 ";
     if (props.heightFull) className += "h-full ";
@@ -33,6 +32,13 @@ const Divider: React.FC<DividerInterface> = (props: DividerInterface) => {
     if (props.overflowHidden) className += "overflow-hidden ";
     if (props.overflowY) className += "overflow-y-auto ";
     if (props.overflowX) className += "overflow-x-hidden ";
+
+    if (props.loadingAnimateDefault) className += "fixed inset-0 bg-gray-800 flex justify-center items-center z-[100] transition-transform duration-500 z-100 ";
+    if (props.loadingOpen) className += "translate-y-0 ";
+    if (props.loadingClose) className += "-translate-y-full ";
+    if (props.animatePulse) className += "animate-pulse ";
+
+    if (props.textWhite) className += "text-white ";
 
     return <div className={className.trim()}>
         {props.children}

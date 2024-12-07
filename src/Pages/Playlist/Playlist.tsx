@@ -23,6 +23,7 @@ import Label from "../../components/Label/Label";
 import Input from "../../components/Input/Input";
 import Aside from "../../components/Aside/Aside";
 import H4 from "../../components/H4/H4";
+import renderizeLoading from "../../common/renderizeLoading";
 
 const Playlist: React.FC<PlaylistInterface> = () => {
     const navigate = useNavigate();
@@ -73,7 +74,6 @@ const Playlist: React.FC<PlaylistInterface> = () => {
                 .then((response: any) => {
                     if (response) {
                         setPlaylist(response)
-                        setLoading(false);
                     }
                     else throw new Error();
                 });
@@ -85,23 +85,40 @@ const Playlist: React.FC<PlaylistInterface> = () => {
                 icon: "error"
             });
         }
+        finally {
+            setLoading(false);
+        }
     };
 
     const handleSendModal = async (event: React.FormEvent, formData: ModalCreateInputInterface, tag: string) => {
-        formData.idPlaylist = playlist["@key"];
+        try {
+            setLoading(true);
 
-        const sendResponse = await handleConfirmModalAdd(event, formData, "playlist_add_song");
+            formData.idPlaylist = playlist["@key"];
+            const sendResponse = await handleConfirmModalAdd(event, formData, "playlist_add_song");
 
-        if (sendResponse) {
-            closeModalAdd();
-            fetchData();
+            if (sendResponse) {
+                closeModalAdd();
+                fetchData();
+            }
+        }
+        catch (error) {
+            console.error(error);
+            Swal.fire({
+                title: "Error!",
+                text: "Error while adding song on playlist.",
+                icon: "error"
+            });
+        }
+        finally {
+            setLoading(false);
         }
     }
 
     const handleChangePrivate = async (e: React.ChangeEvent<HTMLInputElement>) => {
         try {
-            setPlaylist({ ...playlist, private: !playlist.private })
             setLoading(true);
+            setPlaylist({ ...playlist, private: !playlist.private });            
             await playlistApi().updatePrivateStatus(playlist["@key"])
                 .then((response: any) => {
                     console.log(response)
@@ -161,7 +178,6 @@ const Playlist: React.FC<PlaylistInterface> = () => {
             setLoading(true);
             await playlistApi().deletePlaylist(idPlaylist)
                 .then((response: any) => {
-                    setLoading(false);
                     if (response.status) {
                         Swal.fire({
                             title: "Deleted!",
@@ -179,17 +195,20 @@ const Playlist: React.FC<PlaylistInterface> = () => {
         }
         catch (error: any) {
             console.error(error)
-            setLoading(false);
             Swal.fire({
                 title: "Error!",
                 text: "Error on delete playlist.",
                 icon: "error"
             });
         }
+        finally {
+            setLoading(false);
+        }
     }
 
     const handleDeleteSong = async (event: React.MouseEvent<HTMLButtonElement>, idPlaylist: string, idSong: string) => {
         try {
+            setLoading(true);
             await playlistApi().deletePlaylistSong(idPlaylist, idSong)
                 .then((response: any) => {
                     if (response.status) {
@@ -214,6 +233,9 @@ const Playlist: React.FC<PlaylistInterface> = () => {
                 text: "Error on delete song.",
                 icon: "error"
             });
+        }
+        finally {
+            setLoading(false);
         }
     }
 
@@ -251,9 +273,9 @@ const Playlist: React.FC<PlaylistInterface> = () => {
         </Divider>
     }
 
-    if (loading) return <Divider>Loading...</Divider>
-
     return <>
+        {renderizeLoading(loading)}
+
         <Divider flex paddingY2 gap2>
             {
                 modalCreateParams.open && (

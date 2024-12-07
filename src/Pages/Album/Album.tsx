@@ -25,12 +25,25 @@ import H4 from "../../components/H4/H4";
 import ModalCreate from "../Modal/ModalCreate";
 import { ModalCreateInputInterface, ModalCreateInterface } from "../Modal/Interface";
 import { handleConfirmModalAdd } from "../../common/sendModalAdd";
+import renderizeLoading from "../../common/renderizeLoading";
 
 const Album: React.FC<AlbumPageInterface> = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const [loading, setLoading] = useState<boolean>(true);
-    const [album, setAlbum] = useState<ApiInformation | null>(null);
+    const [album, setAlbum] = useState<ApiInformation>({
+        "@assetType": "",
+        assetType: "",
+        "@key": "",
+        key: "",
+        name: '',
+        lastTouchBy: "",
+        lastTx: "",
+        lastUpdated: "",
+        songs: [],
+        private: false
+    });
+    
     const [modalCreateParams, setModalCreateParams] = useState<ModalCreateInterface>({
         open: false,
         title: "",
@@ -169,8 +182,6 @@ const Album: React.FC<AlbumPageInterface> = () => {
     }
 
     const handleDeleteAlbum = async (event: React.MouseEvent<HTMLButtonElement>, idAlbum: string) => {
-        console.log("Cliquei na exclusao do album");
-        console.log(idAlbum)
         try {
             setLoading(true);
             await albumApi().deleteAlbum(idAlbum)
@@ -273,78 +284,75 @@ const Album: React.FC<AlbumPageInterface> = () => {
         </Divider>
     }
 
-    if (loading) return <Divider>Loading...</Divider>
-
     return <>
-        {album && (
-            <Divider flex paddingY2 gap2>
-                {
-                    modalCreateParams.open && (
-                        <ModalCreate
-                            open={modalCreateParams.open}
-                            title={modalCreateParams.title}
-                            tag={modalCreateParams.tag}
-                            onCancel={handleCancelModalAdd}
-                            onConfirm={(e: React.FormEvent, data: ModalCreateInputInterface) => handleSendModal(e, data, modalCreateParams.tag)}
-                            buttonConfirm={modalCreateParams.buttonConfirm}
-                            buttonConfirmText={modalCreateParams.buttonConfirmText}
-                            options={modalCreateParams.options}
-                            apiData={modalCreateParams.apiData}
-                        />
-                    )
-                }
+        {renderizeLoading(loading)}
+        <Divider flex paddingY2 gap2>
+            {
+                modalCreateParams.open && (
+                    <ModalCreate
+                        open={modalCreateParams.open}
+                        title={modalCreateParams.title}
+                        tag={modalCreateParams.tag}
+                        onCancel={handleCancelModalAdd}
+                        onConfirm={(e: React.FormEvent, data: ModalCreateInputInterface) => handleSendModal(e, data, modalCreateParams.tag)}
+                        buttonConfirm={modalCreateParams.buttonConfirm}
+                        buttonConfirmText={modalCreateParams.buttonConfirmText}
+                        options={modalCreateParams.options}
+                        apiData={modalCreateParams.apiData}
+                    />
+                )
+            }
 
-                <Section flex flexCol widthOneFiveDesktop>
-                    <Figure flex justifyCenter itemsCenter>
-                        <Image src={Banjo} roundedT />
-                    </Figure>
-                    <Divider flex flexCol widthFull backgroundGray padding2>
-                        <H2 textXl>{album.name}</H2>
+            <Section flex flexCol widthOneFiveDesktop>
+                <Figure flex justifyCenter itemsCenter>
+                    <Image src={Banjo} roundedT />
+                </Figure>
+                <Divider flex flexCol widthFull backgroundGray padding2>
+                    <H2 textXl>{album.name}</H2>
 
-                        <Fieldset flex itemsCenter gapX2>
-                            <Span>{album.artist?.name}</Span>
-                        </Fieldset>
+                    <Fieldset flex itemsCenter gapX2>
+                        <Span>{album.artist?.name}</Span>
+                    </Fieldset>
 
-                        <Fieldset flex flexColumn gapX2>
-                            <Label for={`album-year-${album["@key"]}`}>Year</Label>
-                            <Divider flex gap2>
-                                <Input
-                                    type="number"
-                                    id={`album-year-${album["@key"]}`}
-                                    name={`album-year-${album["@key"]}`}
-                                    value={album.year}
-                                    required
-                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChangeAlbumYear(e)}
-                                    rounded border backgroundTransparent />
-                                <Button type="button" onClick={(event: React.MouseEvent<HTMLButtonElement>) => handleClickChangeAlbumYear(event, album["@key"])} icon editBackgroundColor flex justifyCenter itemsCenter rounded textWhite>
-                                    <FontAwesomeIcon icon={faPen} />
-                                </Button>
-                            </Divider>
-                        </Fieldset>
-                    </Divider>
-
-                    <Button type="button" onClick={(event: React.MouseEvent<HTMLButtonElement>) => handleDeleteAlbum(event, album["@key"])} deleteBackgroundColor flex justifyCenter itemsCenter roundedB textWhite gapX2>
-                        DELETE
-                        <FontAwesomeIcon icon={faTrash} />
-                    </Button>
-                </Section>
-                <Aside flex flexColumn widthFourFiveDesktop>
-                    <Divider flex flexCol gap2>
-                        <Divider flex justifyBetween itemsCenter>
-                            <H4 textXl>Album songs</H4>
-                            <Button
-                                type="button"
-                                rounded textWhite uppercase border paddingX2 successBackgroundColor
-                                onClick={(event: React.MouseEvent<HTMLButtonElement>) => handleAddSong(event, album["@key"])}
-                            >Add song</Button>
+                    <Fieldset flex flexColumn gapX2>
+                        <Label for={`album-year-${album["@key"]}`}>Year</Label>
+                        <Divider flex gap2>
+                            <Input
+                                type="number"
+                                id={`album-year-${album["@key"]}`}
+                                name={`album-year-${album["@key"]}`}
+                                value={album.year}
+                                required
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChangeAlbumYear(e)}
+                                rounded border backgroundTransparent />
+                            <Button type="button" onClick={(event: React.MouseEvent<HTMLButtonElement>) => handleClickChangeAlbumYear(event, album["@key"])} icon editBackgroundColor flex justifyCenter itemsCenter rounded textWhite>
+                                <FontAwesomeIcon icon={faPen} />
+                            </Button>
                         </Divider>
-                        <Divider flex flexCol backgroundGray border rounded gap2>
-                            {renderSongs(album)}
-                        </Divider>
+                    </Fieldset>
+                </Divider>
+
+                <Button type="button" onClick={(event: React.MouseEvent<HTMLButtonElement>) => handleDeleteAlbum(event, album["@key"])} deleteBackgroundColor flex justifyCenter itemsCenter roundedB textWhite gapX2>
+                    DELETE
+                    <FontAwesomeIcon icon={faTrash} />
+                </Button>
+            </Section>
+            <Aside flex flexColumn widthFourFiveDesktop>
+                <Divider flex flexCol gap2>
+                    <Divider flex justifyBetween itemsCenter>
+                        <H4 textXl>Album songs</H4>
+                        <Button
+                            type="button"
+                            rounded textWhite uppercase border paddingX2 successBackgroundColor
+                            onClick={(event: React.MouseEvent<HTMLButtonElement>) => handleAddSong(event, album["@key"])}
+                        >Add song</Button>
                     </Divider>
-                </Aside>
-            </Divider >
-        )}
+                    <Divider flex flexCol backgroundGray border rounded gap2>
+                        {renderSongs(album)}
+                    </Divider>
+                </Divider>
+            </Aside>
+        </Divider >
     </>
 }
 
