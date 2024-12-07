@@ -27,7 +27,7 @@ import H4 from "../../components/H4/H4";
 const Playlist: React.FC<PlaylistInterface> = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const [loading, setLoading] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(true);
     const [playlist, setPlaylist] = useState<ApiInformation>({
         assetType: "",
         "@key": "",
@@ -39,6 +39,7 @@ const Playlist: React.FC<PlaylistInterface> = () => {
         songs: [],
         private: false
     });
+    const [songsList, setSongsList] = useState<ApiInformation[]>([]);
 
     const [modalCreateParams, setModalCreateParams] = useState<ModalCreateInterface>({
         open: false,
@@ -51,8 +52,6 @@ const Playlist: React.FC<PlaylistInterface> = () => {
 
     const id: string = location.state?.id;
 
-    console.log("ESTADO ANTES: ", playlist)
-
     useEffect(() => {
         fetchData();
     }, [id]);
@@ -63,11 +62,16 @@ const Playlist: React.FC<PlaylistInterface> = () => {
 
     const fetchData = async () => {
         try {
+            await songApi().getAllSongs()
+                .then((response: any) => {
+                    setSongsList(response)
+                });
+
             await playlistApi().getPlaylistInfo(id)
                 .then((response: any) => {
                     if (response) {
                         setPlaylist(response)
-                        setLoading(true);
+                        setLoading(false);
                     }
                     else throw new Error();
                 });
@@ -93,7 +97,7 @@ const Playlist: React.FC<PlaylistInterface> = () => {
     }
 
     const handleChangePrivate = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setPlaylist({ ...playlist, private: !playlist.private})
+        setPlaylist({ ...playlist, private: !playlist.private })
     }
 
     const handleCancelModalAdd = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -117,20 +121,20 @@ const Playlist: React.FC<PlaylistInterface> = () => {
                 ...modalCreateParams,
                 open: true,
                 title: `Add song`,
-                tag: "song",
+                tag: "playlist",
                 buttonConfirm: true,
                 buttonConfirmText: "Create",
                 options: [{
                     label: playlist?.name,
                     value: id
                 }],
-                apiData: []
+                apiData: songsList
             });
         }
     }
 
     const handleDeletePlaylist = async (event: React.MouseEvent<HTMLButtonElement>, idAlbum: string) => {
-        console.log(idAlbum)
+
         try {
             await playlistApi().deletePlaylist(idAlbum)
                 .then((response: any) => {
@@ -159,13 +163,15 @@ const Playlist: React.FC<PlaylistInterface> = () => {
         }
     }
 
-    const handleDeleteSong = async (event: React.MouseEvent<HTMLButtonElement>, idSong: string) => {
+    const handleDeleteSong = async (event: React.MouseEvent<HTMLButtonElement>, idPlaylist: string, idSong: string) => {
+        console.log("ID SONG", idSong)
+        console.log("ID PLAYLIST", idPlaylist)       
         try {
-            await songApi().deleteSong(idSong)
+            await playlistApi().deletePlaylistSong(idPlaylist, idSong)
                 .then((response: any) => {
                     if (response.status) {
                         Swal.fire({
-                            title: "Deleted!",
+                            title: "Sound deleted!",
                             text: response.message,
                             icon: "success"
                         });
@@ -190,8 +196,6 @@ const Playlist: React.FC<PlaylistInterface> = () => {
 
     const renderSongs = (response: ApiInformation) => {
         if (response.songs && response.songs?.length > 0) {
-            console.log("\nABRI\n")
-            console.log(response.songs)
             return <table className="w-full text-center">
                 <thead>
                     <tr className={`bg-gray-600 text-white`}>
@@ -211,7 +215,7 @@ const Playlist: React.FC<PlaylistInterface> = () => {
                                 <td>{song.artist.name}</td>
                                 <td>{song.album.name}</td>
                                 <td>
-                                    <Button type="button" icon deleteBackgroundColor textWhite rounded onClick={(event: React.MouseEvent<HTMLButtonElement>) => handleDeleteSong(event, song["@key"])}><FontAwesomeIcon icon={faTrash} /></Button>
+                                    <Button type="button" icon deleteBackgroundColor textWhite rounded onClick={(event: React.MouseEvent<HTMLButtonElement>) => handleDeleteSong(event, response["@key"], song["@key"])}><FontAwesomeIcon icon={faTrash} /></Button>
                                 </td>
                             </tr>
                         }
@@ -224,7 +228,7 @@ const Playlist: React.FC<PlaylistInterface> = () => {
         </Divider>
     }
 
-    if (!loading) return <Divider>Loading...</Divider>
+    if (loading) return <Divider>Loading...</Divider>
 
     return <>
         <Divider flex paddingY2 gap2>

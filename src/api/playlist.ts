@@ -136,6 +136,53 @@ const playlistApi = () => {
         }
     }
 
+    const deletePlaylistSong = async (idPlaylist: string, idSong: string) => {
+        try {
+            if (idPlaylist === null || idPlaylist === undefined || idPlaylist == "") throw "NO_PLAYLIST_ID";
+            if (idSong === null || idSong === undefined || idSong == "") throw "NO_SONG_ID";
+
+            const playlistData = await getPlaylistInfo(idPlaylist);
+            var newSongs = [];
+            if (playlistData.songs) {
+                newSongs = playlistData.songs.filter((element: ApiInformation) => element["@key"] !== idSong)
+
+                console.log(newSongs)
+
+                await api.post("/invoke/updateAsset", {
+                    "update": {
+                        "@assetType": "playlist",
+                        "@key": idPlaylist,
+                        "songs": newSongs
+                    }
+                }).then((response: any) => {
+                    console.log(response.data);
+                    return response;
+                })
+
+                return {
+                    status: true,
+                    message: "Song removed!"
+                };
+            }
+
+            return {
+                status: false,
+                message: "Song not removed on this playlist."
+            };
+        }
+        catch (error: any) {
+            console.error(error);
+            var message = "Error on delete playlist song.";
+            if (error === "NO_PLAYLIST_ID") message = "No playlist id found for delete playlist song.";
+            if (error === "NO_SONG_ID") message = "No song id found for delete playlist song.";
+
+            return {
+                status: false,
+                message: message
+            };
+        }
+    }
+
     const deletePlaylist = async (id: string) => {
         try {
             if (id === null || id === undefined || id == "") throw "NO_ID";
@@ -158,6 +205,7 @@ const playlistApi = () => {
         createPlaylist,
         getAllPlaylists,
         getPlaylistInfo,
+        deletePlaylistSong,
         deletePlaylist
     }
 }
