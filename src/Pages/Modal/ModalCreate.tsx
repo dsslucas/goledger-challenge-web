@@ -105,13 +105,13 @@ const ModalCreate: React.FC<ModalCreateInterface> = (props: ModalCreateInterface
     }, []);
 
     return <form id="modalAdd" className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50" onSubmit={handleSubmit}>
-        <div className="bg-white w-11/12 max-w-xl mx-auto rounded-lg shadow-lg">
+        <div className="bg-white w-11/12 max-w-xl mx-auto rounded-lg shadow-lg max-h-[80%] overflow-hidden">
 
             <div className="flex justify-between items-center border-b p-4">
                 <H2 textXl>{props.title}</H2>
             </div>
 
-            <Divider flex flexCol={tagPlaylist} padding4 gap2 maxHeight80 overflowHidden>
+            <Divider flex flexCol padding4 gap2 overflowHidden>
                 <Divider flex flexCol={tagArtist || tagAlbum || tagSong || tagPlaylist} gap2 flex1>
                     {props.tag === "album" && !props.createOutsideHome && (
                         <H2 textXl>Album data</H2>
@@ -232,7 +232,7 @@ const ModalCreate: React.FC<ModalCreateInterface> = (props: ModalCreateInterface
                 {(tagAlbum || tagSong) && (
                     <Divider flex flexCol={tagAlbum || tagSong} flex1 gap2>
                         <H2 textXl>Songs</H2>
-                        <div className="flex flex-col gap-2 h-full overflow-y-auto">
+                        <div className="flex flex-col gap-2 overflow-auto max-h-80" id="songs-dynamic">
                             {inputs.map((input, index: number) => (
                                 <Divider key={input.id} flex justifyBetween>
                                     <Divider flex gapX2>
