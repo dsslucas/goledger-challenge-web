@@ -164,14 +164,11 @@ const albumApi = () => {
                     }
                 }
             }).then((response: any) => {
-                console.log(response.data.result)
                 response.data.result.forEach(async (element: any) => {
                     element.songs = await getSong().getSongsByAlbumId(element["@key"]);
                 })
                 return response.data.result;
             });
-
-            console.log("RESULTADO: ", response)
 
             return response;
         }

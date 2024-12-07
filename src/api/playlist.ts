@@ -1,6 +1,8 @@
 import { InputField } from "../components/Input/Interface";
 import { ApiInformation, PlaylistSend } from "../interfaces/ApiInformation";
+import albumApi from "./album";
 import api from "./api";
+import songApi from "./song";
 import getSong from "./song";
 
 const playlistApi = () => {
@@ -94,36 +96,69 @@ const playlistApi = () => {
     }
 
     const getPlaylistInfo = async (id: string) => {
-        await api.post("/query/readAsset", {
-            key: {
-                "@assetType": "playlist",
-                "@key": id
-            }
-        })
-            .then((response: any) => {
+        try {
+            if (id === null || id === undefined || id == "") throw "NO_ID";
+
+            return await api.post("/query/readAsset", {
+                key: {
+                    "@assetType": "playlist",
+                    "@key": id
+                }
+            }).then(async (response: any) => {
+                if (response.data && response.data.songs) {
+                    for (let i = 0; i < response.data.songs.length; i++) {
+                        const element = response.data.songs[i];
+
+                        const getSongDetail = await songApi().getSongInfo(element["@key"]);
+                        element.name = await getSongDetail.name;
+
+                        const getAlbum = await albumApi().getAlbumById(getSongDetail.album["@key"])
+
+                        const artist = getAlbum.artist;
+
+                        element.artist = artist
+                        element.album = getAlbum
+                    }
+                }
+
+                return response.data;
             })
+        }
+        catch (error: any) {
+            console.error(error);
+            var message = "Error on get playlist.";
+            if (error === "NO_ID") message = "No id found for getting playlist data.";
+            if (error === "ERROR_DEFINE_ALBUNS") message = "Error during album search";
+            return {
+                status: false,
+                message: message
+            };
+        }
+    }
 
-        // const data = {
-        //     artist: {
+    const deletePlaylist = async (id: string) => {
+        try {
+            if (id === null || id === undefined || id == "") throw "NO_ID";
 
-        //     },
-        //     albuns: [{
 
-        //     }],
-        //     songs: [{
+        }
+        catch (error: any) {
+            console.error(error);
+            var message = "Error on delete playlist.";
+            if (error === "NO_ID") message = "No id found for delete playlist.";
 
-        //     }],
-        //     playlist: [{
-
-        //     }]
-        // };
-
+            return {
+                status: false,
+                message: message
+            };
+        }
     }
 
     return {
         createPlaylist,
         getAllPlaylists,
-        getPlaylistInfo
+        getPlaylistInfo,
+        deletePlaylist
     }
 }
 

@@ -62,7 +62,7 @@ const Album: React.FC<AlbumPageInterface> = () => {
                     else throw new Error();
                 });
         } catch (err) {
-            console.error("Erro ao buscar dados do album: ", err);
+            console.error(err);
             Swal.fire({
                 title: "Error!",
                 text: "Error during album search.",
