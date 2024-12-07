@@ -3,6 +3,7 @@ import { AlbumSend, ApiInformation } from "../interfaces/ApiInformation";
 import api from "./api";
 import artistApi from "./artists";
 import getArtist from "./artists";
+import playlistApi from "./playlist";
 import songApi from "./song";
 import getSong from "./song";
 
@@ -12,8 +13,7 @@ const albumApi = () => {
             if (request.idArtist === null || request.idArtist === undefined || request.idArtist === "") throw "NO_ARTIST";
             if (request.name === null || request.name === undefined || request.name === "") throw "NO_NAME";
             if (request.year === null || request.year === undefined || request.year === "") throw "NO_YEAR";
-            // if (request.songs === null || request.songs === undefined || request.songs.length === 0) throw "NO_SONG";
-            // if(request.songs.some((element: InputField) => element.value === "" || element.value === null || element.value === undefined)) throw "NO_SONG_NAME";
+            if ((request.songs === null || request.songs === undefined || request.songs.length === 0) && (request.songs.some((element: InputField) => element.value === "" || element.value === null || element.value === undefined))) throw "NO_SONG_NAME";
 
             await api.post("/invoke/createAsset", {
                 asset: [{
@@ -39,30 +39,30 @@ const albumApi = () => {
 
             return {
                 positiveConclusion: true,
-                message: "Album registrado!"
+                message: "Album registered!"
             }
         }
         catch (error) {
             console.error(error)
             if (error === "NO_ARTIST") return {
                 positiveConclusion: false,
-                message: "É necessário informar o nome do artista."
+                message: "You should inform the artist name."
             };
             else if (error === "NO_NAME") return {
                 positiveConclusion: false,
-                message: "É necessário informar o nome do álbum."
+                message: "You should inform the album name."
             }
             else if (error === "NO_YEAR") return {
                 positiveConclusion: false,
-                message: "É necessário informar o ano do álbum."
+                message: "You should inform the album year."
             }
             else if (error === "NO_SONG") return {
                 positiveConclusion: false,
-                message: "É necessário informar pelo menos um som."
+                message: "You should inform at least one song"
             }
             else if (error === "NO_SONG_NAME") return {
                 positiveConclusion: false,
-                message: "É necessário informar o nome do som"
+                message: "You should inform the song name"
             }
             else return {
                 positiveConclusion: false,
@@ -125,16 +125,16 @@ const albumApi = () => {
                     "@key": id
                 }
             })
-            .then(async (response: any) => {
-                const idArtist = response.data.artist["@key"];
-                const artistInfo = await artistApi().getArtistInfo(idArtist);
-                response.data.artist.name = artistInfo.name;
-                return response;
-            }).then(async (response: any) => {
-                const songs = await songApi().getSongsByAlbumId(response.data["@key"]);
-                response.data.songs = songs;
-                return response;
-            });
+                .then(async (response: any) => {
+                    const idArtist = response.data.artist["@key"];
+                    const artistInfo = await artistApi().getArtistInfo(idArtist);
+                    response.data.artist.name = artistInfo.name;
+                    return response;
+                }).then(async (response: any) => {
+                    const songs = await songApi().getSongsByAlbumId(response.data["@key"]);
+                    response.data.songs = songs;
+                    return response;
+                });
 
             return response.data;
         }
@@ -221,22 +221,34 @@ const albumApi = () => {
         try {
             if (id === null || id === undefined || id == "") throw "NO_ID";
 
-            const response = await api.post("/invoke/deleteAsset", {
-                "key": {
-                    "@assetType": "album",
-                    "@key": id
-                },
-                "cascade": true
+            await getAlbumById(id).then(async (response: ApiInformation) => {
+                console.log(response)
+
+                if (!response.songs) throw "NO_SOUNDS"
+
+                for (let i = 0; i < response.songs.length; i++) {
+                    const element = response.songs[i];
+                    await songApi().deleteSongHandler(element["@key"]);
+                }
+                return response;
+            }).then(async () => {
+                await api.post("/invoke/deleteAsset", {
+                    "key": {
+                        "@assetType": "album",
+                        "@key": id
+                    }
+                });
             });
 
             return {
                 status: true,
-                message: "Album deleted."
+                message: "Album deleted in this blockchain."
             };
         }
         catch (error) {
             var message = "Error on delete album.";
-            if (error === "NO_ID") message = "No id found for delete.";
+            if (error === "NO_ID") message = "No id found for delete album.";
+            if (error === "NO_SOUNDS") message = "Sounds not found on this album.";
 
             return {
                 status: false,
