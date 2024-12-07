@@ -1,4 +1,6 @@
+import Album from "../Pages/Album/Album";
 import { ApiInformation, ArtistSend } from "../interfaces/ApiInformation";
+import albumApi from "./album";
 import getAlbum from "./album";
 import api from "./api";
 
@@ -33,7 +35,7 @@ const artistApi = () => {
             };
             else return {
                 positiveConclusion: false,
-                message: "Erro ao registrar artista." 
+                message: "Erro ao registrar artista."
             };
         }
     }
@@ -116,31 +118,44 @@ const artistApi = () => {
 
     const deleteArtist = async (id: string) => {
         try {
-            if (id === null || id === undefined || id == "") throw "NO_ID";
+            if (id === null || id === undefined || id === "") throw "NO_ID";
 
-            await api.post("/invoke/deleteAsset", {
-                "key": {
-                    "@assetType": "artist",
-                    "@key": id
-                },
-                "cascade": true
-            });
+            await albumApi().getAlbunsByArtistId(id)
+                .then(async (response: ApiInformation[]) => {
+                    if (Array.isArray(response) && response.length > 0) {
+                        for (let i = 0; i < response.length; i++) {
+                            const album = response[i];
+                            await albumApi().deleteAlbum(album["@key"]);
+                        }
+                    }
+                    return response;
+                })
+                .then(async () => {
+                    await api.post("/invoke/deleteAsset", {
+                        "key": {
+                            "@assetType": "artist",
+                            "@key": id
+                        }
+                    })
+                });
 
             return {
                 status: true,
-                message: "Artist deleted."
+                message: "Artist deleted successfully."
             };
-        }
-        catch (error) {
-            var message = "Error on delete artist.";
-            if (error === "NO_ID") message = "No id found for delete.";
+        } catch (error) {
+            // Retorno de erro com mensagens específicas
+            let message = "Error on deleting artist.";
+            if (error === "NO_ID") message = "No ID provided for deletion.";
+            else if (error === "NO_ALBUNS") message = "No albums found for deletion.";
 
             return {
                 status: false,
                 message: message
             };
         }
-    }
+    };
+
 
     return {
         postNewArtist,
