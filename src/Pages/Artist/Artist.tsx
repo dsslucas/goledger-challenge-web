@@ -30,6 +30,12 @@ import ModalCreate from "../Modal/ModalCreate";
 import { handleConfirmModalAdd } from "../../common/sendModalAdd";
 import renderizeLoading from "../../common/renderizeLoading";
 import { redirectPage } from "../../common/redirectPage";
+import Thead from "../../components/Table/Thead";
+import TableTr from "../../components/Table/Tr";
+import Tbody from "../../components/Table/Tbody";
+import TableTd from "../../components/Table/Td";
+import TableTh from "../../components/Table/Th";
+import Table from "../../components/Table/Table";
 
 const Artist: React.FC<ArtistPageInterface> = () => {
     const location = useLocation();
@@ -191,26 +197,26 @@ const Artist: React.FC<ArtistPageInterface> = () => {
 
     const renderSongs = (album: ApiInformation) => {
         if (album.songs && album.songs?.length > 0) {
-            return <table className="w-full text-center">
-                <thead>
-                    <tr className={`bg-gray-600 text-white`}>
-                        <th>#</th>
-                        <th>Song</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
+            return <Table widthFull textCenter>
+                <Thead backgroundGray textWhite>
+                    <TableTr>
+                        <TableTh>#</TableTh>
+                        <TableTh>Song</TableTh>
+                        <TableTh> </TableTh>
+                    </TableTr>
+                </Thead>
+                <Tbody>
                     {album.songs && album.songs.map((song: ApiInformation, index: number) => {
-                        if (song.album) return <tr key={song["@key"]} className="even:bg-gray-500 even:bg-opacity-30">
-                            <td>{index + 1}</td>
-                            <td>{song.name}</td>
-                            <td>
+                        if (song.album) return <TableTr key={song["@key"]} backgroundStripedGray>
+                            <TableTd>{index + 1}</TableTd>
+                            <TableTd>{song.name}</TableTd>
+                            <TableTd>
                                 <Button type="button" icon deleteBackgroundColor textWhite rounded onClick={(event: React.MouseEvent<HTMLButtonElement>) => handleDeleteSong(event, song["@key"])}><FontAwesomeIcon icon={faTrash} /></Button>
-                            </td>
-                        </tr>
+                            </TableTd>
+                        </TableTr>
                     })}
-                </tbody>
-            </table>;
+                </Tbody>
+            </Table>;
         }
         else return <Divider flex justifyCenter itemsCenter>
             <Span>Nothing registered there.</Span>
