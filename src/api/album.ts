@@ -88,6 +88,7 @@ const albumApi = () => {
                 const artist: any = await getArtist().getArtistInfo(element.artist["@key"]);
 
                 data.push({
+                    "@assetType": element["@assetType"],
                     assetType: element["@assetType"],
                     "@key": element["@key"],
                     key: element["@key"],

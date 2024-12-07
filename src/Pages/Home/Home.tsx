@@ -31,6 +31,7 @@ import { handleConfirmModalAdd } from "../../common/sendModalAdd";
 const Home = () => {
     const navigation = useNavigate();
 
+    const [loading, setLoading] = useState<boolean>(true);
     const [apiColors, setApiColors] = useState<ColorInterface>();
     const [schema, setSchema] = useState<SchemaSectionInterface[]>();
 
@@ -53,12 +54,21 @@ const Home = () => {
     });
 
     const getSchema = async () => {
-        await api.get("/query/getSchema")
-            .then((response: any) => {
-                if (Array.isArray(response.data)) {
-                    setSchema(response.data.filter((element: SchemaSectionInterface) => element.label !== "AssetTypeListData"));
-                }
-            })
+        try {
+            await api.get("/query/getSchema")
+                .then((response: any) => {
+                    if (Array.isArray(response.data)) {
+                        setSchema(response.data.filter((element: SchemaSectionInterface) => element.label !== "AssetTypeListData"));
+                    }
+                })
+        }
+        catch (error: any) {
+            Swal.fire({
+                title: "Error!",
+                text: "Error on search schema.",
+                icon: "error"
+            });
+        }
     }
 
     const handleClickAdd = async (event: React.MouseEvent<HTMLButtonElement>, tag: string) => {
@@ -82,20 +92,26 @@ const Home = () => {
 
     const renderizeDataCategory = async (tag: string) => {
         try {
+            setLoading(true);
             switch (tag) {
                 case "artist":
                     setGetApiData(await artistApi().getAllArtists());
+                    setLoading(false);
                     break;
                 case "album":
                     setGetApiData(await getAlbum().getAllAlbums());
+                    setLoading(false);
                     break;
                 case "song":
                     setGetApiData(await getSong().getAllSongs());
+                    setLoading(false);
                     break;
                 case "playlist":
                     setGetApiData(await getPlaylist().getAllPlaylists());
+                    setLoading(false);
                     break;
                 default:
+                    setLoading(false);
                     break;
             }
         }
@@ -115,8 +131,9 @@ const Home = () => {
     }
 
     const handleClickCategory = (event: React.MouseEvent<HTMLButtonElement>, element: ApiInformation) => {
-        var tag = element.assetType;
-        var id = element.key;
+        console.log(element)
+        var tag = element["@assetType"];
+        var id = element["@key"];
 
         async function redirectToDetailPage(id: string, tag: string) {
             console.log(id)
@@ -181,40 +198,55 @@ const Home = () => {
     }
 
     const fetchData = async () => {
-        await Promise.all([getSchema()]);
-        const artists = await artistApi().getAllArtists();
-        artists.forEach((element: ApiInformation) => {
-            var temp = artistsList;
+        try {
+            const artists = await artistApi().getAllArtists();
+            artists.forEach((element: ApiInformation) => {
+                var temp = artistsList;
 
-            temp.push({
-                label: element.name,
-                value: element["@key"]
+                temp.push({
+                    label: element.name,
+                    value: element["@key"]
+                })
+                setArtistsList(temp);
+            });
+
+            await renderizeDataCategory(buttonClickedLabel.toLowerCase());
+
+            setLoading(true);
+            const albuns = await albumApi().getAllAlbums();
+            albuns.forEach((response: ApiInformation) => {
+                var temp = albunsList;
+
+                temp.push({
+                    label: response.name,
+                    value: response["@key"]
+                })
+                setAlbunsList(temp);
             })
-            setArtistsList(temp);
-        });
 
-        await renderizeDataCategory(buttonClickedLabel.toLowerCase());
+            const songs = await songApi().getAllSongs();
+            setSongsList(songs);
 
-        const albuns = await albumApi().getAllAlbums();
-        albuns.forEach((response: ApiInformation) => {
-            var temp = albunsList;
+            setButtonClicked(true);
 
-            temp.push({
-                label: response.name,
-                value: response["@key"]
+            setLoading(false);
+        }
+        catch (error: any) {
+            Swal.fire({
+                title: "Error!",
+                text: "Error on search data.",
+                icon: "error"
             })
-            setAlbunsList(temp);
-        })
-
-        const songs = await songApi().getAllSongs();
-        setSongsList(songs);
-
-        setButtonClicked(true);
+        }
     };
 
     useEffect(() => {
+        console.log("abri aqui")
+        getSchema();
         fetchData();
     }, []);
+
+    if (loading) return <Divider>Loading...</Divider>
 
     return <>
         {modalCreateParams.open && artistsList && (
@@ -230,15 +262,17 @@ const Home = () => {
                 apiData={modalCreateParams.apiData}
             />
         )}
-        <Section flex justifyCenter paddingY2>
-            <Divider flex justifyBetween widthOneHalf>
-                {schema && schema?.length > 0 && (
-                    schema.map((element: SchemaSectionInterface, index: number) => {
-                        return <Button type="button" key={index} border rounded paddingX2 borderColorHover={apiColors?.gray} onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleClickOption(e, element.label, element.tag)}>{element.label}</Button>
-                    })
-                )}
-            </Divider>
-        </Section>
+        {schema && schema.length > 0 && (
+            <Section flex justifyCenter paddingY2>
+                <Divider flex justifyBetween widthOneHalf>
+                    {schema && schema?.length > 0 && (
+                        schema.map((element: SchemaSectionInterface, index: number) => {
+                            return <Button type="button" key={index} border rounded paddingX2 borderColorHover={apiColors?.gray} onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleClickOption(e, element.label, element.tag)}>{element.label}</Button>
+                        })
+                    )}
+                </Divider>
+            </Section>
+        )}
         <Aside flex flexColumn widthFull gap2>
             {buttonClicked && (
                 <>

@@ -1,6 +1,7 @@
 import { InputField } from "../components/Input/Interface";
 
 export interface ApiInformation {
+    "@assetType": string;
     assetType: string;
     "@key": string;
     key: string;

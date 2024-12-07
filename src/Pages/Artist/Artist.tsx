@@ -66,7 +66,7 @@ const Artist: React.FC<ArtistPageInterface> = () => {
 
     const handleDeleteSong = async (event: React.MouseEvent<HTMLButtonElement>, idSong: string) => {
         try {
-            await songApi().deleteSong(idSong)
+            await songApi().deleteSongHandler(idSong)
                 .then((response: any) => {
                     if (response.status) {
                         Swal.fire({

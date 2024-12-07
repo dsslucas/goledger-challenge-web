@@ -51,6 +51,7 @@ const artistApi = () => {
             var data: ApiInformation[] = [];
             response.data.result.forEach((element: any) => {
                 data.push({
+                    "@assetType": element["@assetType"],
                     assetType: element["@assetType"],
                     "@key": element["@key"],
                     key: element["@key"],

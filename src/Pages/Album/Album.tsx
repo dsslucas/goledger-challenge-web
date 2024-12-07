@@ -29,6 +29,7 @@ import { handleConfirmModalAdd } from "../../common/sendModalAdd";
 const Album: React.FC<AlbumPageInterface> = () => {
     const navigate = useNavigate();
     const location = useLocation();
+    const [loading, setLoading] = useState<boolean>(true);
     const [album, setAlbum] = useState<ApiInformation | null>(null);
     const [modalCreateParams, setModalCreateParams] = useState<ModalCreateInterface>({
         open: false,
@@ -51,12 +52,11 @@ const Album: React.FC<AlbumPageInterface> = () => {
 
     const fetchData = async () => {
         try {
+            setLoading(true);
             await albumApi().getAlbumById(id)
                 .then((response: ApiInformation) => {
-                    console.log(response)
                     if (response) {
                         setAlbum(response)
-                        console.log(response)
                         return response;
                     }
                     else throw new Error();
@@ -69,16 +69,33 @@ const Album: React.FC<AlbumPageInterface> = () => {
                 icon: "error"
             });
         }
+        finally {
+            setLoading(false);
+        }
     };
 
     const handleSendModal = async (event: React.FormEvent, formData: ModalCreateInputInterface, tag: string) => {
-        const sendResponse = await handleConfirmModalAdd(event, formData, tag);
+        try {
+            setLoading(true);
+            const sendResponse = await handleConfirmModalAdd(event, formData, tag);
 
-        console.log(sendResponse)
+            console.log(sendResponse)
 
-        if (sendResponse) {
-            closeModalAdd();
-            fetchData();
+            if (sendResponse) {
+                closeModalAdd();
+                fetchData();
+            }
+        }
+        catch (error: any) {
+            console.error(error);
+            Swal.fire({
+                title: "Error!",
+                text: "Error on send request.",
+                icon: "error"
+            });
+        }
+        finally {
+            setLoading(false);
         }
     }
 
@@ -117,6 +134,7 @@ const Album: React.FC<AlbumPageInterface> = () => {
 
     const handleClickChangeAlbumYear = async (event: React.MouseEvent<HTMLButtonElement>, id: string) => {
         try {
+            setLoading(true);
             if (album?.year) {
                 await albumApi().updateYearAlbum(id, album?.year)
                     .then((response: any) => {
@@ -145,12 +163,16 @@ const Album: React.FC<AlbumPageInterface> = () => {
                 icon: "error"
             });
         }
+        finally {
+            setLoading(false);
+        }
     }
 
     const handleDeleteAlbum = async (event: React.MouseEvent<HTMLButtonElement>, idAlbum: string) => {
         console.log("Cliquei na exclusao do album");
         console.log(idAlbum)
         try {
+            setLoading(true);
             await albumApi().deleteAlbum(idAlbum)
                 .then((response: any) => {
                     if (response.status) {
@@ -176,6 +198,9 @@ const Album: React.FC<AlbumPageInterface> = () => {
                 icon: "error"
             });
         }
+        finally {
+            setLoading(false);
+        }
     }
 
     const handleChangeAlbumYear = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -189,7 +214,8 @@ const Album: React.FC<AlbumPageInterface> = () => {
 
     const handleDeleteSong = async (event: React.MouseEvent<HTMLButtonElement>, idSong: string) => {
         try {
-            await songApi().deleteSong(idSong)
+            setLoading(true);
+            await songApi().deleteSongHandler(idSong)
                 .then((response: any) => {
                     if (response.status) {
                         Swal.fire({
@@ -213,6 +239,9 @@ const Album: React.FC<AlbumPageInterface> = () => {
                 text: "Error on delete song.",
                 icon: "error"
             });
+        }
+        finally {
+            setLoading(false);
         }
     }
 
@@ -244,7 +273,7 @@ const Album: React.FC<AlbumPageInterface> = () => {
         </Divider>
     }
 
-    if (!album) return <Divider>Loading...</Divider>
+    if (loading) return <Divider>Loading...</Divider>
 
     return <>
         {album && (

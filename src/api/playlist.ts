@@ -59,35 +59,16 @@ const playlistApi = () => {
                         "@assetType": "playlist"
                     }
                 }
+            }).then((response: any) => {
+                if(response.data && response.data.result){
+                    const result = response.data?.result;
+                    
+                    return result;
+                }
+                else return [];
             });
 
-            var data: ApiInformation[] = [];
-            for (let i = 0; i < response.data.result.length; i++) {
-                const element = response.data.result[i];
-                const songs: ApiInformation[] = [];
-
-                if (Array.isArray(element.songs)) {
-                    for (let j = 0; j < element.songs.length; j++) {
-                        const eachSong = await getSong().getSongInfo(element["@key"]);
-                        songs.push(eachSong);
-                    }
-                }
-
-                data.push({
-                    assetType: element["@assetType"],
-                    "@key": element["@key"],
-                    key: element["@key"],
-                    lastTouchBy: element["@lastTouchBy"],
-                    lastTx: element["@lastTx"],
-                    lastUpdated: element["@lastUpdated"],
-                    country: element.country,
-                    name: element.name,
-                    year: element.year,
-                    songs: songs
-                })
-            }
-
-            return data;
+            return response;
         }
         catch (error) {
             console.error(error);
@@ -287,7 +268,7 @@ const playlistApi = () => {
             await api.post("/invoke/deleteAsset", {
                 "key": {
                     "@assetType": "playlist",
-                    "@key": id       
+                    "@key": id
                 },
                 "tag": "cascade"
             })

@@ -29,6 +29,7 @@ const Playlist: React.FC<PlaylistInterface> = () => {
     const location = useLocation();
     const [loading, setLoading] = useState<boolean>(true);
     const [playlist, setPlaylist] = useState<ApiInformation>({
+        "@assetType": "",
         assetType: "",
         "@key": "",
         key: "",

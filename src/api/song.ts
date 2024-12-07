@@ -3,13 +3,14 @@ import { ApiInformation, SongSend } from "../interfaces/ApiInformation";
 import getAlbum from "./album";
 import api from "./api";
 import getArtist from "./artists";
+import playlistApi from "./playlist";
 
 const songApi = () => {
     const registerSong = async (request: SongSend) => {
-        try {            
+        try {
             if (request.idAlbum === null || request.idAlbum === undefined || request.idAlbum === "") throw "NO_ALBUM";
             if (request.songs === null || request.songs === undefined || request.songs.length === 0) throw "NO_SONG";
-            if(request.songs.some((element: InputField) => element.value === "" || element.value === null || element.value === undefined)) throw "NO_SONG_NAME";
+            if (request.songs.some((element: InputField) => element.value === "" || element.value === null || element.value === undefined)) throw "NO_SONG_NAME";
 
             const songs = request.songs.map((song: InputField) => {
                 return {
@@ -44,7 +45,7 @@ const songApi = () => {
             else if (error === "NO_SONG_NAME") return {
                 positiveConclusion: false,
                 message: "É necessário informar o nome do som"
-            }            
+            }
             else return {
                 positiveConclusion: false,
                 message: "Erro ao registrar som."
@@ -77,6 +78,7 @@ const songApi = () => {
                 }
 
                 data.push({
+                    "@assetType": element["@assetType"],
                     assetType: element["@assetType"],
                     "@key": element["@key"],
                     key: element["@key"],
@@ -138,38 +140,72 @@ const songApi = () => {
         }
     }
 
-    const deleteSong = async (id: string) => {
-        console.log("ID NA EXCLUSAO DO SONG: ", id)
+    const deleteSong = async (idSong: string) => {
         try {
-            const response = await api.post("/invoke/deleteAsset", {
+            return await api.post("/invoke/deleteAsset", {
                 key: {
                     "@assetType": "song",
-                    "@key": id
+                    "@key": idSong
                 }
             }).then((response: any) => {
                 return {
                     status: true,
-                    message: "Song deleted."
+                    message: "Song deleted successfully from database."
                 };
             });
-
-            return response;
         }
-        catch (error) {
+        catch (error){
             console.error(error);
             return {
                 status: false,
-                message: "Error on delete song."
+                message: "Error on song delete."
             };
         }
     }
+
+    const deleteSongHandler = async (idSong: string) => {
+        console.log("ID NA EXCLUSAO DO SONG: ", idSong)
+        try {
+            if (idSong === null || idSong === undefined || idSong == "") throw "NO_ID";
+    
+            const existSongOnPlaylist = await playlistApi().getAllPlaylists()
+                .then((response: any) => {
+                    return response.filter((element: any) =>
+                        element.songs.some((song: ApiInformation) => song["@key"] === idSong)
+                    );
+                });
+    
+            if (Array.isArray(existSongOnPlaylist) && existSongOnPlaylist.length > 0) {
+                for (let i = 0; i < existSongOnPlaylist.length; i++) {
+                    const element = existSongOnPlaylist[i];
+                    console.log(element["@key"]);
+                    await playlistApi().deletePlaylistSong(element["@key"], idSong);
+                }
+
+                const responseDeleteSong = await deleteSong(idSong);
+                return responseDeleteSong;
+            } else {
+                const responseDeleteSong = await deleteSong(idSong);
+                return responseDeleteSong;
+            }
+        } catch (error) {
+            console.error(error);
+            var message = "Error on delete song.";
+            if (error === "NO_ID") message = "No id found for delete song.";
+    
+            return {
+                status: false,
+                message: message
+            };
+        }
+    };
 
     return {
         registerSong,
         getAllSongs,
         getSongInfo,
         getSongsByAlbumId,
-        deleteSong
+        deleteSongHandler
     }
 }
 
