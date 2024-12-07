@@ -97,8 +97,29 @@ const Playlist: React.FC<PlaylistInterface> = () => {
         }
     }
 
-    const handleChangePrivate = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setPlaylist({ ...playlist, private: !playlist.private })
+    const handleChangePrivate = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        try {
+            setPlaylist({ ...playlist, private: !playlist.private })
+            setLoading(true);
+            await playlistApi().updatePrivateStatus(playlist["@key"])
+                .then((response: any) => {
+                    console.log(response)
+                })
+                .catch((error: any) => {
+                    throw new Error(error)
+                })
+        }
+        catch (error: any) {
+            console.error(error)
+            Swal.fire({
+                title: "Error!",
+                text: "Error on change private status.",
+                icon: "error"
+            });
+        }
+        finally {
+            setLoading(false);
+        }
     }
 
     const handleCancelModalAdd = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -166,7 +187,7 @@ const Playlist: React.FC<PlaylistInterface> = () => {
 
     const handleDeleteSong = async (event: React.MouseEvent<HTMLButtonElement>, idPlaylist: string, idSong: string) => {
         console.log("ID SONG", idSong)
-        console.log("ID PLAYLIST", idPlaylist)       
+        console.log("ID PLAYLIST", idPlaylist)
         try {
             await playlistApi().deletePlaylistSong(idPlaylist, idSong)
                 .then((response: any) => {

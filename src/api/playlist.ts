@@ -149,7 +149,7 @@ const playlistApi = () => {
 
                 request.songs.forEach((element: InputField) => {
                     const alreadyExists = playlistData.songs.some((item: any) => item["@key"] === element.value);
-            
+
                     if (!alreadyExists) {
                         newSongs.push({
                             "@assetType": "song",
@@ -240,6 +240,46 @@ const playlistApi = () => {
         }
     }
 
+    const updatePrivateStatus = async (idPlaylist: string) => {
+        try {
+            if (idPlaylist === null || idPlaylist === undefined || idPlaylist == "") throw "NO_PLAYLIST_ID";
+
+            const playlistData = await getPlaylistInfo(idPlaylist);
+
+            if (playlistData) {
+                await api.post("/invoke/updateAsset", {
+                    "update": {
+                        "@assetType": "playlist",
+                        "@key": idPlaylist,
+                        "private": playlistData.private
+                    }
+                }).then((response: any) => {
+                    return response;
+                })
+
+                return {
+                    status: true,
+                    message: "Private status updated!"
+                };
+            }
+
+            return {
+                status: false,
+                message: "Private status not updated on this playlist."
+            };
+        }
+        catch (error: any) {
+            console.error(error);
+            var message = "Error on update private status on this playlist.";
+            if (error === "NO_PLAYLIST_ID") message = "No playlist id found for update playlist private status.";
+
+            return {
+                status: false,
+                message: message
+            };
+        }
+    }
+
     const deletePlaylist = async (id: string) => {
         try {
             if (id === null || id === undefined || id == "") throw "NO_ID";
@@ -263,6 +303,7 @@ const playlistApi = () => {
         getAllPlaylists,
         getPlaylistInfo,
         addNewSoundsToPlaylist,
+        updatePrivateStatus,
         deletePlaylistSong,
         deletePlaylist
     }
