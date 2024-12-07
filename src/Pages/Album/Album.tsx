@@ -99,8 +99,6 @@ const Album: React.FC<AlbumPageInterface> = () => {
             setLoading(true);
             const sendResponse = await handleConfirmModalAdd(event, formData, tag);
 
-            console.log(sendResponse)
-
             if (sendResponse) {
                 closeModalAdd();
                 fetchData();

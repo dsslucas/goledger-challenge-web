@@ -171,7 +171,6 @@ const songApi = () => {
     }
 
     const deleteSongHandler = async (idSong: string) => {
-        console.log("ID NA EXCLUSAO DO SONG: ", idSong)
         try {
             if (idSong === null || idSong === undefined || idSong == "") throw "NO_ID";
 
@@ -185,7 +184,6 @@ const songApi = () => {
             if (Array.isArray(existSongOnPlaylist) && existSongOnPlaylist.length > 0) {
                 for (let i = 0; i < existSongOnPlaylist.length; i++) {
                     const element = existSongOnPlaylist[i];
-                    console.log(element["@key"]);
                     await playlistApi().deletePlaylistSong(element["@key"], idSong);
                 }
 

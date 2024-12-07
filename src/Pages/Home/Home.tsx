@@ -140,7 +140,6 @@ const Home = () => {
     }
 
     const handleClickCategory = (event: React.MouseEvent<HTMLButtonElement>, element: ApiInformation) => {
-        console.log(element)
         var tag = element["@assetType"];
         var id = element["@key"];
 
@@ -190,7 +189,6 @@ const Home = () => {
             setLoading(true);
             const sendResponse: ResponseData = await handleConfirmModalAdd(event, formData, tag);
 
-            console.log(sendResponse);
             if (sendResponse.status) {
                 if (sendResponse["@key"]) {
                     return redirectPage(navigate, sendResponse["@key"], tag === "song" ? "album" : tag)
@@ -262,7 +260,6 @@ const Home = () => {
     };
 
     useEffect(() => {
-        console.log("abri aqui")
         getSchema();
         fetchData();
     }, []);

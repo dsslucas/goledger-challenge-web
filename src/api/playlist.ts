@@ -203,8 +203,6 @@ const playlistApi = () => {
             if (playlistData.songs) {
                 newSongs = playlistData.songs.filter((element: ApiInformation) => element["@key"] !== idSong)
 
-                console.log(newSongs)
-
                 await api.post("/invoke/updateAsset", {
                     "update": {
                         "@assetType": "playlist",
@@ -212,7 +210,6 @@ const playlistApi = () => {
                         "songs": newSongs
                     }
                 }).then((response: any) => {
-                    console.log(response.data);
                     return response;
                 })
 

@@ -121,9 +121,6 @@ const Playlist: React.FC<PlaylistInterface> = () => {
             setLoading(true);
             setPlaylist({ ...playlist, private: !playlist.private });            
             await playlistApi().updatePrivateStatus(playlist["@key"])
-                .then((response: any) => {
-                    console.log(response)
-                })
                 .catch((error: any) => {
                     throw new Error(error)
                 })

@@ -35,7 +35,6 @@ const albumApi = () => {
                 
                 return response;
             }).then((response: any) => {
-                console.log(response)
                 if(response.data && Array.isArray(response.data) && response.data.length > 0){
                     return {
                         status: true,
@@ -236,8 +235,6 @@ const albumApi = () => {
             if (id === null || id === undefined || id == "") throw "NO_ID";
 
             await getAlbumById(id).then(async (response: ApiInformation) => {
-                console.log(response)
-
                 if (!response.songs) throw "NO_SOUNDS"
 
                 for (let i = 0; i < response.songs.length; i++) {
