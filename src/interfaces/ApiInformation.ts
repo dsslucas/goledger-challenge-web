@@ -41,3 +41,9 @@ export interface PlaylistSend {
     private: boolean;
     idPlaylist?: string;
 }
+
+export interface ResponseData {
+    "@key"?: string | null;
+    status: boolean;
+    message: string;
+}

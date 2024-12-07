@@ -10,32 +10,45 @@ const artistApi = () => {
             if (request.name === null || request.name === undefined || request.name === "") throw "NO_NAME";
             if (request.country === null || request.country === undefined || request.country === "") throw "NO_COUNTRY";
 
-            await api.post("/invoke/createAsset", {
+            return await api.post("/invoke/createAsset", {
                 asset: [{
                     "@assetType": "artist",
                     "name": request.name,
                     "country": request.country
                 }]
+            }).then((response: any) => {
+                if(response.data && Array.isArray(response.data) && response.data.length > 0){
+                    return {
+                        status: true,
+                        message: "Artist registered!",
+                        "@key": response.data[0]["@key"]
+                    }
+                }
+                return {
+                    status: true,
+                    message: "Artist registered!",
+                    "@key": null
+                }                
+            }).catch((error: any) => {
+                return {
+                    status: false,
+                    message: "The artist isn't registered by error."
+                }
             });
-
-            return {
-                positiveConclusion: true,
-                message: "Artista registrado!"
-            }
         }
         catch (error) {
             console.error(error)
             if (error === "NO_NAME") return {
-                positiveConclusion: false,
-                message: "É necessário informar o nome do artista."
+                status: false,
+                message: "You should inform the name of artist."
             };
             else if (error === "NO_COUNTRY") return {
-                positiveConclusion: false,
-                message: "É necessário informar o país do artista."
+                status: false,
+                message: "You should inform the country of artist."
             };
             else return {
-                positiveConclusion: false,
-                message: "Erro ao registrar artista."
+                status: false,
+                message: "Error while artist register."
             };
         }
     }

@@ -27,25 +27,40 @@ const playlistApi = () => {
                 }]
             }
 
-            await api.post("/invoke/createAsset", payload);
-
-            return {
-                positiveConclusion: true,
-                message: "Playlist registrada!"
-            }
+            return await api.post("/invoke/createAsset", payload)
+                .then((response: any) => {
+                    if (response.data && Array.isArray(response.data) && response.data.length > 0) {
+                        return {
+                            status: true,
+                            message: "Playlist registered!",
+                            "@key": response.data[0]["@key"]
+                        }
+                    }
+                    return {
+                        status: true,
+                        message: "Playlist registered!",
+                        "@key": null
+                    }
+                }).catch((error: any) => {
+                    console.error(error);
+                    return {
+                        status: false,
+                        message: "The playlist isn't registered by error."
+                    }
+                });
         }
         catch (error: any) {
             console.error(error.response.data)
             if (error === "NO_NAME") return {
-                positiveConclusion: false,
+                status: false,
                 message: "É necessário informar o nome da playlist."
             };
             else if (error === "NO_PRIVATE") return {
-                positiveConclusion: false,
+                status: false,
                 message: 'O dado "privado" não foi informada.'
             }
             else return {
-                positiveConclusion: false,
+                status: false,
                 message: "Erro ao registrar playlist."
             };
         }
@@ -60,9 +75,9 @@ const playlistApi = () => {
                     }
                 }
             }).then((response: any) => {
-                if(response.data && response.data.result){
+                if (response.data && response.data.result) {
                     const result = response.data?.result;
-                    
+
                     return result;
                 }
                 else return [];
@@ -139,21 +154,25 @@ const playlistApi = () => {
                     }
                 });
 
-                await api.post("/invoke/updateAsset", {
+                return await api.post("/invoke/updateAsset", {
                     "update": {
                         "@assetType": "playlist",
                         "@key": request.idPlaylist,
                         "songs": newSongs
                     }
                 }).then((response: any) => {
-                    console.log(response.data);
-                    return response;
-                })
-
-                return {
-                    status: true,
-                    message: "Songs added!"
-                };
+                    return {
+                        status: true,
+                        message: "Playlist song registered!",
+                        "@key": null
+                    }
+                }).catch((error: any) => {
+                    console.error(error);
+                    return {
+                        status: false,
+                        message: "The new playlist song isn't registered by error."
+                    }
+                });
             }
 
             return {

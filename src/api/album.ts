@@ -15,7 +15,7 @@ const albumApi = () => {
             if (request.year === null || request.year === undefined || request.year === "") throw "NO_YEAR";
             if ((request.songs === null || request.songs === undefined || request.songs.length === 0) && (request.songs.some((element: InputField) => element.value === "" || element.value === null || element.value === undefined))) throw "NO_SONG_NAME";
 
-            await api.post("/invoke/createAsset", {
+            return await api.post("/invoke/createAsset", {
                 asset: [{
                     "@assetType": "album",
                     "name": request.name,
@@ -27,45 +27,59 @@ const albumApi = () => {
                 }]
             }).then(async (response: any) => {
                 if (request.songs.length > 0) {
-                    return await songApi().registerSong({
+                    await songApi().registerSong({
                         idAlbum: response.data[0]["@key"],
                         songs: request.songs
                     })
                 }
-                else {
-                    return response.data.result;
+                
+                return response;
+            }).then((response: any) => {
+                console.log(response)
+                if(response.data && Array.isArray(response.data) && response.data.length > 0){
+                    return {
+                        status: true,
+                        message: "Album registered!",
+                        "@key": response.data[0]["@key"]
+                    }
+                }
+                return {
+                    status: true,
+                    message: "Album registered!",
+                    "@key": null
+                }
+            }).catch((error: any) => {
+                console.error(error);
+                return {
+                    status: false,
+                    message: "The artist isn't registered by error."
                 }
             });
-
-            return {
-                positiveConclusion: true,
-                message: "Album registered!"
-            }
         }
         catch (error) {
             console.error(error)
             if (error === "NO_ARTIST") return {
-                positiveConclusion: false,
+                status: false,
                 message: "You should inform the artist name."
             };
             else if (error === "NO_NAME") return {
-                positiveConclusion: false,
+                status: false,
                 message: "You should inform the album name."
             }
             else if (error === "NO_YEAR") return {
-                positiveConclusion: false,
+                status: false,
                 message: "You should inform the album year."
             }
             else if (error === "NO_SONG") return {
-                positiveConclusion: false,
+                status: false,
                 message: "You should inform at least one song"
             }
             else if (error === "NO_SONG_NAME") return {
-                positiveConclusion: false,
+                status: false,
                 message: "You should inform the song name"
             }
             else return {
-                positiveConclusion: false,
+                status: false,
                 message: "Erro ao registrar álbum."
             };
         }

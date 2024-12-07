@@ -23,32 +23,39 @@ const songApi = () => {
                 }
             })
 
-            await api.post("/invoke/createAsset", {
+            return await api.post("/invoke/createAsset", {
                 asset: songs
-            })
-
-            return {
-                positiveConclusion: true,
-                message: "Som registrado!"
-            }
+            }).then(() => {
+                return {
+                    status: true,
+                    message: "Song registered!",
+                    "@key": request.idAlbum
+                }
+            }).catch((error: any) => {
+                console.error(error);
+                return {
+                    status: false,
+                    message: "The song isn't registered by error."
+                }
+            });
         }
         catch (error) {
             console.error(error)
             if (error === "NO_ALBUM") return {
-                positiveConclusion: false,
-                message: "É necessário informar o álbum."
+                status: false,
+                message: "You should inform the album."
             };
             else if (error === "NO_SONG") return {
-                positiveConclusion: false,
-                message: "É necessário informar pelo menos um som."
+                status: false,
+                message: "You should inform at least one song"
             }
             else if (error === "NO_SONG_NAME") return {
-                positiveConclusion: false,
-                message: "É necessário informar o nome do som"
+                status: false,
+                message: "One of songs not have name."
             }
             else return {
-                positiveConclusion: false,
-                message: "Erro ao registrar som."
+                status: false,
+                message: "Error during song registration."
             };
         }
     }
@@ -113,7 +120,7 @@ const songApi = () => {
             return response.data;
         }
         catch (error) {
-            console.error("Erro ao buscar artista:", error);
+            console.error("Error:", error);
             return [];
         }
     }
@@ -150,11 +157,11 @@ const songApi = () => {
             }).then((response: any) => {
                 return {
                     status: true,
-                    message: "Song deleted successfully from database."
+                    message: "Song deleted successfully."
                 };
             });
         }
-        catch (error){
+        catch (error) {
             console.error(error);
             return {
                 status: false,
@@ -167,14 +174,14 @@ const songApi = () => {
         console.log("ID NA EXCLUSAO DO SONG: ", idSong)
         try {
             if (idSong === null || idSong === undefined || idSong == "") throw "NO_ID";
-    
+
             const existSongOnPlaylist = await playlistApi().getAllPlaylists()
                 .then((response: any) => {
                     return response.filter((element: any) =>
                         element.songs.some((song: ApiInformation) => song["@key"] === idSong)
                     );
                 });
-    
+
             if (Array.isArray(existSongOnPlaylist) && existSongOnPlaylist.length > 0) {
                 for (let i = 0; i < existSongOnPlaylist.length; i++) {
                     const element = existSongOnPlaylist[i];
@@ -192,7 +199,7 @@ const songApi = () => {
             console.error(error);
             var message = "Error on delete song.";
             if (error === "NO_ID") message = "No id found for delete song.";
-    
+
             return {
                 status: false,
                 message: message

@@ -3,7 +3,7 @@ import getPlaylist from "../../api/playlist";
 import { ColorInterface, SchemaSectionInterface } from "../../Interface";
 import getAlbum from "../../api/album";
 import getSong from "../../api/song";
-import { ApiInformation, ArtistSend } from "../../interfaces/ApiInformation";
+import { ApiInformation, ArtistSend, ResponseData } from "../../interfaces/ApiInformation";
 import api from "../../api/api";
 import Section from "../../components/Section/Section";
 import Divider from "../../components/Divider/Divider";
@@ -29,8 +29,9 @@ import songApi from "../../api/song";
 import playlistApi from "../../api/playlist";
 import { handleConfirmModalAdd } from "../../common/sendModalAdd";
 import renderizeLoading from "../../common/renderizeLoading";
+import { redirectPage } from "../../common/redirectPage";
 const Home = () => {
-    const navigation = useNavigate();
+    const navigate = useNavigate();
 
     const [loading, setLoading] = useState<boolean>(true);
     const [apiColors, setApiColors] = useState<ColorInterface>();
@@ -143,26 +144,14 @@ const Home = () => {
         var tag = element["@assetType"];
         var id = element["@key"];
 
-        async function redirectToDetailPage(id: string, tag: string) {
-            console.log(id)
-            console.log(tag)
-
-            await navigation(`/${tag}`, {
-                state: {
-                    id: id,
-                }
-            });
-        }
-
         if (element) {
             if (element.assetType === "song" && element.album) {
                 tag = "album";
                 id = element.album["@key"];
-
-                redirectToDetailPage(id, tag);
+                redirectPage(navigate, id, tag)
             }
             else if (tag === "artist" || tag === "album" || tag === "playlist") {
-                redirectToDetailPage(id, tag);
+                redirectPage(navigate, id, tag)
             }
             else {
                 Swal.fire({
@@ -198,11 +187,18 @@ const Home = () => {
 
     const handleSendModal = async (event: React.FormEvent, formData: ModalCreateInputInterface, tag: string) => {
         try {
-            const sendResponse = await handleConfirmModalAdd(event, formData, tag);
+            setLoading(true);
+            const sendResponse: ResponseData = await handleConfirmModalAdd(event, formData, tag);
 
-            if (sendResponse) {
-                closeModalAdd();
-                fetchData();
+            console.log(sendResponse);
+            if (sendResponse.status) {
+                if (sendResponse["@key"]) {
+                    return redirectPage(navigate, sendResponse["@key"], tag === "song" ? "album" : tag)
+                }
+                else {
+                    closeModalAdd();
+                    fetchData();
+                }
             }
         }
         catch (error) {

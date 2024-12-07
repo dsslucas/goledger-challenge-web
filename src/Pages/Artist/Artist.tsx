@@ -29,6 +29,7 @@ import { ModalCreateInputInterface, ModalCreateInterface } from "../Modal/Interf
 import ModalCreate from "../Modal/ModalCreate";
 import { handleConfirmModalAdd } from "../../common/sendModalAdd";
 import renderizeLoading from "../../common/renderizeLoading";
+import { redirectPage } from "../../common/redirectPage";
 
 const Artist: React.FC<ArtistPageInterface> = () => {
     const location = useLocation();
@@ -239,7 +240,7 @@ const Artist: React.FC<ArtistPageInterface> = () => {
                             text: response.message,
                             icon: "success"
                         });
-                        navigate("/home");
+                        redirectPage(navigate, "home", undefined);
                     }
                     else Swal.fire({
                         title: "Error!",

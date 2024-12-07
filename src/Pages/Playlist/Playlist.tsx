@@ -24,6 +24,7 @@ import Input from "../../components/Input/Input";
 import Aside from "../../components/Aside/Aside";
 import H4 from "../../components/H4/H4";
 import renderizeLoading from "../../common/renderizeLoading";
+import { redirectPage } from "../../common/redirectPage";
 
 const Playlist: React.FC<PlaylistInterface> = () => {
     const navigate = useNavigate();
@@ -184,7 +185,7 @@ const Playlist: React.FC<PlaylistInterface> = () => {
                             text: response.message,
                             icon: "success"
                         });
-                        navigate("/home");
+                        redirectPage(navigate, "home", undefined);
                     }
                     else Swal.fire({
                         title: "Error!",

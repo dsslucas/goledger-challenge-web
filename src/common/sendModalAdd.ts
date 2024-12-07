@@ -4,9 +4,9 @@ import artistApi from "../api/artists";
 import albumApi from "../api/album";
 import songApi from "../api/song";
 import playlistApi from "../api/playlist";
-import { AlbumSend } from "../interfaces/ApiInformation";
+import { AlbumSend, ResponseData } from "../interfaces/ApiInformation";
 
-export const handleConfirmModalAdd = async (event: React.FormEvent, formData: ModalCreateInputInterface, tag: string): Promise<boolean> => {
+export const handleConfirmModalAdd = async (event: React.FormEvent, formData: ModalCreateInputInterface, tag: string): Promise<ResponseData> => {
     event.preventDefault();
 
     if (!formData) {
@@ -15,7 +15,11 @@ export const handleConfirmModalAdd = async (event: React.FormEvent, formData: Mo
             text: "Internal error.",
             icon: "error"
         });
-        return false;
+        return {
+            status: false,
+            message: "Internal error.",
+            "@key": null
+        }
     }
 
     try {
@@ -23,19 +27,27 @@ export const handleConfirmModalAdd = async (event: React.FormEvent, formData: Mo
             if (!formData?.name) {
                 await Swal.fire({
                     title: "Error!",
-                    text: "Informe o nome do artista.",
+                    text: "You should inform the artist name.",
                     icon: "error"
                 });
-                return false;
+                return {
+                    status: false,
+                    message: "You should inform the artist name.",
+                    "@key": null
+                }
             }
 
             if (!formData?.country) {
                 await Swal.fire({
                     title: "Error!",
-                    text: "Informe o país do artista.",
+                    text: "You should inform the country of artist.",
                     icon: "error"
                 });
-                return false;
+                return {
+                    status: false,
+                    message: "You should inform the country of artist.",
+                    "@key": null
+                }
             }
 
             const data = {
@@ -43,14 +55,18 @@ export const handleConfirmModalAdd = async (event: React.FormEvent, formData: Mo
                 country: formData.country,
             };
 
-            const response = await artistApi().postNewArtist(data);
+            const response: ResponseData = await artistApi().postNewArtist(data);
             await Swal.fire({
-                title: response.positiveConclusion ? "Success!" : "Error!",
+                title: response.status ? "Success!" : "Error!",
                 text: response.message,
-                icon: response.positiveConclusion ? "success" : "error",
+                icon: response.status ? "success" : "error",
             });
 
-            return response.positiveConclusion;
+            return {
+                "@key": response["@key"],
+                status: response.status,
+                message: response.message
+            };
         }
 
         if (tag.toLowerCase() === "album") {
@@ -61,14 +77,18 @@ export const handleConfirmModalAdd = async (event: React.FormEvent, formData: Mo
                 songs: formData.songs,
             };
 
-            const response = await albumApi().registerNewAlbum(data);
+            const response: ResponseData = await albumApi().registerNewAlbum(data);
             await Swal.fire({
-                title: response.positiveConclusion ? "Success!" : "Error!",
+                title: response.status ? "Success!" : "Error!",
                 text: response.message,
-                icon: response.positiveConclusion ? "success" : "error",
+                icon: response.status ? "success" : "error",
             });
 
-            return response.positiveConclusion;
+            return {
+                "@key": response["@key"],
+                status: response.status,
+                message: response.message
+            };
         }
 
         if (tag.toLowerCase() === "song") {
@@ -77,14 +97,18 @@ export const handleConfirmModalAdd = async (event: React.FormEvent, formData: Mo
                 songs: formData.songs,
             };
 
-            const response = await songApi().registerSong(data);
+            const response: ResponseData = await songApi().registerSong(data);
             await Swal.fire({
-                title: response.positiveConclusion ? "Success!" : "Error!",
+                title: response.status ? "Success!" : "Error!",
                 text: response.message,
-                icon: response.positiveConclusion ? "success" : "error",
+                icon: response.status ? "success" : "error",
             });
 
-            return response.positiveConclusion;
+            return {
+                "@key": response["@key"],
+                status: response.status,
+                message: response.message
+            };
         }
 
         if (tag.toLowerCase() === "playlist") {
@@ -94,14 +118,18 @@ export const handleConfirmModalAdd = async (event: React.FormEvent, formData: Mo
                 private: formData.private,
             };
 
-            const response = await playlistApi().createPlaylist(data);
+            const response: ResponseData = await playlistApi().createPlaylist(data);
             await Swal.fire({
-                title: response.positiveConclusion ? "Success!" : "Error!",
+                title: response.status ? "Success!" : "Error!",
                 text: response.message,
-                icon: response.positiveConclusion ? "success" : "error",
+                icon: response.status ? "success" : "error",
             });
 
-            return response.positiveConclusion;
+            return {
+                "@key": response["@key"],
+                status: response.status,
+                message: response.message
+            };
         }
 
         if (tag.toLowerCase() === "playlist_add_song") {
@@ -110,24 +138,35 @@ export const handleConfirmModalAdd = async (event: React.FormEvent, formData: Mo
                 songs: formData.songs
             };
 
-            const response = await playlistApi().addNewSoundsToPlaylist(data);
+            const response: ResponseData = await playlistApi().addNewSoundsToPlaylist(data);
             await Swal.fire({
                 title: response.status ? "Success!" : "Error!",
                 text: response.message,
                 icon: response.status ? "success" : "error",
             });
 
-            return response.status;
+            return {
+                "@key": response["@key"],
+                status: response.status,
+                message: response.message
+            };
         }
 
-        return false;
+        return {
+            status: false,
+            message: "Process not found."
+        }
     } catch (error: any) {
         console.error(error);
         await Swal.fire({
             title: "Error!",
-            text: error.response?.message || "Ocorreu um erro inesperado.",
+            text: error.response?.message || "Internal error.",
             icon: "error"
         });
-        return false;
+
+        return {
+            status: false,
+            message: error.response?.message || "Internal error."
+        }
     }
 };

@@ -26,6 +26,7 @@ import ModalCreate from "../Modal/ModalCreate";
 import { ModalCreateInputInterface, ModalCreateInterface } from "../Modal/Interface";
 import { handleConfirmModalAdd } from "../../common/sendModalAdd";
 import renderizeLoading from "../../common/renderizeLoading";
+import { redirectPage } from "../../common/redirectPage";
 
 const Album: React.FC<AlbumPageInterface> = () => {
     const navigate = useNavigate();
@@ -192,7 +193,7 @@ const Album: React.FC<AlbumPageInterface> = () => {
                             text: response.message,
                             icon: "success"
                         });
-                        navigate("/home");
+                        redirectPage(navigate, "home", undefined);
                     }
                     else Swal.fire({
                         title: "Error!",
