@@ -25,6 +25,12 @@ import Aside from "../../components/Aside/Aside";
 import H4 from "../../components/H4/H4";
 import renderizeLoading from "../../common/renderizeLoading";
 import { redirectPage } from "../../common/redirectPage";
+import Table from "../../components/Table/Table";
+import Thead from "../../components/Table/Thead";
+import TableTr from "../../components/Table/Tr";
+import TableTh from "../../components/Table/Th";
+import Tbody from "../../components/Table/Tbody";
+import TableTd from "../../components/Table/Td";
 
 const Playlist: React.FC<PlaylistInterface> = () => {
     const navigate = useNavigate();
@@ -57,6 +63,7 @@ const Playlist: React.FC<PlaylistInterface> = () => {
 
     useEffect(() => {
         fetchData();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id]);
 
     if (!location.state || !id) {
@@ -239,32 +246,33 @@ const Playlist: React.FC<PlaylistInterface> = () => {
 
     const renderSongs = (response: ApiInformation) => {
         if (response.songs && response.songs?.length > 0) {
-            return <table className="w-full text-center">
-                <thead>
-                    <tr className={`bg-gray-600 text-white`}>
-                        <th>#</th>
-                        <th>Song</th>
-                        <th>Artist</th>
-                        <th>Album</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
+            return <Table widthFull textCenter>
+                <Thead backgroundGray textWhite>
+                    <TableTr>
+                        <TableTh>#</TableTh>
+                        <TableTh>Song</TableTh>
+                        <TableTh>Artist</TableTh>
+                        <TableTh>Album</TableTh>
+                        <TableTh> </TableTh>
+                    </TableTr>
+                </Thead>
+                <Tbody>
                     {response.songs.map((song: ApiInformation, index: number) => {
                         if (song.album && song.artist) {
-                            return <tr key={song["@key"]} className="even:bg-gray-500 even:bg-opacity-30">
-                                <td>{index + 1}</td>
-                                <td>{song.name}</td>
-                                <td>{song.artist.name}</td>
-                                <td>{song.album.name}</td>
-                                <td>
+                            return <TableTr key={song["@key"]} backgroundStripedGray>
+                                <TableTd>{index + 1}</TableTd>
+                                <TableTd>{song.name}</TableTd>
+                                <TableTd>{song.artist.name}</TableTd>
+                                <TableTd>{song.album.name}</TableTd>
+                                <TableTd>
                                     <Button type="button" icon deleteBackgroundColor textWhite rounded onClick={(event: React.MouseEvent<HTMLButtonElement>) => handleDeleteSong(event, response["@key"], song["@key"])}><FontAwesomeIcon icon={faTrash} /></Button>
-                                </td>
-                            </tr>
+                                </TableTd>
+                            </TableTr>
                         }
+                        else return <></>
                     })}
-                </tbody>
-            </table>;
+                </Tbody>
+            </Table>;
         }
         else return <Divider flex justifyCenter itemsCenter>
             <Span>Nothing registered there.</Span>

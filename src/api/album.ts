@@ -3,17 +3,17 @@ import { AlbumSend, ApiInformation } from "../interfaces/ApiInformation";
 import api from "./api";
 import artistApi from "./artists";
 import getArtist from "./artists";
-import playlistApi from "./playlist";
 import songApi from "./song";
 import getSong from "./song";
+import { generateThrow } from "./throw";
 
 const albumApi = () => {
     const registerNewAlbum = async (request: AlbumSend) => {
         try {
-            if (request.idArtist === null || request.idArtist === undefined || request.idArtist === "") throw "NO_ARTIST";
-            if (request.name === null || request.name === undefined || request.name === "") throw "NO_NAME";
-            if (request.year === null || request.year === undefined || request.year === "") throw "NO_YEAR";
-            if ((request.songs === null || request.songs === undefined || request.songs.length === 0) && (request.songs.some((element: InputField) => element.value === "" || element.value === null || element.value === undefined))) throw "NO_SONG_NAME";
+            if (request.idArtist === null || request.idArtist === undefined || request.idArtist === "") throw generateThrow("NO_ARTIST");
+            if (request.name === null || request.name === undefined || request.name === "") throw generateThrow("NO_NAME");
+            if (request.year === null || request.year === undefined || request.year === "") throw generateThrow("NO_YEAR");
+            if ((request.songs === null || request.songs === undefined || request.songs.length === 0) && (request.songs.some((element: InputField) => element.value === "" || element.value === null || element.value === undefined))) throw generateThrow("NO_SONG_NAME");
 
             return await api.post("/invoke/createAsset", {
                 asset: [{
@@ -119,18 +119,13 @@ const albumApi = () => {
         }
         catch (error) {
             console.error(error);
-            var message = "Error on get albuns.";
             return [];
-            // return {
-            //     status: false,
-            //     message: message
-            // };
         }
     }
 
     const getAlbumById = async (id: string) => {
         try {
-            if (id === null || id === undefined || id == "") throw "NO_ID";
+            if (id === null || id === undefined || id === "") throw generateThrow("NO_ID");
 
             const response = await api.post("/query/readAsset", {
                 key: {
@@ -165,7 +160,7 @@ const albumApi = () => {
 
     const getAlbunsByArtistId = async (id: string) => {
         try {
-            if (id === null || id === undefined || id == "") throw "NO_ID";
+            if (id === null || id === undefined || id === "") throw generateThrow("NO_ID");
 
             const response = await api.post("/query/search", {
                 query: {
@@ -200,21 +195,27 @@ const albumApi = () => {
 
     const updateYearAlbum = async (id: string, value: number) => {
         try {
-            if (id === null || id === undefined || id == "") throw "NO_ID";
-            if (value === null || value === undefined) throw "NO_VALUE";
+            if (id === null || id === undefined || id === "") throw generateThrow("NO_ID");
+            if (value === null || value === undefined) throw generateThrow("NO_VALUE");
 
-            const response = await api.post("/invoke/updateAsset", {
+            return await api.post("/invoke/updateAsset", {
                 "update": {
                     "@assetType": "album",
                     "@key": id,
                     "year": Number(value)
                 }
-            });
-
-            return {
-                status: true,
-                message: "Year updated."
-            };
+            }).then(() => {
+                return {
+                    status: true,
+                    message: "Year updated."
+                };
+            }).catch((error: any) => {
+                console.error(error)
+                return {
+                    status: false,
+                    message: "Error during year update."
+                };
+            });            
         }
         catch (error) {
             console.error(error);
@@ -232,10 +233,10 @@ const albumApi = () => {
 
     const deleteAlbum = async (id: string) => {
         try {
-            if (id === null || id === undefined || id == "") throw "NO_ID";
+            if (id === null || id === undefined || id === "") throw generateThrow("NO_ID");
 
             await getAlbumById(id).then(async (response: ApiInformation) => {
-                if (!response.songs) throw "NO_SOUNDS"
+                if (!response.songs) throw generateThrow("NO_SOUNDS");
 
                 for (let i = 0; i < response.songs.length; i++) {
                     const element = response.songs[i];

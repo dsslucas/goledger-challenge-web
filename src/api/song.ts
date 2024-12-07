@@ -4,14 +4,14 @@ import getAlbum from "./album";
 import api from "./api";
 import getArtist from "./artists";
 import playlistApi from "./playlist";
+import { generateThrow } from "./throw";
 
 const songApi = () => {
     const registerSong = async (request: SongSend) => {
         try {
-            if (request.idAlbum === null || request.idAlbum === undefined || request.idAlbum === "") throw "NO_ALBUM";
-            if (request.songs === null || request.songs === undefined || request.songs.length === 0) throw "NO_SONG";
-            if (request.songs.some((element: InputField) => element.value === "" || element.value === null || element.value === undefined)) throw "NO_SONG_NAME";
-
+            if (request.idAlbum === null || request.idAlbum === undefined || request.idAlbum === "") throw generateThrow("NO_ALBUM");
+            if (request.songs === null || request.songs === undefined || request.songs.length === 0) throw generateThrow("NO_SONG");
+            if (request.songs.some((element: InputField) => element.value === "" || element.value === null || element.value === undefined)) throw generateThrow("NO_SONG_NAME");
             const songs = request.songs.map((song: InputField) => {
                 return {
                     "@assetType": "song",
@@ -172,7 +172,7 @@ const songApi = () => {
 
     const deleteSongHandler = async (idSong: string) => {
         try {
-            if (idSong === null || idSong === undefined || idSong == "") throw "NO_ID";
+            if (idSong === null || idSong === undefined || idSong === "") throw generateThrow("NO_ID");
 
             const existSongOnPlaylist = await playlistApi().getAllPlaylists()
                 .then((response: any) => {

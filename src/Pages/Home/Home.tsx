@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import getPlaylist from "../../api/playlist";
-import { ColorInterface, SchemaSectionInterface } from "../../Interface";
+import { SchemaSectionInterface } from "../../Interface";
 import getAlbum from "../../api/album";
 import getSong from "../../api/song";
-import { ApiInformation, ArtistSend, ResponseData } from "../../interfaces/ApiInformation";
+import { ApiInformation, ResponseData } from "../../interfaces/ApiInformation";
 import api from "../../api/api";
 import Section from "../../components/Section/Section";
 import Divider from "../../components/Divider/Divider";
@@ -26,15 +26,14 @@ import artistApi from "../../api/artists";
 import { Option } from "../../components/Select/Interface";
 import albumApi from "../../api/album";
 import songApi from "../../api/song";
-import playlistApi from "../../api/playlist";
 import { handleConfirmModalAdd } from "../../common/sendModalAdd";
 import renderizeLoading from "../../common/renderizeLoading";
 import { redirectPage } from "../../common/redirectPage";
+
 const Home = () => {
     const navigate = useNavigate();
 
     const [loading, setLoading] = useState<boolean>(true);
-    const [apiColors, setApiColors] = useState<ColorInterface>();
     const [schema, setSchema] = useState<SchemaSectionInterface[]>();
 
     // Data
@@ -262,6 +261,8 @@ const Home = () => {
     useEffect(() => {
         getSchema();
         fetchData();
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return <>
@@ -285,7 +286,7 @@ const Home = () => {
                 <Divider flex justifyBetween widthOneHalf>
                     {schema && schema?.length > 0 && (
                         schema.map((element: SchemaSectionInterface, index: number) => {
-                            return <Button type="button" key={index} border rounded paddingX2 borderColorHover={apiColors?.gray} onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleClickOption(e, element.label, element.tag)}>{element.label}</Button>
+                            return <Button type="button" key={index} border rounded paddingX2 onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleClickOption(e, element.label, element.tag)}>{element.label}</Button>
                         })
                     )}
                 </Divider>

@@ -5,7 +5,7 @@ import { ApiInformation } from "../../interfaces/ApiInformation";
 import albumApi from "../../api/album";
 import Swal from "sweetalert2";
 import Button from "../../components/Button/Button";
-import { faLocationDot, faPen, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faPen, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Divider from "../../components/Divider/Divider";
 import Span from "../../components/Span/Span";
@@ -19,8 +19,6 @@ import Banjo from "../../assets/img/banjo.jpg";
 import songApi from "../../api/song";
 import Label from "../../components/Label/Label";
 import Aside from "../../components/Aside/Aside";
-import CountryRoads from "../../assets/img/country.jpg";
-import H1 from "../../components/H1/H1";
 import H4 from "../../components/H4/H4";
 import ModalCreate from "../Modal/ModalCreate";
 import { ModalCreateInputInterface, ModalCreateInterface } from "../Modal/Interface";
@@ -64,6 +62,8 @@ const Album: React.FC<AlbumPageInterface> = () => {
 
     useEffect(() => {
         fetchData();
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id]);
 
     if (!location.state || !id) {
@@ -280,6 +280,7 @@ const Album: React.FC<AlbumPageInterface> = () => {
                                 <Button type="button" icon deleteBackgroundColor textWhite rounded onClick={(event: React.MouseEvent<HTMLButtonElement>) => handleDeleteSong(event, song["@key"])}><FontAwesomeIcon icon={faTrash} /></Button>
                             </TableTd>
                         </TableTr>
+                        else return <></>
                     })}
                 </Tbody>
             </Table>;

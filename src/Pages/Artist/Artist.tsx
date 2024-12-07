@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Album, ArtistPageInterface } from "./Interface";
+import { ArtistPageInterface } from "./Interface";
 import { Navigate, useLocation, useNavigate } from "react-router";
 import Section from "../../components/Section/Section";
 import H1 from "../../components/H1/H1";
@@ -19,7 +19,6 @@ import Divider from "../../components/Divider/Divider";
 import { ApiInformation } from "../../interfaces/ApiInformation";
 import Aside from "../../components/Aside/Aside";
 import getAlbum from "../../api/album";
-import getSong from "../../api/song";
 import songApi from "../../api/song";
 import Swal from "sweetalert2";
 import albumApi from "../../api/album";
@@ -52,7 +51,6 @@ const Artist: React.FC<ArtistPageInterface> = () => {
         lastTx: "",
         lastUpdated: ""
     });
-    const [songs, setSongs] = useState<ApiInformation[] | null>(null);
 
     const [modalCreateParams, setModalCreateParams] = useState<ModalCreateInterface>({
         open: false,
@@ -70,16 +68,6 @@ const Artist: React.FC<ArtistPageInterface> = () => {
                 .then((response: ApiInformation) => {
                     setArtist(response)
                     return response;
-                })
-                .then((response: ApiInformation) => {
-                    response.albuns?.forEach(async (element: ApiInformation) => {
-                        await getSong().getSongsByAlbumId(element["@key"])
-                            .then((returnSongs: ApiInformation[]) => {
-                                returnSongs?.forEach((eachSong: ApiInformation) => {
-                                    setSongs((prevSongs) => (prevSongs ? [...prevSongs, eachSong] : [eachSong]));
-                                })
-                            })
-                    })
                 });
         } catch (err) {
             console.error(err)
@@ -98,6 +86,8 @@ const Artist: React.FC<ArtistPageInterface> = () => {
 
     useEffect(() => {
         fetchData();
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id]);
 
     if (!location.state || !id) {
@@ -214,6 +204,7 @@ const Artist: React.FC<ArtistPageInterface> = () => {
                                 <Button type="button" icon deleteBackgroundColor textWhite rounded onClick={(event: React.MouseEvent<HTMLButtonElement>) => handleDeleteSong(event, song["@key"])}><FontAwesomeIcon icon={faTrash} /></Button>
                             </TableTd>
                         </TableTr>
+                        else return <></>
                     })}
                 </Tbody>
             </Table>;

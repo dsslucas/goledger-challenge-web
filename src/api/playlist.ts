@@ -3,13 +3,13 @@ import { ApiInformation, PlaylistSend } from "../interfaces/ApiInformation";
 import albumApi from "./album";
 import api from "./api";
 import songApi from "./song";
-import getSong from "./song";
+import { generateThrow } from "./throw";
 
 const playlistApi = () => {
     const createPlaylist = async (request: PlaylistSend) => {
         try {
-            if (request.name === null || request.name === undefined || request.name === "") throw "NO_NAME";
-            if (request.private === null || request.private === undefined) throw "NO_PRIVATE";
+            if (request.name === null || request.name === undefined || request.name === "") throw generateThrow("NO_NAME");
+            if (request.private === null || request.private === undefined) throw generateThrow("NO_PRIVATE");
 
             const songs = request.songs.map((song: InputField) => {
                 return {
@@ -93,7 +93,7 @@ const playlistApi = () => {
 
     const getPlaylistInfo = async (id: string) => {
         try {
-            if (id === null || id === undefined || id == "") throw "NO_ID";
+            if (id === null || id === undefined || id === "") throw generateThrow("NO_ID");
 
             return await api.post("/query/readAsset", {
                 key: {
@@ -134,9 +134,9 @@ const playlistApi = () => {
 
     const addNewSoundsToPlaylist = async (request: PlaylistSend) => {
         try {
-            if (request === null || request === undefined) throw "NO_DATA";
-            if (request.idPlaylist === null || request.idPlaylist === undefined || request.idPlaylist === "") throw "NO_PLAYLIST_ID";
-            if (request.songs === null || request.songs === undefined || !Array.isArray(request.songs) || request.songs.length === 0) throw "NO_SONGS";
+            if (request === null || request === undefined) throw generateThrow("NO_DATA");
+            if (request.idPlaylist === null || request.idPlaylist === undefined || request.idPlaylist === "") throw generateThrow("NO_PLAYLIST_ID");
+            if (request.songs === null || request.songs === undefined || !Array.isArray(request.songs) || request.songs.length === 0) throw generateThrow("NO_SONGS");
 
             const playlistData = await getPlaylistInfo(request.idPlaylist);
             var newSongs: any = [];
@@ -195,8 +195,8 @@ const playlistApi = () => {
 
     const deletePlaylistSong = async (idPlaylist: string, idSong: string) => {
         try {
-            if (idPlaylist === null || idPlaylist === undefined || idPlaylist == "") throw "NO_PLAYLIST_ID";
-            if (idSong === null || idSong === undefined || idSong == "") throw "NO_SONG_ID";
+            if (idPlaylist === null || idPlaylist === undefined || idPlaylist === "") throw generateThrow("NO_PLAYLIST_ID");
+            if (idSong === null || idSong === undefined || idSong === "") throw generateThrow("NO_SONG_ID");
 
             const playlistData = await getPlaylistInfo(idPlaylist);
             var newSongs = [];
@@ -239,7 +239,7 @@ const playlistApi = () => {
 
     const updatePrivateStatus = async (idPlaylist: string) => {
         try {
-            if (idPlaylist === null || idPlaylist === undefined || idPlaylist == "") throw "NO_PLAYLIST_ID";
+            if (idPlaylist === null || idPlaylist === undefined || idPlaylist === "") throw generateThrow("NO_PLAYLIST_ID");
 
             const playlistData = await getPlaylistInfo(idPlaylist);
 
@@ -279,7 +279,7 @@ const playlistApi = () => {
 
     const deletePlaylist = async (id: string) => {
         try {
-            if (id === null || id === undefined || id == "") throw "NO_ID";
+            if (id === null || id === undefined || id === "") throw generateThrow("NO_ID");
 
             await api.post("/invoke/deleteAsset", {
                 "key": {
