@@ -113,10 +113,10 @@ const ModalCreate: React.FC<ModalCreateInterface> = (props: ModalCreateInterface
 
             <Divider flex flexCol={tagPlaylist} padding4 gap2 maxHeight80 overflowHidden>
                 <Divider flex flexCol={tagArtist || tagAlbum || tagSong || tagPlaylist} gap2 flex1>
-                    {props.tag === "album" && (
+                    {props.tag === "album" && !props.createOutsideHome && (
                         <H2 textXl>Album data</H2>
                     )}
-                    {props.tag !== "song" && (
+                    {props.tag !== "song" && !props.createOutsideHome && (
                         <Fieldset flex flexColumn>
                             <Label for={`${props.tag}_name`}>Name</Label>
                             <Input
@@ -129,7 +129,7 @@ const ModalCreate: React.FC<ModalCreateInterface> = (props: ModalCreateInterface
                         </Fieldset>
                     )}
 
-                    {tagArtist && (
+                    {tagArtist && !props.createOutsideHome && (
                         <>
                             <Fieldset flex flexColumn>
                                 <Label for={`${props.tag}_country`}>Country</Label>
@@ -142,7 +142,7 @@ const ModalCreate: React.FC<ModalCreateInterface> = (props: ModalCreateInterface
                             </Fieldset>
                         </>
                     )}
-                    {tagAlbum && (
+                    {tagAlbum && !props.createOutsideHome && (
                         <>
                             <Fieldset flex flexColumn>
                                 <Label for={`${props.tag}_artist`}>Artist</Label>
@@ -166,7 +166,7 @@ const ModalCreate: React.FC<ModalCreateInterface> = (props: ModalCreateInterface
                             </Fieldset>
                         </>
                     )}
-                    {tagSong && (
+                    {tagSong && !props.createOutsideHome && (
                         <>
                             <Fieldset flex flexColumn>
                                 <Label for={`${props.tag}_album`}>Album</Label>
@@ -181,7 +181,7 @@ const ModalCreate: React.FC<ModalCreateInterface> = (props: ModalCreateInterface
                             </Fieldset>
                         </>
                     )}
-                    {tagPlaylist && (
+                    {tagPlaylist && !props.createOutsideHome && (
                         <>
                             <Fieldset flex flexColumn>
                                 <Label for={`${props.tag}_private`}>Private</Label>

@@ -11,7 +11,7 @@ export const handleConfirmModalAdd = async (event: React.FormEvent, formData: Mo
 
     if (!formData) {
         await Swal.fire({
-            title: "Erro!",
+            title: "Error!",
             text: "Internal error.",
             icon: "error"
         });
@@ -22,7 +22,7 @@ export const handleConfirmModalAdd = async (event: React.FormEvent, formData: Mo
         if (tag.toLowerCase() === "artist") {
             if (!formData?.name) {
                 await Swal.fire({
-                    title: "Erro!",
+                    title: "Error!",
                     text: "Informe o nome do artista.",
                     icon: "error"
                 });
@@ -31,7 +31,7 @@ export const handleConfirmModalAdd = async (event: React.FormEvent, formData: Mo
 
             if (!formData?.country) {
                 await Swal.fire({
-                    title: "Erro!",
+                    title: "Error!",
                     text: "Informe o país do artista.",
                     icon: "error"
                 });
@@ -45,7 +45,7 @@ export const handleConfirmModalAdd = async (event: React.FormEvent, formData: Mo
 
             const response = await artistApi().postNewArtist(data);
             await Swal.fire({
-                title: response.positiveConclusion ? "Sucesso!" : "Erro!",
+                title: response.positiveConclusion ? "Success!" : "Error!",
                 text: response.message,
                 icon: response.positiveConclusion ? "success" : "error",
             });
@@ -63,7 +63,7 @@ export const handleConfirmModalAdd = async (event: React.FormEvent, formData: Mo
 
             const response = await albumApi().registerNewAlbum(data);
             await Swal.fire({
-                title: response.positiveConclusion ? "Sucesso!" : "Erro!",
+                title: response.positiveConclusion ? "Success!" : "Error!",
                 text: response.message,
                 icon: response.positiveConclusion ? "success" : "error",
             });
@@ -79,7 +79,7 @@ export const handleConfirmModalAdd = async (event: React.FormEvent, formData: Mo
 
             const response = await songApi().registerSong(data);
             await Swal.fire({
-                title: response.positiveConclusion ? "Sucesso!" : "Erro!",
+                title: response.positiveConclusion ? "Success!" : "Error!",
                 text: response.message,
                 icon: response.positiveConclusion ? "success" : "error",
             });
@@ -96,7 +96,7 @@ export const handleConfirmModalAdd = async (event: React.FormEvent, formData: Mo
 
             const response = await playlistApi().createPlaylist(data);
             await Swal.fire({
-                title: response.positiveConclusion ? "Sucesso!" : "Erro!",
+                title: response.positiveConclusion ? "Success!" : "Error!",
                 text: response.message,
                 icon: response.positiveConclusion ? "success" : "error",
             });
@@ -104,11 +104,27 @@ export const handleConfirmModalAdd = async (event: React.FormEvent, formData: Mo
             return response.positiveConclusion;
         }
 
+        if (tag.toLowerCase() === "playlist_add_song") {
+            const data: any = {
+                idPlaylist: formData.idPlaylist,
+                songs: formData.songs
+            };
+
+            const response = await playlistApi().addNewSoundsToPlaylist(data);
+            await Swal.fire({
+                title: response.status ? "Success!" : "Error!",
+                text: response.message,
+                icon: response.status ? "success" : "error",
+            });
+
+            return response.status;
+        }
+
         return false;
     } catch (error: any) {
         console.error(error);
         await Swal.fire({
-            title: "Erro!",
+            title: "Error!",
             text: error.response?.message || "Ocorreu um erro inesperado.",
             icon: "error"
         });

@@ -136,6 +136,63 @@ const playlistApi = () => {
         }
     }
 
+    const addNewSoundsToPlaylist = async (request: PlaylistSend) => {
+        try {
+            if (request === null || request === undefined) throw "NO_DATA";
+            if (request.idPlaylist === null || request.idPlaylist === undefined || request.idPlaylist === "") throw "NO_PLAYLIST_ID";
+            if (request.songs === null || request.songs === undefined || !Array.isArray(request.songs) || request.songs.length === 0) throw "NO_SONGS";
+
+            const playlistData = await getPlaylistInfo(request.idPlaylist);
+            var newSongs: any = [];
+            if (playlistData.songs) {
+                newSongs = [...playlistData.songs];
+
+                request.songs.forEach((element: InputField) => {
+                    const alreadyExists = playlistData.songs.some((item: any) => item["@key"] === element.value);
+            
+                    if (!alreadyExists) {
+                        newSongs.push({
+                            "@assetType": "song",
+                            "@key": element.value
+                        });
+                    }
+                });
+
+                await api.post("/invoke/updateAsset", {
+                    "update": {
+                        "@assetType": "playlist",
+                        "@key": request.idPlaylist,
+                        "songs": newSongs
+                    }
+                }).then((response: any) => {
+                    console.log(response.data);
+                    return response;
+                })
+
+                return {
+                    status: true,
+                    message: "Songs added!"
+                };
+            }
+
+            return {
+                status: false,
+                message: "Songs not added to playlist."
+            };
+        }
+        catch (error: any) {
+            console.error(error);
+            var message = "Error on post new songs to playlist.";
+            if (error === "NO_DATA") message = "Request body not provided.";
+            if (error === "NO_PLAYLIST_ID") message = "Playlist ID not found.";
+            if (error === "NO_SONGS") message = "Songs not informated.";
+            return {
+                status: false,
+                message: message
+            };
+        }
+    }
+
     const deletePlaylistSong = async (idPlaylist: string, idSong: string) => {
         try {
             if (idPlaylist === null || idPlaylist === undefined || idPlaylist == "") throw "NO_PLAYLIST_ID";
@@ -205,6 +262,7 @@ const playlistApi = () => {
         createPlaylist,
         getAllPlaylists,
         getPlaylistInfo,
+        addNewSoundsToPlaylist,
         deletePlaylistSong,
         deletePlaylist
     }

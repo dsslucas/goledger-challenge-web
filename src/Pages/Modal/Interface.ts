@@ -13,6 +13,7 @@ export interface ModalCreateInterface {
     submitData?: any;
     options?: Option[];
     apiData?: ApiInformation[];
+    createOutsideHome?: boolean;
 }
 
 export interface ModalCreateInputInterface {
@@ -21,6 +22,7 @@ export interface ModalCreateInputInterface {
     year?: number;
     idArtist?: string;
     idAlbum?: string;
+    idPlaylist?: string;
     songs?: InputField[];
     private?: boolean;
 }

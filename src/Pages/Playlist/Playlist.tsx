@@ -62,6 +62,7 @@ const Playlist: React.FC<PlaylistInterface> = () => {
 
     const fetchData = async () => {
         try {
+            setLoading(true);
             await songApi().getAllSongs()
                 .then((response: any) => {
                     setSongsList(response)
@@ -86,9 +87,9 @@ const Playlist: React.FC<PlaylistInterface> = () => {
     };
 
     const handleSendModal = async (event: React.FormEvent, formData: ModalCreateInputInterface, tag: string) => {
-        const sendResponse = await handleConfirmModalAdd(event, formData, tag);
+        formData.idPlaylist = playlist["@key"];
 
-        console.log(sendResponse)
+        const sendResponse = await handleConfirmModalAdd(event, formData, "playlist_add_song");
 
         if (sendResponse) {
             closeModalAdd();
@@ -244,6 +245,7 @@ const Playlist: React.FC<PlaylistInterface> = () => {
                         buttonConfirmText={modalCreateParams.buttonConfirmText}
                         options={modalCreateParams.options}
                         apiData={modalCreateParams.apiData}
+                        createOutsideHome={true}
                     />
                 )
             }

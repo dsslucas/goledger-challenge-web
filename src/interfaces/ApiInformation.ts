@@ -38,4 +38,5 @@ export interface PlaylistSend {
     name: string;
     songs: InputField[];
     private: boolean;
+    idPlaylist?: string;
 }
