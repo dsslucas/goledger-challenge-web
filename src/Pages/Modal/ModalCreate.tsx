@@ -183,7 +183,7 @@ const ModalCreate: React.FC<ModalCreateInterface> = (props: ModalCreateInterface
                     )}
                     {tagPlaylist && !props.createOutsideHome && (
                         <>
-                            <Fieldset flex flexColumn>
+                            <Fieldset flex gapX2>
                                 <Label for={`${props.tag}_private`}>Private</Label>
                                 <Input type="checkbox"
                                     id={`${props.tag}_private`}
