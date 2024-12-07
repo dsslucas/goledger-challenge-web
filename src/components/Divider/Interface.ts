@@ -4,6 +4,7 @@ export interface DividerInterface {
     flexWrap?: boolean;
     flex1?: boolean;
     flexCol?: boolean;
+    itemsStart?: boolean;
     itemsCenter?: boolean;
     justifyCenter?: boolean;
     justifyBetween?: boolean;

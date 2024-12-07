@@ -7,6 +7,7 @@ const Divider: React.FC<DividerInterface> = (props: DividerInterface) => {
     if (props.flexCol) className += "flex-col ";
     if (props.flexWrap) className += "flex-wrap ";
     if (props.flex1) className += "flex-1 ";
+    if (props.itemsStart) className += "items-start ";
     if (props.itemsCenter) className += "items-center ";
     if (props.justifyCenter) className += "justify-center ";
     if (props.justifyBetween) className += "justify-between ";
