@@ -240,7 +240,7 @@ const Artist: React.FC<ArtistPageInterface> = () => {
                             text: response.message,
                             icon: "success"
                         });
-                        redirectPage(navigate, "home", undefined);
+                        redirectPage(navigate, undefined, "home");
                     }
                     else Swal.fire({
                         title: "Error!",

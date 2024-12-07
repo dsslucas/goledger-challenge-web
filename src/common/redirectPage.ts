@@ -1,7 +1,7 @@
 import React from "react";
 import { NavigateFunction, useNavigate } from "react-router"
 
-export const redirectPage = (navigate: NavigateFunction, id: string, tag: string | undefined) => {
+export const redirectPage = (navigate: NavigateFunction, id: string | undefined, tag: string) => {
     if (tag && id) {
         navigate(`/${tag}`, {
             state: {
