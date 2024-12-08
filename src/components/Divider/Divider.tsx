@@ -11,10 +11,12 @@ const Divider: React.FC<DividerInterface> = (props: DividerInterface) => {
     if (props.itemsCenter) className += "items-center ";
     if (props.justifyCenter) className += "justify-center ";
     if (props.justifyBetween) className += "justify-between ";
+    if (props.justifyEnd) className += "justify-end ";
     if (props.widthOneHalf) className += `w-1/2 `;
     if (props.widthFull) className += "w-full ";
     if (props.widthOneFiveDesktop) className += "xl:w-1/5 ";
     if (props.widthOneSixDesktop) className += "xl:w-1/6 ";
+    if (props.width12Percent) className += "w-[12%] "
     if (props.grid) className += "grid ";
     if (props.gridColsCategories) className += "xs:grid-cols-1 xl:grid-cols-5 ";
     if (props.gap2) className += "gap-2 ";
@@ -32,12 +34,10 @@ const Divider: React.FC<DividerInterface> = (props: DividerInterface) => {
     if (props.overflowHidden) className += "overflow-hidden ";
     if (props.overflowY) className += "overflow-y-auto ";
     if (props.overflowX) className += "overflow-x-hidden ";
-
     if (props.loadingAnimateDefault) className += "fixed inset-0 bg-gray-800 flex justify-center items-center z-[100] transition-transform duration-500 z-100 ";
     if (props.loadingOpen) className += "translate-y-0 ";
     if (props.loadingClose) className += "-translate-y-full ";
     if (props.animatePulse) className += "animate-pulse ";
-
     if (props.textWhite) className += "text-white ";
 
     return <div className={className.trim()}>

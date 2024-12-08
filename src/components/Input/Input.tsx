@@ -8,7 +8,8 @@ const Input: React.FC<InputInterface> = (props: InputInterface) => {
     if (props.rounded) className += "rounded ";
     if (props.backgroundTransparent) className += "bg-transparent ";
     if (props.width36) className += "w-36 ";
-
+    if (props.widthFull) className += "w-full ";
+    
     return <input
         id={props.id}
         name={props.name}

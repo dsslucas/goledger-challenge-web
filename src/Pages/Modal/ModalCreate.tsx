@@ -4,7 +4,7 @@ import Fieldset from "../../components/Fieldset/Fieldset";
 import Label from "../../components/Label/Label";
 import Input from "../../components/Input/Input";
 import Select from "../../components/Select/Select";
-import { InputField, InputInterface } from "../../components/Input/Interface";
+import { InputField } from "../../components/Input/Interface";
 import Divider from "../../components/Divider/Divider";
 import H2 from "../../components/H2/H2";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -14,7 +14,6 @@ import Span from "../../components/Span/Span";
 import H4 from "../../components/H4/H4";
 import { ApiInformation } from "../../interfaces/ApiInformation";
 import Thead from "../../components/Table/Thead";
-import TableBody from "../../components/Table/Tbody";
 import Tbody from "../../components/Table/Tbody";
 import TableTr from "../../components/Table/Tr";
 import TableTh from "../../components/Table/Th";
@@ -29,7 +28,7 @@ const ModalCreate: React.FC<ModalCreateInterface> = (props: ModalCreateInterface
 
     const rootElement = document.getElementById('root') as HTMLElement;
 
-    if(props.open) rootElement.style.overflow = 'hidden';
+    if (props.open) rootElement.style.overflow = 'hidden';
     else rootElement.style.overflow = 'auto';
 
     const [formData, setFormData] = useState<ModalCreateInputInterface>({
@@ -88,7 +87,7 @@ const ModalCreate: React.FC<ModalCreateInterface> = (props: ModalCreateInterface
     };
 
     const handleChangePrivate = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setFormData({ ...formData, private: !formData.private})
+        setFormData({ ...formData, private: !formData.private })
     }
 
     const handleChangeEvent = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
@@ -105,6 +104,8 @@ const ModalCreate: React.FC<ModalCreateInterface> = (props: ModalCreateInterface
 
     useEffect(() => {
         if (tagPlaylist) setInputs([]);
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return <form id="modalAdd" className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50" onSubmit={handleSubmit}>
@@ -128,7 +129,9 @@ const ModalCreate: React.FC<ModalCreateInterface> = (props: ModalCreateInterface
                                 name={`name`}
                                 value={formData.name}
                                 required
-                                onChange={handleChangeEvent} border />
+                                onChange={handleChangeEvent}
+                                border rounded
+                            />
                         </Fieldset>
                     )}
 
@@ -141,7 +144,9 @@ const ModalCreate: React.FC<ModalCreateInterface> = (props: ModalCreateInterface
                                     name={`country`}
                                     value={formData.country}
                                     required
-                                    onChange={handleChangeEvent} border />
+                                    onChange={handleChangeEvent}
+                                    border rounded
+                                />
                             </Fieldset>
                         </>
                     )}
@@ -155,7 +160,7 @@ const ModalCreate: React.FC<ModalCreateInterface> = (props: ModalCreateInterface
                                     value={formData.idArtist}
                                     onChange={handleChangeEvent}
                                     options={props.options}
-                                    border
+                                    border rounded
                                 />
                             </Fieldset>
                             <Fieldset flex flexColumn>
@@ -165,7 +170,9 @@ const ModalCreate: React.FC<ModalCreateInterface> = (props: ModalCreateInterface
                                     name={`year`}
                                     value={formData.year}
                                     required
-                                    onChange={handleChangeEvent} border />
+                                    onChange={handleChangeEvent}
+                                    border rounded
+                                />
                             </Fieldset>
                         </>
                     )}
@@ -179,7 +186,7 @@ const ModalCreate: React.FC<ModalCreateInterface> = (props: ModalCreateInterface
                                     value={formData.idAlbum}
                                     onChange={handleChangeEvent}
                                     options={props.options}
-                                    border
+                                    border rounded
                                 />
                             </Fieldset>
                         </>
@@ -192,8 +199,10 @@ const ModalCreate: React.FC<ModalCreateInterface> = (props: ModalCreateInterface
                                     id={`${props.tag}_private`}
                                     name={`private`}
                                     checked={formData.private}
-                                    //value={undefined}
-                                    onChange={handleChangePrivate} border />
+                                    //value={undefined}                                    
+                                    onChange={handleChangePrivate}
+                                    border rounded
+                                />
                             </Fieldset>
                         </>
                     )}
@@ -237,8 +246,8 @@ const ModalCreate: React.FC<ModalCreateInterface> = (props: ModalCreateInterface
                         <H2 textXl>Songs</H2>
                         <div className="flex flex-col gap-2 overflow-auto max-h-80" id="songs-dynamic">
                             {inputs.map((input, index: number) => (
-                                <Divider key={input.id} flex justifyBetween>
-                                    <Divider flex gapX2>
+                                <Divider key={input.id} flex justifyBetween gapX2>
+                                    <Divider flex gapX2 flex1>
                                         <Span>{index + 1}</Span>
                                         <Input
                                             type="text"
@@ -246,11 +255,11 @@ const ModalCreate: React.FC<ModalCreateInterface> = (props: ModalCreateInterface
                                             name={`song_${index}`}
                                             value={input.value}
                                             onChange={(e) => handleChangeDynamicInputSong(e, input.id)}
-                                            border rounded
-                                            width36                                            
+                                            border rounded    
+                                            widthFull
                                         />
                                     </Divider>
-                                    <Divider flex gap2>
+                                    <Divider flex gap2 width12Percent justifyEnd>
                                         {index !== 0 && (
                                             <Button type="button" onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleRemoveDynamicEventDelete(e, input.id)} deleteBackgroundColor textWhite icon rounded>
                                                 <FontAwesomeIcon icon={faTrash} />

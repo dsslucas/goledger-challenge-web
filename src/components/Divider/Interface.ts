@@ -8,11 +8,13 @@ export interface DividerInterface {
     itemsCenter?: boolean;
     justifyCenter?: boolean;
     justifyBetween?: boolean;
+    justifyEnd?: boolean;
     widthOneHalf?: boolean;
     widthFull?: boolean;
     widthOneFiveDesktop?: boolean;
     widthOneSixDesktop?: boolean;
     widthFourFiveDesktop?: boolean;
+    width12Percent?: boolean;
     padding4?: boolean;
     heightFull?: boolean;
     maxHeight52?: boolean;
@@ -31,7 +33,6 @@ export interface DividerInterface {
     backgroundGray?: boolean;
     rounded?: boolean;
     border?: boolean;
-
     loadingAnimateDefault?: boolean;
     loadingOpen?: boolean;
     loadingClose?: boolean;

@@ -10,7 +10,8 @@ export interface InputInterface {
     border?: boolean;
     backgroundTransparent?: boolean;
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    width36?: boolean
+    width36?: boolean;
+    widthFull?: boolean;
 }
 
 export interface InputField {
