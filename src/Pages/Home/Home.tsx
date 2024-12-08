@@ -97,7 +97,6 @@ const Home = () => {
             switch (tag) {
                 case "artist":
                     setGetApiData(await artistApi().getAllArtists());
-                    console.log(getApiData)
                     break;
                 case "album":
                     setGetApiData(await getAlbum().getAllAlbums());
