@@ -12,7 +12,7 @@ const Loading: React.FC<LoadingInterface> = ({ open }: LoadingInterface) => {
     return (
         <Divider loadingAnimateDefault loadingOpen={open} loadingClose={!open}>
             <Divider textWhite animatePulse>
-                <Span>Hold on...</Span>
+                <Span>Loading...</Span>
             </Divider>
         </Divider>
     );
