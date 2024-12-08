@@ -100,14 +100,14 @@ const Home = () => {
             setLoading(true);
             switch (tag) {
                 case "artist":
-                    setGetApiData(await artistApi().getAllArtists());                   
+                    setGetApiData(await artistApi().getAllArtists());
                     break;
                 case "album":
                     setGetApiData(await getAlbum().getAllAlbums());
                     const artists = await artistApi().getAllArtists();
                     artists.forEach((element: ApiInformation) => {
                         var temp = artistsList;
-        
+
                         temp.push({
                             label: element.name,
                             value: element["@key"]
@@ -127,11 +127,11 @@ const Home = () => {
                             value: response["@key"]
                         })
                         setAlbunsList(temp);
-                    });                   
+                    });
                     break;
                 case "playlist":
                     setGetApiData(await getPlaylist().getAllPlaylists());
-                    setSongsList(await songApi().getAllSongs());                   
+                    setSongsList(await songApi().getAllSongs());
                     break;
                 default:
                     break;
@@ -299,12 +299,17 @@ const Home = () => {
                                 <Figure flex justifyCenter itemsCenter>
                                     <Image src={randomImage()} widthFull roundedT />
                                 </Figure>
-                                <Divider flex justifyBetween widthFull gapX2 padding2>
+                                <Divider flex justifyBetween widthFull gapX2 padding2 textJustify>
                                     <Divider flex flexCol itemsStart>
                                         <H2 textXl>{element.name}</H2>
                                         {element.artist != null && (
                                             <Fieldset flex itemsCenter gapX2>
                                                 <Span details>{element.artist.name}</Span>
+                                            </Fieldset>
+                                        )}
+                                        {element["@assetType"] === "playlist" && (
+                                            <Fieldset flex>
+                                                <Span indicator>{element.private ? "PRIVATE" : "PUBLIC"}</Span>
                                             </Fieldset>
                                         )}
                                         {element.album != null && (

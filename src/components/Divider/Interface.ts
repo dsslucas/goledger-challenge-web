@@ -38,4 +38,5 @@ export interface DividerInterface {
     loadingClose?: boolean;
     animatePulse?: boolean;
     textWhite?: boolean;
+    textJustify?: boolean;
 }

@@ -39,6 +39,7 @@ const Divider: React.FC<DividerInterface> = (props: DividerInterface) => {
     if (props.loadingClose) className += "-translate-y-full ";
     if (props.animatePulse) className += "animate-pulse ";
     if (props.textWhite) className += "text-white ";
+    if (props.textJustify) className += "text-justify ";
 
     return <div className={className.trim()}>
         {props.children}
