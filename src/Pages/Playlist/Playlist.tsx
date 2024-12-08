@@ -59,10 +59,10 @@ const Playlist: React.FC<PlaylistInterface> = () => {
 
             await playlistApi().getPlaylistInfo(id)
                 .then((response: any) => {
-                    if (response) {
+                    if (response.status) {
                         setPlaylist(response)
                     }
-                    else throw new Error();
+                    else throw new Error(response);
                 });
         } catch (err) {
             console.error(err);
