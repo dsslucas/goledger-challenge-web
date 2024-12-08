@@ -66,16 +66,16 @@ const ModalCreate: React.FC<ModalCreateInterface> = (props: ModalCreateInterface
     }
 
     const handleChangeDynamicInputSong = (event: React.ChangeEvent<HTMLInputElement>, id: number) => {
-        setInputs(
-            inputs.map((input) =>
-                input.id === id ? { ...input, value: event.target.value } : input
-            )
+        const updatedInputs = inputs.map((input) =>
+            input.id === id ? { ...input, value: event.target.value } : input
         );
-
+    
+        setInputs(updatedInputs);
+    
         setFormData({
             ...formData,
-            songs: inputs
-        })
+            songs: updatedInputs // Use o array atualizado diretamente
+        });
     };
 
     const handleAddDynamicInput = () => {
@@ -96,7 +96,7 @@ const ModalCreate: React.FC<ModalCreateInterface> = (props: ModalCreateInterface
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
-
+        
         if (event && formData && props.onConfirm) {
             props.onConfirm(event, formData);
         }
