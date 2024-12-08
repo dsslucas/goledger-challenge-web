@@ -4,11 +4,11 @@ import { Navigate, useLocation, useNavigate } from "react-router";
 import { ApiInformation } from "../../interfaces/ApiInformation";
 import { ModalCreateInputInterface, ModalCreateInterface } from "../Modal/Interface";
 import playlistApi from "../../api/playlist";
-import Swal from "sweetalert2";
 import { handleConfirmModalAdd } from "../../common/sendModalAdd";
 import songApi from "../../api/song";
 import { redirectPage } from "../../common/redirectPage";
 import DetailContent from "../DetailContent/detailContent";
+import { sweetAlertHandler } from "../../common/sweetAlertHandler";
 
 const Playlist: React.FC<PlaylistInterface> = () => {
     const navigate = useNavigate();
@@ -66,11 +66,7 @@ const Playlist: React.FC<PlaylistInterface> = () => {
                 });
         } catch (err) {
             console.error(err);
-            Swal.fire({
-                title: "Error!",
-                text: "Error during playlist search.",
-                icon: "error"
-            });
+            await sweetAlertHandler("Error!", "Error during playlist search.", "error", () => null, () => null, false);
         }
         finally {
             setLoading(false);
@@ -91,11 +87,7 @@ const Playlist: React.FC<PlaylistInterface> = () => {
         }
         catch (error) {
             console.error(error);
-            Swal.fire({
-                title: "Error!",
-                text: "Error while adding song on playlist.",
-                icon: "error"
-            });
+            await sweetAlertHandler("Error!", "Error while adding song on playlist.", "error", () => null, () => null, false);
         }
         finally {
             setLoading(false);
@@ -113,11 +105,7 @@ const Playlist: React.FC<PlaylistInterface> = () => {
         }
         catch (error: any) {
             console.error(error)
-            Swal.fire({
-                title: "Error!",
-                text: "Error on change private status.",
-                icon: "error"
-            });
+            await sweetAlertHandler("Error!", "Error on change private status.", "error", () => null, () => null, false);
         }
         finally {
             setLoading(false);
@@ -154,69 +142,79 @@ const Playlist: React.FC<PlaylistInterface> = () => {
     }
 
     const handleDeletePlaylist = async (event: React.MouseEvent<HTMLButtonElement>, idPlaylist: string) => {
-        try {
-            setLoading(true);
-            await playlistApi().deletePlaylist(idPlaylist)
-                .then((response: any) => {
-                    if (response.status) {
-                        Swal.fire({
-                            title: "Deleted!",
-                            text: response.message,
-                            icon: "success"
+        await sweetAlertHandler(
+            "Are you sure?",
+            "This action is irreversible.",
+            "question",
+            () => null,
+            async () => {
+                try {
+                    setLoading(true);
+                    await playlistApi().deletePlaylist(idPlaylist)
+                        .then(async (response: any) => {
+                            if (response.status) {
+                                await sweetAlertHandler(
+                                    "Deleted!",
+                                    response.message,
+                                    "success",
+                                    () => null,
+                                    () => {
+                                        redirectPage(navigate, undefined, "home");
+                                    },
+                                    false
+                                );
+                            }
+                            else await sweetAlertHandler("Error!", response.message, "error", () => null, () => null, false);
                         });
-                        redirectPage(navigate, undefined, "home");
-                    }
-                    else Swal.fire({
-                        title: "Error!",
-                        text: response.message,
-                        icon: "error"
-                    });
-                });
-        }
-        catch (error: any) {
-            console.error(error)
-            Swal.fire({
-                title: "Error!",
-                text: "Error on delete playlist.",
-                icon: "error"
-            });
-        }
-        finally {
-            setLoading(false);
-        }
+                }
+                catch (error: any) {
+                    console.error(error)
+                    await sweetAlertHandler("Error!", "Error on delete playlist.", "error", () => null, () => null, false);
+                }
+                finally {
+                    setLoading(false);
+                }
+            },
+            true
+        );
     }
 
     const handleDeleteSong = async (event: React.MouseEvent<HTMLButtonElement>, idSong: string) => {
-        try {
-            setLoading(true);
-            await playlistApi().deletePlaylistSong(playlist["@key"], idSong)
-                .then((response: any) => {
-                    if (response.status) {
-                        Swal.fire({
-                            title: "Sound deleted!",
-                            text: response.message,
-                            icon: "success"
+        await sweetAlertHandler(
+            "Are you sure?",
+            "This action is irreversible.",
+            "question",
+            () => null,
+            async () => {
+                try {
+                    setLoading(true);
+                    await playlistApi().deletePlaylistSong(playlist["@key"], idSong)
+                        .then(async (response: any) => {
+                            if (response.status) {
+                                await sweetAlertHandler(
+                                    "Sound deleted!!", 
+                                    response.message, 
+                                    "success", 
+                                    () => null, 
+                                    () => {
+                                        fetchData();
+                                    }, 
+                                    false
+                                );
+                            }
+                            else await sweetAlertHandler("Error!", response.message, "error", () => null, () => null, false);
                         });
-                        fetchData();
-                    }
-                    else Swal.fire({
-                        title: "Error!",
-                        text: response.message,
-                        icon: "error"
-                    });
-                });
-        }
-        catch (error: any) {
-            console.error(error)
-            Swal.fire({
-                title: "Error!",
-                text: "Error on delete song.",
-                icon: "error"
-            });
-        }
-        finally {
-            setLoading(false);
-        }
+                }
+                catch (error: any) {
+                    console.error(error)
+                    await sweetAlertHandler("Error!", "Error on delete song.", "error", () => null, () => null, false);
+                }
+                finally {
+                    setLoading(false);
+                }
+            },
+            true
+        );
     }
 
     return <DetailContent

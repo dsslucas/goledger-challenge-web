@@ -5,13 +5,13 @@ import getArtist from "../../api/artists";
 import { ApiInformation } from "../../interfaces/ApiInformation";
 import getAlbum from "../../api/album";
 import songApi from "../../api/song";
-import Swal from "sweetalert2";
 import albumApi from "../../api/album";
 import artistApi from "../../api/artists";
 import { ModalCreateInputInterface, ModalCreateInterface } from "../Modal/Interface";
 import { handleConfirmModalAdd } from "../../common/sendModalAdd";
 import { redirectPage } from "../../common/redirectPage";
 import DetailContent from "../DetailContent/detailContent";
+import { sweetAlertHandler } from "../../common/sweetAlertHandler";
 
 const Artist: React.FC<ArtistPageInterface> = () => {
     const location = useLocation();
@@ -49,11 +49,7 @@ const Artist: React.FC<ArtistPageInterface> = () => {
                 });
         } catch (err) {
             console.error(err)
-            Swal.fire({
-                title: "Error!",
-                text: "Error on search artist data.",
-                icon: "error"
-            });
+            await sweetAlertHandler("Error!", "Error on search artist data.", "error", () => null, () => null, false);
         }
         finally {
             setLoading(false);
@@ -115,11 +111,7 @@ const Artist: React.FC<ArtistPageInterface> = () => {
         }
         catch (error) {
             console.error(error);
-            Swal.fire({
-                title: "Error!",
-                text: "Error while adding album.",
-                icon: "error"
-            });
+            await sweetAlertHandler("Error!", "Error while adding album.", "error", () => null, () => null, false);
         }
         finally {
             setLoading(false);
@@ -136,37 +128,33 @@ const Artist: React.FC<ArtistPageInterface> = () => {
     }
 
     const handleDeleteSong = async (event: React.MouseEvent<HTMLButtonElement>, idSong: string) => {
-        try {
-            setLoading(true);
-            await songApi().deleteSongHandler(idSong)
-                .then((response: any) => {
-                    if (response.status) {
-                        Swal.fire({
-                            title: "Deleted!",
-                            text: response.message,
-                            icon: "success"
+        await sweetAlertHandler(
+            "Are you sure?",
+            "This action is irreversible.",
+            "question",
+            () => null,
+            async () => {
+                try {
+                    setLoading(true);
+                    await songApi().deleteSongHandler(idSong)
+                        .then(async (response: any) => {
+                            if (response.status) {
+                                await sweetAlertHandler("Deleted!", response.message, "success", () => null, () => fetchData(), false);
+                            }
+                            else await sweetAlertHandler("Error!", response.message, "error", () => null, () => null, false);
                         });
-                        fetchData();
-                    }
-                    else Swal.fire({
-                        title: "Error!",
-                        text: response.message,
-                        icon: "error"
-                    });
-                });
-        }
-        catch (error: any) {
-            console.error(error)
-            Swal.fire({
-                title: "Error!",
-                text: "Error on delete song.",
-                icon: "error"
-            });
-        }
-        finally {
-            setLoading(false);
-        }
-    }  
+                }
+                catch (error: any) {
+                    console.error(error)
+                    await sweetAlertHandler("Error!", "Error on delete song.", "error", () => null, () => null, false);
+                }
+                finally {
+                    setLoading(false);
+                }
+            },
+            true
+        );
+    }
 
     const handleClickChangeArtistLocation = async (event: React.MouseEvent<HTMLButtonElement>, id: string) => {
         try {
@@ -182,32 +170,28 @@ const Artist: React.FC<ArtistPageInterface> = () => {
     }
 
     const handleClickDeleteArtist = async (event: React.MouseEvent<HTMLButtonElement>, id: string) => {
-        try {
-            await artistApi().deleteArtist(id)
-                .then((response: any) => {
-                    if (response.status) {
-                        Swal.fire({
-                            title: "Deleted!",
-                            text: response.message,
-                            icon: "success"
+        await sweetAlertHandler(
+            "Are you sure?",
+            "This action is irreversible.",
+            "question",
+            () => null,
+            async () => {
+                try {
+                    await artistApi().deleteArtist(id)
+                        .then(async (response: any) => {
+                            if (response.status) {
+                                await sweetAlertHandler("Deleted!", response.message, "success", () => null, () => redirectPage(navigate, undefined, "home"), false);
+                            }
+                            else await sweetAlertHandler("Error!", response.message, "error", () => null, () => null, false);
                         });
-                        redirectPage(navigate, undefined, "home");
-                    }
-                    else Swal.fire({
-                        title: "Error!",
-                        text: response.message,
-                        icon: "error"
-                    });
-                });
-        }
-        catch (error: any) {
-            console.error(error)
-            Swal.fire({
-                title: "Error!",
-                text: "Error on delete artist.",
-                icon: "error"
-            });
-        }
+                }
+                catch (error: any) {
+                    console.error(error)
+                    await sweetAlertHandler("Error!", "Error on delete artist.", "error", () => null, () => null, false);
+                }
+            },
+            true
+        );
     }
 
     const handleClickChangeAlbumYear = async (event: React.MouseEvent<HTMLButtonElement>, id: string) => {
@@ -218,20 +202,11 @@ const Artist: React.FC<ArtistPageInterface> = () => {
 
                 if (album.year) {
                     await getAlbum().updateYearAlbum(id, album?.year)
-                        .then((response: any) => {
+                        .then(async (response: any) => {
                             if (response.status) {
-                                Swal.fire({
-                                    title: "Updated!",
-                                    text: response.message,
-                                    icon: "success"
-                                });
-                                fetchData();
+                                await sweetAlertHandler("Updated!", response.message, "success", () => null, () => fetchData(), false);
                             }
-                            else Swal.fire({
-                                title: "Error!",
-                                text: response.message,
-                                icon: "error"
-                            });
+                            else await sweetAlertHandler("Error!", response.message, "error", () => null, () => null, false);
                         });
                 }
             }
@@ -239,11 +214,7 @@ const Artist: React.FC<ArtistPageInterface> = () => {
         }
         catch (e) {
             console.error(e);
-            Swal.fire({
-                title: "Error!",
-                text: "Error on update album year.",
-                icon: "error"
-            });
+            await sweetAlertHandler("Error!", "Error on update album year.", "error", () => null, () => null, false);
         }
         finally {
             setLoading(false);
@@ -251,39 +222,33 @@ const Artist: React.FC<ArtistPageInterface> = () => {
     }
 
     const handleDeleteAlbum = async (event: React.MouseEvent<HTMLButtonElement>, idAlbum: string) => {
-        try {
-            setLoading(true);
-            await albumApi().deleteAlbum(idAlbum)
-                .then((response: any) => {
-                    if (response.status) {
-                        Swal.fire({
-                            title: "Deleted!",
-                            text: response.message,
-                            icon: "success"
+        await sweetAlertHandler(
+            "Are you sure?",
+            "This action is irreversible.",
+            "question",
+            () => null,
+            async () => {
+                try {
+                    setLoading(true);
+                    await albumApi().deleteAlbum(idAlbum)
+                        .then(async (response: any) => {
+                            if (response.status) {
+                                await sweetAlertHandler("Deleted!", response.message, "success", () => null, () => fetchData(), false);
+                            }
+                            else await sweetAlertHandler("Error!", response.message, "error", () => null, () => null, false);
                         });
-                        fetchData();
-                    }
-                    else Swal.fire({
-                        title: "Error!",
-                        text: response.message,
-                        icon: "error"
-                    });
-                });
-        }
-        catch (error: any) {
-            console.error(error)
-            Swal.fire({
-                title: "Error!",
-                text: "Error on delete album.",
-                icon: "error"
-            });
-        }
-        finally {
-            setLoading(false);
-        }
+                }
+                catch (error: any) {
+                    console.error(error)
+                    await sweetAlertHandler("Error!", "Error on delete album.", "error", () => null, () => null, false);
+                }
+                finally {
+                    setLoading(false);
+                }
+            },
+            true
+        );
     }
-
-
 
     const handleChangeAlbumYear = (e: React.ChangeEvent<HTMLInputElement>, id: string) => {
         if (artist && artist.albuns !== undefined) {
@@ -304,7 +269,7 @@ const Artist: React.FC<ArtistPageInterface> = () => {
         }
     }
 
-    return <DetailContent 
+    return <DetailContent
         loading={loading}
         externalData={artist}
         type="artist"

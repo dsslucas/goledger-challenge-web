@@ -18,7 +18,6 @@ import { faLocationDot } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router";
 import Figure from "../../components/Figure/Figure";
 import Image from "../../components/Image/Image";
-import Swal from "sweetalert2";
 import ModalCreate from "../Modal/ModalCreate";
 import { ModalCreateInputInterface, ModalCreateInterface } from "../Modal/Interface";
 import artistApi from "../../api/artists";
@@ -29,6 +28,7 @@ import { handleConfirmModalAdd } from "../../common/sendModalAdd";
 import renderizeLoading from "../../common/renderizeLoading";
 import { redirectPage } from "../../common/redirectPage";
 import { randomImage } from "../../common/randomImage";
+import { sweetAlertHandler } from "../../common/sweetAlertHandler";
 
 const Home = () => {
     const navigate = useNavigate();
@@ -65,11 +65,7 @@ const Home = () => {
                 })
         }
         catch (error: any) {
-            Swal.fire({
-                title: "Error!",
-                text: "Error on search schema.",
-                icon: "error"
-            });
+            await sweetAlertHandler("Error!", "Error on search schema.", "error", () => null, () => null, false);
         }
         finally {
             setLoading(false);
@@ -101,6 +97,7 @@ const Home = () => {
             switch (tag) {
                 case "artist":
                     setGetApiData(await artistApi().getAllArtists());
+                    console.log(getApiData)
                     break;
                 case "album":
                     setGetApiData(await getAlbum().getAllAlbums());
@@ -138,11 +135,7 @@ const Home = () => {
             }
         }
         catch (error: any) {
-            Swal.fire({
-                title: "Error!",
-                text: "Error during list search.",
-                icon: "error"
-            });
+            await sweetAlertHandler("Error!", "Error during list search.", "error", () => null, () => null, false);
         }
         finally {
             setLoading(false);
@@ -155,7 +148,7 @@ const Home = () => {
         await renderizeDataCategory(tag);
     }
 
-    const handleClickCategory = (event: React.MouseEvent<HTMLButtonElement>, element: ApiInformation) => {
+    const handleClickCategory = async (event: React.MouseEvent<HTMLButtonElement>, element: ApiInformation) => {
         var tag = element["@assetType"];
         var id = element["@key"];
 
@@ -169,19 +162,11 @@ const Home = () => {
                 redirectPage(navigate, id, tag)
             }
             else {
-                Swal.fire({
-                    title: "Error!",
-                    text: "Error during redirect.",
-                    icon: "error"
-                })
+                await sweetAlertHandler("Error!", "Error during redirect.", "error", () => null, () => null, false);
             }
         }
         else {
-            Swal.fire({
-                title: "Error!",
-                text: "Error during redirect.",
-                icon: "error"
-            })
+            await sweetAlertHandler("Error!", "Error during redirect.", "error", () => null, () => null, false);
         }
     }
 
@@ -217,11 +202,7 @@ const Home = () => {
         }
         catch (error) {
             console.error(error);
-            Swal.fire({
-                title: "Error!",
-                text: "Error while send the request.",
-                icon: "error"
-            });
+            await sweetAlertHandler("Error!", "Error while send the request.", "error", () => null, () => null, false);
         }
         finally {
             setLoading(false);
@@ -236,11 +217,7 @@ const Home = () => {
             setButtonClicked(true);
         }
         catch (error: any) {
-            Swal.fire({
-                title: "Error!",
-                text: "Error on search data.",
-                icon: "error"
-            })
+            await sweetAlertHandler("Error!", "Error on search data.", "error", () => null, () => null, false);
         }
         finally {
             setLoading(false);

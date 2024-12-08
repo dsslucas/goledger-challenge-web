@@ -1,53 +1,42 @@
-import Swal from "sweetalert2";
 import { ModalCreateInputInterface } from "../Pages/Modal/Interface";
 import artistApi from "../api/artists";
 import albumApi from "../api/album";
 import songApi from "../api/song";
 import playlistApi from "../api/playlist";
 import { ResponseData } from "../interfaces/ApiInformation";
+import { sweetAlertHandler } from "./sweetAlertHandler";
 
 export const handleConfirmModalAdd = async (event: React.FormEvent, formData: ModalCreateInputInterface, tag: string): Promise<ResponseData> => {
     event.preventDefault();
 
-    if (!formData) {
-        await Swal.fire({
-            title: "Error!",
-            text: "Internal error.",
-            icon: "error"
-        });
+    const returnResponse = async (status: boolean, text: string, key?: string) => {
+        await sweetAlertHandler(
+            status ? "Success!" : "Error!",
+            text,
+            status ? "success" : "error",
+            () => null,
+            () => null,
+        false);
+
         return {
-            status: false,
-            message: "Internal error.",
-            "@key": null
+            status: status,
+            message: text,
+            "@key": key
         }
+    }
+
+    if (!formData) {
+        return returnResponse(false, "Internal error.");
     }
 
     try {
         if (tag.toLowerCase() === "artist") {
             if (!formData?.name) {
-                await Swal.fire({
-                    title: "Error!",
-                    text: "You should inform the artist name.",
-                    icon: "error"
-                });
-                return {
-                    status: false,
-                    message: "You should inform the artist name.",
-                    "@key": null
-                }
+                return returnResponse(false, "You should inform the artist name.");
             }
 
             if (!formData?.country) {
-                await Swal.fire({
-                    title: "Error!",
-                    text: "You should inform the country of artist.",
-                    icon: "error"
-                });
-                return {
-                    status: false,
-                    message: "You should inform the country of artist.",
-                    "@key": null
-                }
+                return returnResponse(false, "You should inform the country of artist.");
             }
 
             const data = {
@@ -56,17 +45,7 @@ export const handleConfirmModalAdd = async (event: React.FormEvent, formData: Mo
             };
 
             const response: ResponseData = await artistApi().postNewArtist(data);
-            await Swal.fire({
-                title: response.status ? "Success!" : "Error!",
-                text: response.message,
-                icon: response.status ? "success" : "error",
-            });
-
-            return {
-                "@key": response["@key"],
-                status: response.status,
-                message: response.message
-            };
+            return returnResponse(response.status, response.message);
         }
 
         if (tag.toLowerCase() === "album") {
@@ -78,17 +57,7 @@ export const handleConfirmModalAdd = async (event: React.FormEvent, formData: Mo
             };
 
             const response: ResponseData = await albumApi().registerNewAlbum(data);
-            await Swal.fire({
-                title: response.status ? "Success!" : "Error!",
-                text: response.message,
-                icon: response.status ? "success" : "error",
-            });
-
-            return {
-                "@key": response["@key"],
-                status: response.status,
-                message: response.message
-            };
+            return returnResponse(response.status, response.message);
         }
 
         if (tag.toLowerCase() === "song") {
@@ -98,17 +67,7 @@ export const handleConfirmModalAdd = async (event: React.FormEvent, formData: Mo
             };
 
             const response: ResponseData = await songApi().registerSong(data);
-            await Swal.fire({
-                title: response.status ? "Success!" : "Error!",
-                text: response.message,
-                icon: response.status ? "success" : "error",
-            });
-
-            return {
-                "@key": response["@key"],
-                status: response.status,
-                message: response.message
-            };
+            return returnResponse(response.status, response.message, (response["@key"])?.toString());
         }
 
         if (tag.toLowerCase() === "playlist") {
@@ -119,17 +78,7 @@ export const handleConfirmModalAdd = async (event: React.FormEvent, formData: Mo
             };
 
             const response: ResponseData = await playlistApi().createPlaylist(data);
-            await Swal.fire({
-                title: response.status ? "Success!" : "Error!",
-                text: response.message,
-                icon: response.status ? "success" : "error",
-            });
-
-            return {
-                "@key": response["@key"],
-                status: response.status,
-                message: response.message
-            };
+            return returnResponse(response.status, response.message, (response["@key"])?.toString());
         }
 
         if (tag.toLowerCase() === "playlist_add_song") {
@@ -139,17 +88,7 @@ export const handleConfirmModalAdd = async (event: React.FormEvent, formData: Mo
             };
 
             const response: ResponseData = await playlistApi().addNewSoundsToPlaylist(data);
-            await Swal.fire({
-                title: response.status ? "Success!" : "Error!",
-                text: response.message,
-                icon: response.status ? "success" : "error",
-            });
-
-            return {
-                "@key": response["@key"],
-                status: response.status,
-                message: response.message
-            };
+            return returnResponse(response.status, response.message, (response["@key"])?.toString());
         }
 
         return {
@@ -158,15 +97,6 @@ export const handleConfirmModalAdd = async (event: React.FormEvent, formData: Mo
         }
     } catch (error: any) {
         console.error(error);
-        await Swal.fire({
-            title: "Error!",
-            text: error.response?.message || "Internal error.",
-            icon: "error"
-        });
-
-        return {
-            status: false,
-            message: error.response?.message || "Internal error."
-        }
+        return returnResponse(false, error.response?.message || "Internal error.");
     }
 };
