@@ -157,7 +157,7 @@ const DetailContent: React.FC<DetailContentInterface> = ({ externalData, type, l
             }
             <Section flex flexColMobile flexRowTablet flexColDesktop widthOneFiveDesktop>
                 <Figure flex justifyCenter itemsCenter widthFullMobile width50PercentTablet widthFullDesktop>
-                    <Image src={data.image} roundedTMobile roundedTlTablet roundedTDesktop />
+                    <Image src={data.image} alt={`${type}_photo`} roundedTMobile roundedTlTablet roundedTDesktop />
                 </Figure>
                 <Divider flex flexCol flex1>
                     <Divider flex flexCol widthFull backgroundGray padding2 flex1Tablet>
@@ -269,7 +269,7 @@ const DetailContent: React.FC<DetailContentInterface> = ({ externalData, type, l
                                         return <Divider flex flexCol backgroundGray border rounded gap2 key={key}>
                                             <Divider flex gapX2>
                                                 <Figure flex justifyCenter widthOneSixDesktop widthFullMobile width50PercentTablet>
-                                                    <Image src={element.image} />
+                                                    <Image src={element.image} alt="artist_photo"/>
                                                 </Figure>
                                                 <Divider flex flexCol flex1 justifyBetween>
                                                     <Divider flex flexCol>

@@ -274,7 +274,7 @@ const Home = () => {
                                 key={key}
                             >
                                 <Figure flex justifyCenter itemsCenter>
-                                    <Image src={randomImage()} widthFull roundedT />
+                                    <Image src={randomImage()} alt={`${buttonClickedLabel}_photo`} widthFull roundedT />
                                 </Figure>
                                 <Divider flex justifyBetween widthFull gapX2 padding2 textJustify>
                                     <Divider flex flexCol itemsStart>

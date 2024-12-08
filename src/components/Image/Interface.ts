@@ -1,5 +1,6 @@
 export interface ImageInterface {
     src: string;
+    alt: string;
     flex?: boolean;
     itemsCenter?: boolean;
     justifyCenter?: boolean;

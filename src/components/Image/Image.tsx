@@ -11,7 +11,7 @@ const Image: React.FC<ImageInterface> = (props: ImageInterface) => {
     if (props.roundedTDesktop) className += "xl:rounded-t ";
     if (props.roundedBlTablet) className += "md:rounded-bl lg:rounded-bl-none"
 
-    return <img className={className.trim()} src={props.src} />
+    return <img className={className.trim()} src={props.src} alt={props.alt}/>
 }
 
 export default Image;
