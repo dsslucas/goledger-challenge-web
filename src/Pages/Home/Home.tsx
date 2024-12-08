@@ -300,7 +300,7 @@ const Home = () => {
                                     <Image src={randomImage()} widthFull roundedT />
                                 </Figure>
                                 <Divider flex justifyBetween widthFull gapX2 padding2>
-                                    <Divider>
+                                    <Divider flex flexCol itemsStart>
                                         <H2 textXl>{element.name}</H2>
                                         {element.artist != null && (
                                             <Fieldset flex itemsCenter gapX2>
