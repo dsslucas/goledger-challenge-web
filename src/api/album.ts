@@ -172,10 +172,14 @@ const albumApi = () => {
                         }
                     }
                 }
-            }).then((response: any) => {
-                response.data.result.forEach(async (element: any) => {
-                    element.songs = await getSong().getSongsByAlbumId(element["@key"]);
-                })
+            }).then(async (response: any) => {
+                if(response.data?.result){
+                    for(let i = 0; i < response.data.result.length; i++){
+                        const element = response.data.result[i];
+
+                        element.songs = await getSong().getSongsByAlbumId(element["@key"]);
+                    }
+                }
                 return response.data.result;
             });
 
