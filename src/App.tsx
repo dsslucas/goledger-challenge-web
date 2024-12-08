@@ -40,7 +40,7 @@ function App() {
           <H1 text2xl>GoLedger Challenger</H1>
         </Header>
         <Breadcrumb />
-        <Main flex flexColumn backgroundColor={apiColors?.silver} gap2 paddingX10>
+        <Main flex flexColumn backgroundColor={apiColors?.silver} gap2 paddingX10 paddingX5Mobile>
           <Routes>
             <Route path="/home" index element={<Home />} />
             <Route path="/artist" element={<Artist />} />

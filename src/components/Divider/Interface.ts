@@ -3,21 +3,26 @@ export interface DividerInterface {
     flex?: boolean;
     flexWrap?: boolean;
     flex1?: boolean;
+    flex1Mobile?: boolean;
     flexCol?: boolean;
     itemsStart?: boolean;
     itemsCenter?: boolean;
     justifyCenter?: boolean;
     justifyBetween?: boolean;
     justifyEnd?: boolean;
-    widthOneHalf?: boolean;
+
+    //widthOneHalf?: boolean;
+    widthOneHalfTablet?: boolean;
     widthFull?: boolean;
     widthOneFiveDesktop?: boolean;
     widthOneSixDesktop?: boolean;
     widthFourFiveDesktop?: boolean;
     width12Percent?: boolean;
+    width20PercentMobile?: boolean;
+
     padding4?: boolean;
     heightFull?: boolean;
-    maxHeight52?: boolean;
+    maxHeight32Rem?: boolean;
     maxHeight80?: boolean;
     overflowHidden?: boolean;
     overflowY?: boolean;

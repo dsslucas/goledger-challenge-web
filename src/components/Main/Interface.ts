@@ -8,4 +8,7 @@ export interface MainInterface {
     backgroundColor?: string;
     gap2?: boolean;
     paddingX10?: boolean;
+    
+    paddingX5Mobile?: boolean;
+    paddingBottomMobile?: boolean;
 }

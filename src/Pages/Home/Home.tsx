@@ -272,7 +272,7 @@ const Home = () => {
         )}
         {schema && schema.length > 0 && (
             <Section flex justifyCenter paddingY2>
-                <Divider flex justifyBetween widthOneHalf>
+                <Divider flex justifyBetween flex1Mobile widthOneHalfTablet>
                     {schema && schema?.length > 0 && (
                         schema.map((element: SchemaSectionInterface, index: number) => {
                             return <Button type="button" key={index} border rounded paddingX2 onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleClickOption(e, element.label, element.tag)}>{element.label}</Button>

@@ -108,8 +108,8 @@ const ModalCreate: React.FC<ModalCreateInterface> = (props: ModalCreateInterface
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    return <form id="modalAdd" className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50" onSubmit={handleSubmit}>
-        <div className="bg-white w-11/12 max-w-xl mx-auto rounded-lg shadow-lg max-h-[80%] overflow-hidden">
+    return <form id="modalAdd" className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10" onSubmit={handleSubmit}>
+        <div className="bg-white w-11/12 max-w-xl mx-auto rounded-lg shadow-lg max-h-[90%] overflow-hidden">
 
             <div className="flex justify-between items-center border-b p-4">
                 <H2 textXl>{props.title}</H2>
@@ -211,7 +211,7 @@ const ModalCreate: React.FC<ModalCreateInterface> = (props: ModalCreateInterface
                     <Divider flex flexCol={tagPlaylist} flex1 gap2>
                         <H4 textXl>Songs</H4>
 
-                        <Divider maxHeight52 overflowY overflowXHidden>
+                        <Divider maxHeight32Rem overflowY overflowXHidden>
                             <Table textCenter widthFull>
                                 <Thead top0 sticky backgroundGray textWhite>
                                     <TableTr>
@@ -259,7 +259,7 @@ const ModalCreate: React.FC<ModalCreateInterface> = (props: ModalCreateInterface
                                             widthFull
                                         />
                                     </Divider>
-                                    <Divider flex gap2 width12Percent justifyEnd>
+                                    <Divider flex gap2 width20PercentMobile justifyEnd>
                                         {index !== 0 && (
                                             <Button type="button" onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleRemoveDynamicEventDelete(e, input.id)} deleteBackgroundColor textWhite icon rounded>
                                                 <FontAwesomeIcon icon={faTrash} />
