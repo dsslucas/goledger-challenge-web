@@ -108,16 +108,16 @@ const playlistApi = () => {
 
                         const getSongDetail = await songApi().getSongInfo(element["@key"]);
                         element.name = await getSongDetail.name;
-
+                        
                         const getAlbum = await albumApi().getAlbumById(getSongDetail.album["@key"])
 
                         const artist = getAlbum.artist;
 
                         element.artist = artist;
-                        element.album = getAlbum;
-                        element.image = randomImage()
-                    }
+                        element.album = getAlbum;                        
+                    }                    
                 }
+                response.data.image = randomImage();
 
                 return response.data;
             })
