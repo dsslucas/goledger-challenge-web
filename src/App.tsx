@@ -11,6 +11,7 @@ import Artist from './Pages/Artist/Artist';
 import Album from './Pages/Album/Album';
 import Playlist from './Pages/Playlist/Playlist';
 import Test from './Pages/Test';
+import Breadcrumb from './components/Breadcrumb/Breadcrumb';
 
 function App() {
   const [apiColors, setApiColors] = useState<ColorInterface>();
@@ -34,24 +35,26 @@ function App() {
 
   return (
     <div className="flex flex-col h-svh">
-      <Header flex justifyContentCenter alignItemsCenter height16 zIndex10>
-        <H1 text2xl>GoLedger Challenger</H1>
-      </Header>
-      <Main flex flexColumn backgroundColor={apiColors?.silver} gap2 paddingX10>
-        <BrowserRouter>
+      <BrowserRouter>
+        <Header flex justifyContentCenter alignItemsCenter height16 zIndex10>
+          <H1 text2xl>GoLedger Challenger</H1>
+        </Header>
+        <Breadcrumb />
+        <Main flex flexColumn backgroundColor={apiColors?.silver} gap2 paddingX10>
           <Routes>
             <Route path="/home" index element={<Home />} />
-            <Route path="/artist" element={<Artist />} />            
+            <Route path="/artist" element={<Artist />} />
             <Route path="/album" element={<Album />} />
             <Route path="/playlist" element={<Playlist />} />
             <Route path="/test" element={<Test />} />
             <Route path="*" element={<Navigate to="/home" replace />} />
           </Routes>
-        </BrowserRouter>
-      </Main>
-      <Footer>
-        <h1>teste</h1>
-      </Footer>
+
+        </Main>
+        <Footer>
+          <h1>teste</h1>
+        </Footer>
+      </BrowserRouter>
     </div>
   );
 }
