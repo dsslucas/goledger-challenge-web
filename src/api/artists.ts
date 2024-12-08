@@ -1,3 +1,4 @@
+import { randomImage } from "../common/randomImage";
 import { ApiInformation, ArtistSend } from "../interfaces/ApiInformation";
 import albumApi from "./album";
 import getAlbum from "./album";
@@ -75,7 +76,8 @@ const artistApi = () => {
                     lastUpdated: element["@lastUpdated"],
                     country: element.country,
                     name: element.name,
-                    year: element.year
+                    year: element.year,
+                    image: randomImage()
                 })
             })
 
@@ -100,7 +102,8 @@ const artistApi = () => {
 
             var data = {
                 ...response.data,
-                albuns: albuns
+                albuns: albuns,
+                image: randomImage()
             }
 
             return data;

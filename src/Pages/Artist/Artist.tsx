@@ -1,39 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { ArtistPageInterface } from "./Interface";
 import { Navigate, useLocation, useNavigate } from "react-router";
-import Section from "../../components/Section/Section";
-import H1 from "../../components/H1/H1";
 import getArtist from "../../api/artists";
-import Figure from "../../components/Figure/Figure";
-import Image from "../../components/Image/Image";
-import Fieldset from "../../components/Fieldset/Fieldset";
-import Span from "../../components/Span/Span";
-import H2 from "../../components/H2/H2";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faLocationDot, faPen, faTrash } from "@fortawesome/free-solid-svg-icons";
-import Input from "../../components/Input/Input";
-import Button from "../../components/Button/Button";
-import Divider from "../../components/Divider/Divider";
 import { ApiInformation } from "../../interfaces/ApiInformation";
-import Aside from "../../components/Aside/Aside";
 import getAlbum from "../../api/album";
 import songApi from "../../api/song";
 import Swal from "sweetalert2";
 import albumApi from "../../api/album";
 import artistApi from "../../api/artists";
-import H4 from "../../components/H4/H4";
 import { ModalCreateInputInterface, ModalCreateInterface } from "../Modal/Interface";
-import ModalCreate from "../Modal/ModalCreate";
 import { handleConfirmModalAdd } from "../../common/sendModalAdd";
-import renderizeLoading from "../../common/renderizeLoading";
 import { redirectPage } from "../../common/redirectPage";
-import Thead from "../../components/Table/Thead";
-import TableTr from "../../components/Table/Tr";
-import Tbody from "../../components/Table/Tbody";
-import TableTd from "../../components/Table/Td";
-import TableTh from "../../components/Table/Th";
-import Table from "../../components/Table/Table";
-import { randomImage } from "../../common/randomImage";
+import DetailContent from "../DetailContent/detailContent";
 
 const Artist: React.FC<ArtistPageInterface> = () => {
     const location = useLocation();
@@ -48,7 +26,8 @@ const Artist: React.FC<ArtistPageInterface> = () => {
         name: '',
         lastTouchBy: "",
         lastTx: "",
-        lastUpdated: ""
+        lastUpdated: "",
+        image: ""
     });
 
     const [modalCreateParams, setModalCreateParams] = useState<ModalCreateInterface>({
@@ -111,10 +90,6 @@ const Artist: React.FC<ArtistPageInterface> = () => {
         }
     }
 
-    const handleCancelModalAdd = (event: React.MouseEvent<HTMLButtonElement>) => {
-        closeModalAdd();
-    }
-
     const closeModalAdd = () => {
         setModalCreateParams({
             ...modalCreateParams,
@@ -126,7 +101,7 @@ const Artist: React.FC<ArtistPageInterface> = () => {
         });
     }
 
-    const handleSendModal = async (event: React.FormEvent, formData: ModalCreateInputInterface, tag: string) => {
+    const handleSendModal = async (event: React.FormEvent, formData: ModalCreateInputInterface) => {
         try {
             setLoading(true);
             formData.idArtist = artist["@key"];
@@ -148,6 +123,15 @@ const Artist: React.FC<ArtistPageInterface> = () => {
         }
         finally {
             setLoading(false);
+        }
+    }
+
+    const handleChangeCountryState = (e: React.ChangeEvent<HTMLInputElement>, id: string) => {
+        if (artist !== undefined && artist?.country !== undefined && e.target.value !== undefined) {
+            setArtist({
+                ...artist,
+                country: e.target.value
+            })
         }
     }
 
@@ -182,36 +166,7 @@ const Artist: React.FC<ArtistPageInterface> = () => {
         finally {
             setLoading(false);
         }
-    }
-
-    const renderSongs = (album: ApiInformation) => {
-        if (album.songs && album.songs?.length > 0) {
-            return <Table widthFull textCenter>
-                <Thead backgroundGray textWhite>
-                    <TableTr>
-                        <TableTh>#</TableTh>
-                        <TableTh>Song</TableTh>
-                        <TableTh> </TableTh>
-                    </TableTr>
-                </Thead>
-                <Tbody>
-                    {album.songs && album.songs.map((song: ApiInformation, index: number) => {
-                        if (song.album) return <TableTr key={song["@key"]} backgroundStripedGray>
-                            <TableTd>{index + 1}</TableTd>
-                            <TableTd>{song.name}</TableTd>
-                            <TableTd>
-                                <Button type="button" icon deleteBackgroundColor textWhite rounded onClick={(event: React.MouseEvent<HTMLButtonElement>) => handleDeleteSong(event, song["@key"])}><FontAwesomeIcon icon={faTrash} /></Button>
-                            </TableTd>
-                        </TableTr>
-                        else return <></>
-                    })}
-                </Tbody>
-            </Table>;
-        }
-        else return <Divider flex justifyCenter itemsCenter>
-            <Span>Nothing registered there.</Span>
-        </Divider>
-    }
+    }  
 
     const handleClickChangeArtistLocation = async (event: React.MouseEvent<HTMLButtonElement>, id: string) => {
         try {
@@ -328,14 +283,7 @@ const Artist: React.FC<ArtistPageInterface> = () => {
         }
     }
 
-    const handleChangeCountryState = (e: React.ChangeEvent<HTMLInputElement>, id: string) => {
-        if (artist !== undefined && artist?.country !== undefined && e.target.value !== undefined) {
-            setArtist({
-                ...artist,
-                country: e.target.value
-            })
-        }
-    }
+
 
     const handleChangeAlbumYear = (e: React.ChangeEvent<HTMLInputElement>, id: string) => {
         if (artist && artist.albuns !== undefined) {
@@ -356,109 +304,21 @@ const Artist: React.FC<ArtistPageInterface> = () => {
         }
     }
 
-    return <>
-        {renderizeLoading(loading)}
-        <Divider flex paddingY2 gap2>
-            {
-                modalCreateParams.open && (
-                    <ModalCreate
-                        open={modalCreateParams.open}
-                        title={modalCreateParams.title}
-                        tag={modalCreateParams.tag}
-                        onCancel={handleCancelModalAdd}
-                        onConfirm={(e: React.FormEvent, data: ModalCreateInputInterface) => handleSendModal(e, data, modalCreateParams.tag)}
-                        buttonConfirm={modalCreateParams.buttonConfirm}
-                        buttonConfirmText={modalCreateParams.buttonConfirmText}
-                        options={modalCreateParams.options}
-                        apiData={modalCreateParams.apiData}
-                    />
-                )
-            }
-            <Section flex flexCol widthOneFiveDesktop>
-                <Figure flex justifyCenter itemsCenter>
-                    <Image src={randomImage()} roundedT />
-                </Figure>
-                <Divider flex flexCol widthFull backgroundGray padding2>
-                    <H2 textXl>{artist.name}</H2>
-                    <Fieldset flex itemsCenter gapX2 height7>
-                        <FontAwesomeIcon icon={faLocationDot} />
-                        <Input
-                            type="text"
-                            id="artist-country"
-                            name="country"
-                            value={artist.country}
-                            rounded
-                            border
-                            required
-                            backgroundTransparent
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChangeCountryState(e, artist["@key"])}
-                        />
-                        <Button type="button" onClick={(event: React.MouseEvent<HTMLButtonElement>) => handleClickChangeArtistLocation(event, artist["@key"])} icon editBackgroundColor flex justifyCenter itemsCenter rounded textWhite>
-                            <FontAwesomeIcon icon={faPen} />
-                        </Button>
-                    </Fieldset>
-                    <Fieldset flex itemsCenter gapX2>
-                        <H2 textXl>Albuns</H2>
-                        <Span>{artist.albuns?.length}</Span>
-                    </Fieldset>
-                </Divider>
-                <Button type="button" onClick={(event: React.MouseEvent<HTMLButtonElement>) => handleClickDeleteArtist(event, artist["@key"])} deleteBackgroundColor flex justifyCenter itemsCenter roundedB textWhite gapX2>
-                    DELETE
-                    <FontAwesomeIcon icon={faTrash} />
-                </Button>
-            </Section>
-            <Aside flex flexColumn widthFourFiveDesktop>
-                < Divider flex flexCol gap2>
-                    <Divider flex justifyBetween itemsCenter>
-                        <H4 textXl>Albuns</H4>
-                        <Button
-                            type="button"
-                            rounded textWhite uppercase border paddingX2 successBackgroundColor
-                            onClick={(event: React.MouseEvent<HTMLButtonElement>) => handleAddAlbum(event, artist["@key"])}
-                        >Add Album</Button>
-                    </Divider>
-                    <Divider flex gap2>
-                        {artist && artist.albuns && (
-                            artist.albuns.map((element: ApiInformation, key: number) => {
-                                return <Divider flex flexCol backgroundGray border rounded gap2 key={key}>
-                                    <Divider flex gapX2>
-                                        <Figure flex justifyCenter widthOneSixDesktop>
-                                            <Image src={randomImage()} />
-                                        </Figure>
-                                        <Divider flex flexCol justifyBetween>
-                                            <Fieldset flex flexColumn>
-                                                <H1 text3xl>{element.name}</H1>
-                                            </Fieldset>
-                                            <Fieldset flex gapX2 height7>
-                                                <Input
-                                                    type="number"
-                                                    id={`album-year-${element["@key"]}`}
-                                                    name={`album-year-${element["@key"]}`}
-                                                    value={element.year}
-                                                    required
-                                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChangeAlbumYear(e, element["@key"])}
-                                                    rounded border backgroundTransparent />
-                                                <Button type="button" onClick={(event: React.MouseEvent<HTMLButtonElement>) => handleClickChangeAlbumYear(event, element["@key"])} icon editBackgroundColor flex justifyCenter itemsCenter rounded textWhite>
-                                                    <FontAwesomeIcon icon={faPen} />
-                                                </Button>
-                                            </Fieldset>
-                                            <Button type="button" onClick={(event: React.MouseEvent<HTMLButtonElement>) => handleDeleteAlbum(event, element["@key"])} deleteBackgroundColor flex justifyCenter itemsCenter textWhite gapX2>
-                                                DELETE
-                                                <FontAwesomeIcon icon={faTrash} /></Button>
-                                        </Divider>
-
-                                    </Divider>
-                                    <Divider flex justifyCenter itemsStart>
-                                        {renderSongs(element)}
-                                    </Divider>
-                                </Divider>
-                            })
-                        )}
-                    </Divider>
-                </Divider>
-            </Aside>
-        </Divider>
-    </>
+    return <DetailContent 
+        loading={loading}
+        externalData={artist}
+        type="artist"
+        paramsModalCreate={modalCreateParams}
+        handleSendModal={handleSendModal}
+        handleDeleteSong={handleDeleteSong}
+        handleChangeCountryState={handleChangeCountryState}
+        handleClickChangeArtistLocation={handleClickChangeArtistLocation}
+        handleClickDeleteArtist={handleClickDeleteArtist}
+        handleAddAlbum={handleAddAlbum}
+        handleChangeAlbumYear={handleChangeAlbumYear}
+        handleClickChangeAlbumYear={handleClickChangeAlbumYear}
+        handleDeleteAlbum={handleDeleteAlbum}
+    />
 }
 
 export default Artist;

@@ -7,30 +7,8 @@ import playlistApi from "../../api/playlist";
 import Swal from "sweetalert2";
 import { handleConfirmModalAdd } from "../../common/sendModalAdd";
 import songApi from "../../api/song";
-import Button from "../../components/Button/Button";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash } from "@fortawesome/free-solid-svg-icons";
-import Divider from "../../components/Divider/Divider";
-import Span from "../../components/Span/Span";
-import Section from "../../components/Section/Section";
-import ModalCreate from "../Modal/ModalCreate";
-import Figure from "../../components/Figure/Figure";
-import Image from "../../components/Image/Image";
-import H2 from "../../components/H2/H2";
-import Fieldset from "../../components/Fieldset/Fieldset";
-import Label from "../../components/Label/Label";
-import Input from "../../components/Input/Input";
-import Aside from "../../components/Aside/Aside";
-import H4 from "../../components/H4/H4";
-import renderizeLoading from "../../common/renderizeLoading";
 import { redirectPage } from "../../common/redirectPage";
-import Table from "../../components/Table/Table";
-import Thead from "../../components/Table/Thead";
-import TableTr from "../../components/Table/Tr";
-import TableTh from "../../components/Table/Th";
-import Tbody from "../../components/Table/Tbody";
-import TableTd from "../../components/Table/Td";
-import { randomImage } from "../../common/randomImage";
+import DetailContent from "../DetailContent/detailContent";
 
 const Playlist: React.FC<PlaylistInterface> = () => {
     const navigate = useNavigate();
@@ -46,7 +24,8 @@ const Playlist: React.FC<PlaylistInterface> = () => {
         lastTx: "",
         lastUpdated: "",
         songs: [],
-        private: false
+        private: false,
+        image: ""
     });
     const [songsList, setSongsList] = useState<ApiInformation[]>([]);
 
@@ -98,7 +77,7 @@ const Playlist: React.FC<PlaylistInterface> = () => {
         }
     };
 
-    const handleSendModal = async (event: React.FormEvent, formData: ModalCreateInputInterface, tag: string) => {
+    const handleSendModal = async (event: React.FormEvent, formData: ModalCreateInputInterface) => {
         try {
             setLoading(true);
 
@@ -126,7 +105,7 @@ const Playlist: React.FC<PlaylistInterface> = () => {
     const handleChangePrivate = async (e: React.ChangeEvent<HTMLInputElement>) => {
         try {
             setLoading(true);
-            setPlaylist({ ...playlist, private: !playlist.private });            
+            setPlaylist({ ...playlist, private: !playlist.private });
             await playlistApi().updatePrivateStatus(playlist["@key"])
                 .catch((error: any) => {
                     throw new Error(error)
@@ -143,10 +122,6 @@ const Playlist: React.FC<PlaylistInterface> = () => {
         finally {
             setLoading(false);
         }
-    }
-
-    const handleCancelModalAdd = (event: React.MouseEvent<HTMLButtonElement>) => {
-        closeModalAdd();
     }
 
     const closeModalAdd = () => {
@@ -211,10 +186,10 @@ const Playlist: React.FC<PlaylistInterface> = () => {
         }
     }
 
-    const handleDeleteSong = async (event: React.MouseEvent<HTMLButtonElement>, idPlaylist: string, idSong: string) => {
+    const handleDeleteSong = async (event: React.MouseEvent<HTMLButtonElement>, idSong: string) => {
         try {
             setLoading(true);
-            await playlistApi().deletePlaylistSong(idPlaylist, idSong)
+            await playlistApi().deletePlaylistSong(playlist["@key"], idSong)
                 .then((response: any) => {
                     if (response.status) {
                         Swal.fire({
@@ -244,103 +219,17 @@ const Playlist: React.FC<PlaylistInterface> = () => {
         }
     }
 
-    const renderSongs = (response: ApiInformation) => {
-        if (response.songs && response.songs?.length > 0) {
-            return <Table widthFull textCenter>
-                <Thead backgroundGray textWhite>
-                    <TableTr>
-                        <TableTh>#</TableTh>
-                        <TableTh>Song</TableTh>
-                        <TableTh>Artist</TableTh>
-                        <TableTh>Album</TableTh>
-                        <TableTh> </TableTh>
-                    </TableTr>
-                </Thead>
-                <Tbody>
-                    {response.songs.map((song: ApiInformation, index: number) => {
-                        if (song.album && song.artist) {
-                            return <TableTr key={song["@key"]} backgroundStripedGray>
-                                <TableTd>{index + 1}</TableTd>
-                                <TableTd>{song.name}</TableTd>
-                                <TableTd>{song.artist.name}</TableTd>
-                                <TableTd>{song.album.name}</TableTd>
-                                <TableTd>
-                                    <Button type="button" icon deleteBackgroundColor textWhite rounded onClick={(event: React.MouseEvent<HTMLButtonElement>) => handleDeleteSong(event, response["@key"], song["@key"])}><FontAwesomeIcon icon={faTrash} /></Button>
-                                </TableTd>
-                            </TableTr>
-                        }
-                        else return <></>
-                    })}
-                </Tbody>
-            </Table>;
-        }
-        else return <Divider flex justifyCenter itemsCenter>
-            <Span>Nothing registered there.</Span>
-        </Divider>
-    }
-
-    return <>
-        {renderizeLoading(loading)}
-
-        <Divider flex paddingY2 gap2>
-            {
-                modalCreateParams.open && (
-                    <ModalCreate
-                        open={modalCreateParams.open}
-                        title={modalCreateParams.title}
-                        tag={modalCreateParams.tag}
-                        onCancel={handleCancelModalAdd}
-                        onConfirm={(e: React.FormEvent, data: ModalCreateInputInterface) => handleSendModal(e, data, modalCreateParams.tag)}
-                        buttonConfirm={modalCreateParams.buttonConfirm}
-                        buttonConfirmText={modalCreateParams.buttonConfirmText}
-                        options={modalCreateParams.options}
-                        apiData={modalCreateParams.apiData}
-                        createOutsideHome={true}
-                    />
-                )
-            }
-
-            <Section flex flexCol widthOneFiveDesktop>
-                <Figure flex justifyCenter itemsCenter>
-                    <Image src={randomImage()} roundedT />
-                </Figure>
-                <Divider flex flexCol widthFull backgroundGray padding2>
-                    <H2 textXl>{playlist.name}</H2>
-
-                    <Fieldset flex gapX2>
-                        <Label for={`private`}>Private</Label>
-                        <Input type="checkbox"
-                            id={`private`}
-                            name={`private`}
-                            checked={playlist.private}
-                            //value={undefined}
-                            onChange={handleChangePrivate} border />
-                    </Fieldset>
-                </Divider>
-
-                <Button type="button" onClick={(event: React.MouseEvent<HTMLButtonElement>) => handleDeletePlaylist(event, playlist["@key"])} deleteBackgroundColor flex justifyCenter itemsCenter roundedB textWhite gapX2>
-                    DELETE
-                    <FontAwesomeIcon icon={faTrash} />
-                </Button>
-            </Section>
-            <Aside flex flexColumn widthFourFiveDesktop>
-                <Divider flex flexCol gap2>
-                    <Divider flex justifyBetween itemsCenter>
-                        <H4 textXl>Songs</H4>
-                        <Button
-                            type="button"
-                            rounded textWhite uppercase border paddingX2 successBackgroundColor
-                            onClick={(event: React.MouseEvent<HTMLButtonElement>) => handleAddSong(event, playlist["@key"])}
-                        >Add song</Button>
-                    </Divider>
-                    <Divider flex flexCol backgroundGray border rounded gap2>
-                        {renderSongs(playlist)}
-                    </Divider>
-                </Divider>
-            </Aside>
-        </Divider >
-
-    </>
+    return <DetailContent
+        loading={loading}
+        externalData={playlist}
+        type="playlist"
+        paramsModalCreate={modalCreateParams}
+        handleSendModal={handleSendModal}
+        handleDeleteSong={handleDeleteSong}
+        handleAddSong={handleAddSong}
+        handleChangePrivate={handleChangePrivate}
+        handleDeletePlaylist={handleDeletePlaylist}
+    />
 }
 
 export default Playlist;

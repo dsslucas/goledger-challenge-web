@@ -4,6 +4,7 @@ import albumApi from "./album";
 import api from "./api";
 import songApi from "./song";
 import { generateThrow } from "./throw";
+import { randomImage } from "../common/randomImage";
 
 const playlistApi = () => {
     const createPlaylist = async (request: PlaylistSend) => {
@@ -112,8 +113,9 @@ const playlistApi = () => {
 
                         const artist = getAlbum.artist;
 
-                        element.artist = artist
-                        element.album = getAlbum
+                        element.artist = artist;
+                        element.album = getAlbum;
+                        element.image = randomImage()
                     }
                 }
 

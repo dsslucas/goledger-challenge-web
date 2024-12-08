@@ -4,7 +4,11 @@ import { DividerInterface } from "./Interface";
 const Divider: React.FC<DividerInterface> = (props: DividerInterface) => {
     var className = "";
     if (props.flex) className += "flex ";
+
     if (props.flexCol) className += "flex-col ";
+    if (props.flexColMobile) className += "xs:flex-col ";
+    if (props.flexRowDesktop) className += "lg:flex-row ";
+
     if (props.flexWrap) className += "flex-wrap ";
 
     if (props.flex1) className += "flex-1 ";

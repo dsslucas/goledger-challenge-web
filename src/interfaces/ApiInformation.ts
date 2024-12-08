@@ -16,6 +16,7 @@ export interface ApiInformation {
     albuns?: ApiInformation[];
     songs?: ApiInformation[];
     private?: boolean;
+    image: string;
 }
 
 export interface ArtistSend {

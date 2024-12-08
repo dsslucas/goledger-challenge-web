@@ -1,3 +1,4 @@
+import { randomImage } from "../common/randomImage";
 import { InputField } from "../components/Input/Interface";
 import { AlbumSend, ApiInformation } from "../interfaces/ApiInformation";
 import api from "./api";
@@ -111,7 +112,8 @@ const albumApi = () => {
                     country: element.country,
                     name: element.name,
                     year: element.year,
-                    artist: artist
+                    artist: artist,
+                    image: randomImage()
                 })
             }
 
@@ -137,6 +139,7 @@ const albumApi = () => {
                     const idArtist = response.data.artist["@key"];
                     const artistInfo = await artistApi().getArtistInfo(idArtist);
                     response.data.artist.name = artistInfo.name;
+                    response.data.image = randomImage();
                     return response;
                 }).then(async (response: any) => {
                     const songs = await songApi().getSongsByAlbumId(response.data["@key"]);
@@ -178,6 +181,8 @@ const albumApi = () => {
                         const element = response.data.result[i];
 
                         element.songs = await getSong().getSongsByAlbumId(element["@key"]);
+
+                        element.image = randomImage()
                     }
                 }
                 return response.data.result;

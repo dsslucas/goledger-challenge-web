@@ -1,3 +1,4 @@
+import { randomImage } from "../common/randomImage";
 import { InputField } from "../components/Input/Interface";
 import { ApiInformation, SongSend } from "../interfaces/ApiInformation";
 import getAlbum from "./album";
@@ -96,7 +97,8 @@ const songApi = () => {
                     name: element.name,
                     year: element.year,
                     artist: artist,
-                    album: album
+                    album: album,
+                    image: randomImage()
                 })
             }
 
