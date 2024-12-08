@@ -72,7 +72,6 @@ const songApi = () => {
             }).then(async (response: any) => {
                 var data: ApiInformation[] = [];
                 if(response.data && response.data.result){
-                    var data: ApiInformation[] = [];
                     for (let i = 0; i < response.data.result.length; i++) {
                         const element = response.data.result[i];
     

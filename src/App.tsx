@@ -10,7 +10,6 @@ import Home from './Pages/Home/Home';
 import Artist from './Pages/Artist/Artist';
 import Album from './Pages/Album/Album';
 import Playlist from './Pages/Playlist/Playlist';
-import Test from './Pages/Test';
 import Breadcrumb from './components/Breadcrumb/Breadcrumb';
 
 function App() {
@@ -46,7 +45,6 @@ function App() {
             <Route path="/artist" element={<Artist />} />
             <Route path="/album" element={<Album />} />
             <Route path="/playlist" element={<Playlist />} />
-            <Route path="/test" element={<Test />} />
             <Route path="*" element={<Navigate to="/home" replace />} />
           </Routes>
 
