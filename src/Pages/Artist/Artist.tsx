@@ -5,7 +5,6 @@ import Section from "../../components/Section/Section";
 import H1 from "../../components/H1/H1";
 import getArtist from "../../api/artists";
 import Banjo from "../../assets/img/banjo.jpg";
-import CountryRoads from "../../assets/img/country.jpg";
 import Figure from "../../components/Figure/Figure";
 import Image from "../../components/Image/Image";
 import Fieldset from "../../components/Fieldset/Fieldset";
@@ -35,6 +34,7 @@ import Tbody from "../../components/Table/Tbody";
 import TableTd from "../../components/Table/Td";
 import TableTh from "../../components/Table/Th";
 import Table from "../../components/Table/Table";
+import { randomImage } from "../../common/randomImage";
 
 const Artist: React.FC<ArtistPageInterface> = () => {
     const location = useLocation();
@@ -424,7 +424,7 @@ const Artist: React.FC<ArtistPageInterface> = () => {
                                 return <Divider flex flexCol backgroundGray border rounded gap2 key={key}>
                                     <Divider flex gapX2>
                                         <Figure flex justifyCenter widthOneSixDesktop>
-                                            <Image src={CountryRoads} />
+                                            <Image src={randomImage()} />
                                         </Figure>
                                         <Divider flex flexCol justifyBetween>
                                             <Fieldset flex flexColumn>

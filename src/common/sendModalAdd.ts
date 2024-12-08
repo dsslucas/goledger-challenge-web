@@ -4,7 +4,7 @@ import artistApi from "../api/artists";
 import albumApi from "../api/album";
 import songApi from "../api/song";
 import playlistApi from "../api/playlist";
-import { AlbumSend, ResponseData } from "../interfaces/ApiInformation";
+import { ResponseData } from "../interfaces/ApiInformation";
 
 export const handleConfirmModalAdd = async (event: React.FormEvent, formData: ModalCreateInputInterface, tag: string): Promise<ResponseData> => {
     event.preventDefault();

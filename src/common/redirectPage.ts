@@ -1,5 +1,4 @@
-import React from "react";
-import { NavigateFunction, useNavigate } from "react-router"
+import { NavigateFunction } from "react-router"
 
 export const redirectPage = (navigate: NavigateFunction, id: string | undefined, tag: string) => {
     if (tag && id) {

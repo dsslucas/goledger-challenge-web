@@ -16,7 +16,6 @@ import Section from "../../components/Section/Section";
 import ModalCreate from "../Modal/ModalCreate";
 import Figure from "../../components/Figure/Figure";
 import Image from "../../components/Image/Image";
-import Banjo from "../../assets/img/banjo.jpg";
 import H2 from "../../components/H2/H2";
 import Fieldset from "../../components/Fieldset/Fieldset";
 import Label from "../../components/Label/Label";
@@ -31,6 +30,7 @@ import TableTr from "../../components/Table/Tr";
 import TableTh from "../../components/Table/Th";
 import Tbody from "../../components/Table/Tbody";
 import TableTd from "../../components/Table/Td";
+import { randomImage } from "../../common/randomImage";
 
 const Playlist: React.FC<PlaylistInterface> = () => {
     const navigate = useNavigate();
@@ -302,7 +302,7 @@ const Playlist: React.FC<PlaylistInterface> = () => {
 
             <Section flex flexCol widthOneFiveDesktop>
                 <Figure flex justifyCenter itemsCenter>
-                    <Image src={Banjo} roundedT />
+                    <Image src={randomImage()} roundedT />
                 </Figure>
                 <Divider flex flexCol widthFull backgroundGray padding2>
                     <H2 textXl>{playlist.name}</H2>

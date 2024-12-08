@@ -15,7 +15,6 @@ import H2 from "../../components/H2/H2";
 import Fieldset from "../../components/Fieldset/Fieldset";
 import Input from "../../components/Input/Input";
 import Image from "../../components/Image/Image";
-import Banjo from "../../assets/img/banjo.jpg";
 import songApi from "../../api/song";
 import Label from "../../components/Label/Label";
 import Aside from "../../components/Aside/Aside";
@@ -31,6 +30,7 @@ import TableTr from "../../components/Table/Tr";
 import TableTh from "../../components/Table/Th";
 import Tbody from "../../components/Table/Tbody";
 import TableTd from "../../components/Table/Td";
+import { randomImage } from "../../common/randomImage";
 
 const Album: React.FC<AlbumPageInterface> = () => {
     const navigate = useNavigate();
@@ -311,7 +311,7 @@ const Album: React.FC<AlbumPageInterface> = () => {
 
             <Section flex flexCol widthOneFiveDesktop>
                 <Figure flex justifyCenter itemsCenter>
-                    <Image src={Banjo} roundedT />
+                    <Image src={randomImage()} roundedT />
                 </Figure>
                 <Divider flex flexCol widthFull backgroundGray padding2>
                     <H2 textXl>{album.name}</H2>

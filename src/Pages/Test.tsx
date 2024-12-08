@@ -1,69 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import getArtist from '../api/artists';
-import getSong from '../api/song';
+import React from 'react';
+import { randomImage } from '../common/randomImage';
 
-interface Artist {
-  "@assetType": string;
-  "@key": string;
-  "@lastTouchBy": string;
-  "@lastTx": string;
-  "@lastUpdated": string;
-  country: string;
-  name: string;
-  albuns: Album[];
-}
 
-interface Album {
-  "@assetType": string;
-  "@key": string;
-  "@lastTouchBy": string;
-  "@lastTx": string;
-  "@lastUpdated": string;
-  artist: Artist;
-  name: string;
-  year: number;
-  songs: Song[];
-}
+// const images = randomImage<HTMLImageElement>(
+//   require.context('../assets/img', false, /\.(png|jpg|jpe?g|svg)$/)
+// )
 
-interface Song {
-  "@assetType": string;
-  "@key": string;
-  "@lastTouchBy": string;
-  "@lastTx": string;
-  "@lastUpdated": string;
-  album: Album;
-  name: string;
-}
+const images = require.context('../assets/img', true);
+const imageList = images.keys().map(image => images(image));
 
 const Test: React.FC = () => {
-  const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    setTimeout(() => {
-      console.log("ativei o loading")
-      setIsLoading(!isLoading)
-    }, 5000); // 10 segundos
-  }, [])
-
-  useEffect(() => {
-    if (isLoading) {
-      const timeout = setTimeout(() => {
-        console.log("desativei o loading")
-        setIsLoading(false);
-      }, 5000); // 10 segundos
-
-      return () => clearTimeout(timeout);
-    }
-  }, [isLoading]);
 
   return (
-    <div
-      className={`fixed inset-0 bg-gray-800 flex justify-center items-center z-[100] transition-transform duration-500 z-100 ${
-        isLoading ? 'translate-y-0' : '-translate-y-full'
-      }`}
-    >
-      {/* Conteúdo do loading */}
-      <div className="text-white animate-pulse">Carregando...</div>
+    <div className='flex justify-center items-center w-full h-full gap-x-2'>
+      <img src={randomImage()} alt={`image-`} className='w-36 h-36'/>
     </div>
   );
 };

@@ -1,14 +1,14 @@
-import Album from "../Pages/Album/Album";
 import { ApiInformation, ArtistSend } from "../interfaces/ApiInformation";
 import albumApi from "./album";
 import getAlbum from "./album";
 import api from "./api";
+import { generateThrow } from "./throw";
 
 const artistApi = () => {
     const postNewArtist = async (request: ArtistSend) => {
         try {
-            if (request.name === null || request.name === undefined || request.name === "") throw "NO_NAME";
-            if (request.country === null || request.country === undefined || request.country === "") throw "NO_COUNTRY";
+            if (request.name === null || request.name === undefined || request.name === "") throw generateThrow("NO_NAME");
+            if (request.country === null || request.country === undefined || request.country === "") throw generateThrow("NO_COUNTRY");
 
             return await api.post("/invoke/createAsset", {
                 asset: [{
@@ -131,7 +131,7 @@ const artistApi = () => {
 
     const deleteArtist = async (id: string) => {
         try {
-            if (id === null || id === undefined || id === "") throw "NO_ID";
+            if (id === null || id === undefined || id === "") throw generateThrow("NO_ID");
 
             await albumApi().getAlbunsByArtistId(id)
                 .then(async (response: ApiInformation[]) => {

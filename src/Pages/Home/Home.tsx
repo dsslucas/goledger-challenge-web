@@ -15,7 +15,6 @@ import Fieldset from "../../components/Fieldset/Fieldset";
 import Span from "../../components/Span/Span";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLocationDot } from "@fortawesome/free-solid-svg-icons";
-import Banjo from "../../assets/img/banjo.jpg";
 import { useNavigate } from "react-router";
 import Figure from "../../components/Figure/Figure";
 import Image from "../../components/Image/Image";
@@ -29,6 +28,7 @@ import songApi from "../../api/song";
 import { handleConfirmModalAdd } from "../../common/sendModalAdd";
 import renderizeLoading from "../../common/renderizeLoading";
 import { redirectPage } from "../../common/redirectPage";
+import { randomImage } from "../../common/randomImage";
 
 const Home = () => {
     const navigate = useNavigate();
@@ -297,7 +297,7 @@ const Home = () => {
                                 key={key}
                             >
                                 <Figure flex justifyCenter itemsCenter>
-                                    <Image src={Banjo} widthFull roundedT />
+                                    <Image src={randomImage()} widthFull roundedT />
                                 </Figure>
                                 <Divider flex justifyBetween widthFull gapX2 padding2>
                                     <Divider>
