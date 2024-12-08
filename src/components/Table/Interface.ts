@@ -25,7 +25,7 @@ export interface TableBodyInterface {
 export interface TableTrInterface {
     children: React.ReactNode;
 
-    key?: string;
+    rowKey?: string | number;
     backgroundStripedGray?: boolean;
 }
 

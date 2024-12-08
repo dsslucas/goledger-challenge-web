@@ -26,7 +26,7 @@ const Button: React.FC<ButtonInterface> = (props: ButtonInterface) => {
     if (props.gapX2) className += "gap-x-2 ";
 
 
-    return <button type={props.type} className={className.trim()} onClick={props.onClick} key={props.key}>
+    return <button type={props.type} className={className.trim()} onClick={props.onClick} data-key={props.rowKey}>
         {props.children}
     </button>
 }

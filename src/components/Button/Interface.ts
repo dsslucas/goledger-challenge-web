@@ -9,7 +9,7 @@ export interface ButtonInterface {
     itemsCenter?: boolean;
     widthFull?: boolean;
     active?: boolean;
-    key?: number;
+    rowKey?: string | number;
     width25Percent?: boolean;
     border?: boolean;
     rounded?: boolean;
