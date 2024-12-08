@@ -100,23 +100,40 @@ const Home = () => {
             setLoading(true);
             switch (tag) {
                 case "artist":
-                    setGetApiData(await artistApi().getAllArtists());
-                    setLoading(false);
+                    setGetApiData(await artistApi().getAllArtists());                   
                     break;
                 case "album":
                     setGetApiData(await getAlbum().getAllAlbums());
-                    setLoading(false);
+                    const artists = await artistApi().getAllArtists();
+                    artists.forEach((element: ApiInformation) => {
+                        var temp = artistsList;
+        
+                        temp.push({
+                            label: element.name,
+                            value: element["@key"]
+                        })
+                        setArtistsList(temp);
+                    });
                     break;
                 case "song":
                     setGetApiData(await getSong().getAllSongs());
-                    setLoading(false);
+
+                    const albuns = await albumApi().getAllAlbums();
+                    albuns.forEach((response: ApiInformation) => {
+                        var temp = albunsList;
+
+                        temp.push({
+                            label: response.name,
+                            value: response["@key"]
+                        })
+                        setAlbunsList(temp);
+                    });                   
                     break;
                 case "playlist":
                     setGetApiData(await getPlaylist().getAllPlaylists());
-                    setLoading(false);
+                    setSongsList(await songApi().getAllSongs());                   
                     break;
                 default:
-                    setLoading(false);
                     break;
             }
         }
@@ -214,37 +231,9 @@ const Home = () => {
     const fetchData = async () => {
         try {
             setLoading(true);
-            const artists = await artistApi().getAllArtists();
-            artists.forEach((element: ApiInformation) => {
-                var temp = artistsList;
-
-                temp.push({
-                    label: element.name,
-                    value: element["@key"]
-                })
-                setArtistsList(temp);
-            });
-
             await renderizeDataCategory(buttonClickedLabel.toLowerCase());
-
             setLoading(true);
-            const albuns = await albumApi().getAllAlbums();
-            albuns.forEach((response: ApiInformation) => {
-                var temp = albunsList;
-
-                temp.push({
-                    label: response.name,
-                    value: response["@key"]
-                })
-                setAlbunsList(temp);
-            })
-
-            const songs = await songApi().getAllSongs();
-            setSongsList(songs);
-
             setButtonClicked(true);
-
-            setLoading(false);
         }
         catch (error: any) {
             Swal.fire({
