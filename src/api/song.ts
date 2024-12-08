@@ -63,46 +63,52 @@ const songApi = () => {
 
     const getAllSongs = async () => {
         try {
-            const response = await api.post("/query/search", {
+            return await api.post("/query/search", {
                 query: {
                     selector: {
                         "@assetType": "song"
                     }
                 }
+            }).then(async (response: any) => {
+                var data: ApiInformation[] = [];
+                if(response.data && response.data.result){
+                    var data: ApiInformation[] = [];
+                    for (let i = 0; i < response.data.result.length; i++) {
+                        const element = response.data.result[i];
+    
+                        var album;
+                        if (element.album) {
+                            album = await getAlbum().getAlbumById(element.album["@key"]);
+                        }
+    
+                        var artist;
+                        if (album.artist) {
+                            artist = await getArtist().getArtistInfo(album.artist["@key"]);
+                        }
+    
+                        data.push({
+                            "@assetType": element["@assetType"],
+                            assetType: element["@assetType"],
+                            "@key": element["@key"],
+                            key: element["@key"],
+                            lastTouchBy: element["@lastTouchBy"],
+                            lastTx: element["@lastTx"],
+                            lastUpdated: element["@lastUpdated"],
+                            country: element.country,
+                            name: element.name,
+                            year: element.year,
+                            artist: artist,
+                            album: album,
+                            image: randomImage()
+                        })
+                    }
+                }
+
+                return data;
+            }).catch((error: any) => {
+                console.error(error);
+                return [];
             });
-
-            var data: ApiInformation[] = [];
-            for (let i = 0; i < response.data.result.length; i++) {
-                const element = response.data.result[i];
-
-                var album;
-                if (element.album) {
-                    album = await getAlbum().getAlbumById(element.album["@key"]);
-                }
-
-                var artist;
-                if (album.artist) {
-                    artist = await getArtist().getArtistInfo(album.artist["@key"]);
-                }
-
-                data.push({
-                    "@assetType": element["@assetType"],
-                    assetType: element["@assetType"],
-                    "@key": element["@key"],
-                    key: element["@key"],
-                    lastTouchBy: element["@lastTouchBy"],
-                    lastTx: element["@lastTx"],
-                    lastUpdated: element["@lastUpdated"],
-                    country: element.country,
-                    name: element.name,
-                    year: element.year,
-                    artist: artist,
-                    album: album,
-                    image: randomImage()
-                })
-            }
-
-            return data;
         }
         catch (error) {
             console.error(error);
