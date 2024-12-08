@@ -5,4 +5,9 @@ export interface ImageInterface {
     justifyCenter?: boolean;
     widthFull?: boolean;
     roundedT?: boolean;
+    roundedTMobile?: boolean;
+    roundedTlTablet?: boolean;
+    roundedTDesktop?: boolean;
+
+    roundedBlTablet?: boolean;
 }

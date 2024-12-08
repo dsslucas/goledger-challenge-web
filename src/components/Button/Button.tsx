@@ -12,7 +12,9 @@ const Button: React.FC<ButtonInterface> = (props: ButtonInterface) => {
     if (props.border) className += "border border-solid border-gray-400 ";
     if (props.borderColorHover) className += "hover:border-gray-500 ";
     if (props.rounded) className += "rounded ";
-    if (props.roundedB) className += "rounded-b ";
+    if (props.roundedB) className += "xs:rounded-b lg:rounded-b ";
+    if (props.roundedBNoneTablet) className += "md:rounded-b-none ";
+    if (props.roundedBrTablet) className += "md:rounded-br ";
     if (props.padding2) className += "p-2 ";
     if (props.paddingX2) className += "px-2 ";
     if (props.backgroundColor) className += `bg-${props.backgroundColor} hover:opacity-75 `;
@@ -24,7 +26,6 @@ const Button: React.FC<ButtonInterface> = (props: ButtonInterface) => {
     if (props.uppercase) className += `uppercase `;
     if (props.icon) className += "w-7 h-7 ";
     if (props.gapX2) className += "gap-x-2 ";
-
 
     return <button type={props.type} className={className.trim()} onClick={props.onClick} data-key={props.rowKey}>
         {props.children}

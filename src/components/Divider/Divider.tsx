@@ -7,12 +7,15 @@ const Divider: React.FC<DividerInterface> = (props: DividerInterface) => {
 
     if (props.flexCol) className += "flex-col ";
     if (props.flexColMobile) className += "xs:flex-col ";
-    if (props.flexRowDesktop) className += "lg:flex-row ";
+    if (props.flexRowDesktop) className += "xl:flex-row ";
 
     if (props.flexWrap) className += "flex-wrap ";
 
     if (props.flex1) className += "flex-1 ";
     if (props.flex1Mobile) className += "xs:flex-1 md:flex-none ";
+    if (props.flex1Tablet) className += "md:flex-1 ";
+    if (props.flexAutoDesktop) className += "lg:flex-auto ";
+
     if (props.itemsStart) className += "items-start ";
     if (props.itemsCenter) className += "items-center ";
     if (props.justifyCenter) className += "justify-center ";
@@ -26,6 +29,7 @@ const Divider: React.FC<DividerInterface> = (props: DividerInterface) => {
     if (props.width20PercentMobile) className += "xs:w-[20%] ";
     if (props.grid) className += "grid ";
     if (props.gridColsCategories) className += "xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 ";
+    if (props.gridColsAlbunsArtist) className += "xs:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 ";
     if (props.gap2) className += "gap-2 ";
     if (props.gap3) className += "gap-3 ";
     if (props.gapX2) className += "gap-x-2 ";

@@ -4,6 +4,8 @@ export interface DividerInterface {
     flexWrap?: boolean;
     flex1?: boolean;
     flex1Mobile?: boolean;
+    flex1Tablet?: boolean;
+    flexAutoDesktop?: boolean;
 
     flexCol?: boolean;
     flexColMobile?: boolean;
@@ -35,6 +37,7 @@ export interface DividerInterface {
     overflowXHidden?: boolean;
     grid?: boolean;
     gridColsCategories?: boolean;
+    gridColsAlbunsArtist?: boolean;
     gap2?: boolean;
     gap3?: boolean;
     gapX2?: boolean;

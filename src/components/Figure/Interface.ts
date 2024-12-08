@@ -4,4 +4,8 @@ export interface FigureInterface {
     itemsCenter?: boolean;
     justifyCenter?: boolean;
     widthOneSixDesktop?: boolean;
+    widthFullMobile?: boolean;
+    width50PercentTablet?: boolean;
+    widthFullDesktop?: boolean;
+
 }

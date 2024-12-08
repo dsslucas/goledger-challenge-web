@@ -2,7 +2,13 @@ export interface SectionInterface {
     children: React.ReactNode;
     flex?: boolean;
     flex1?: boolean;
-    flexCol?: boolean;
+    flexRowMobile?: boolean;
+    flexRowTablet?: boolean;
+    flexRowDesktop?: boolean;
+    //flexCol?: boolean;
+    flexColMobile?: boolean;
+    flexColTablet?: boolean;
+    flexColDesktop?: boolean;
     itemsCenter?: boolean;
     justifyCenter?: boolean;
     justifyBetween?: boolean;

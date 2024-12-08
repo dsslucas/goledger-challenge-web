@@ -82,7 +82,7 @@ const DetailContent: React.FC<DetailContentInterface> = ({ externalData, type, l
                 </Divider>
             );
         }
-    
+
         const renderTableHeaders = (headers: string[]) => (
             <Thead backgroundGray textWhite>
                 <TableTr>
@@ -92,11 +92,11 @@ const DetailContent: React.FC<DetailContentInterface> = ({ externalData, type, l
                 </TableTr>
             </Thead>
         );
-    
+
         const renderTableRows = (songs: ApiInformation[], showArtistAlbum: boolean) =>
             songs.map((song, index) => {
                 if (!song.album || (showArtistAlbum && !song.artist)) return null;
-    
+
                 return (
                     <TableTr key={song["@key"]} rowKey={song["@key"]} backgroundStripedGray>
                         <TableTd>{index + 1}</TableTd>
@@ -124,18 +124,18 @@ const DetailContent: React.FC<DetailContentInterface> = ({ externalData, type, l
                     </TableTr>
                 );
             });
-    
+
         const tableHeaders = isPlaylist
             ? ["#", "Song", "Artist", "Album", ""]
             : ["#", "Song", ""];
-    
+
         return (
             <Table widthFull textCenter>
                 {renderTableHeaders(tableHeaders)}
                 <Tbody>{renderTableRows(element.songs, isPlaylist)}</Tbody>
             </Table>
         );
-    };    
+    };
 
     return <>
         {renderizeLoading(loading)}
@@ -156,91 +156,95 @@ const DetailContent: React.FC<DetailContentInterface> = ({ externalData, type, l
                     />
                 )
             }
-            <Section flex flexCol widthOneFiveDesktop>
-                <Figure flex justifyCenter itemsCenter>
-                    <Image src={data.image} roundedT />                    
+            <Section flex flexColMobile flexRowTablet flexColDesktop widthOneFiveDesktop>
+                <Figure flex justifyCenter itemsCenter widthFullMobile width50PercentTablet widthFullDesktop>
+                    <Image src={data.image} roundedTMobile roundedTlTablet roundedTDesktop />
                 </Figure>
-                <Divider flex flexCol widthFull backgroundGray padding2>
-                    <H2 textXl>{data.name}</H2>
+                <Divider flex flexCol flex1>
+                    <Divider flex flexCol widthFull backgroundGray padding2 flex1Tablet>
+                        <H2 textXl>{data.name}</H2>
 
-                    {isAlbum && handleChangeAlbumYear && handleClickChangeAlbumYear && (
-                        <>
-                            <Fieldset flex itemsCenter gapX2>
-                                <Span>{data.artist?.name}</Span>
-                            </Fieldset>
+                        {isAlbum && handleChangeAlbumYear && handleClickChangeAlbumYear && (
+                            <>
+                                <Fieldset flex itemsCenter gapX2>
+                                    <Span>{data.artist?.name}</Span>
+                                </Fieldset>
 
-                            <Fieldset flex flexColumn gapX2>
-                                <Label for={`album-year-${data["@key"]}`}>Year</Label>
-                                <Divider flex gap2>
+                                <Fieldset flex flexColumn gapX2>
+                                    <Label for={`album-year-${data["@key"]}`}>Year</Label>
+                                    <Divider flex gap2>
+                                        <Input
+                                            type="number"
+                                            id={`album-year-${data["@key"]}`}
+                                            name={`album-year-${data["@key"]}`}
+                                            value={data.year ?? ""}
+                                            required
+                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChangeAlbumYear(e, data["@key"])}
+                                            rounded border backgroundTransparent />
+                                        <Button type="button" onClick={(event: React.MouseEvent<HTMLButtonElement>) => handleClickChangeAlbumYear(event, data["@key"])} icon editBackgroundColor flex justifyCenter itemsCenter rounded textWhite>
+                                            <FontAwesomeIcon icon={faPen} />
+                                        </Button>
+                                    </Divider>
+                                </Fieldset>
+                            </>
+                        )}
+
+                        {isArtist && handleChangeCountryState && handleClickChangeArtistLocation && (
+                            <>
+                                <Fieldset flex itemsCenter gapX2 height7>
+                                    <FontAwesomeIcon icon={faLocationDot} />
                                     <Input
-                                        type="number"
-                                        id={`album-year-${data["@key"]}`}
-                                        name={`album-year-${data["@key"]}`}
-                                        value={data.year ?? ""}
+                                        type="text"
+                                        id="artist-country"
+                                        name="country"
+                                        value={data.country || ""}
+                                        rounded
+                                        border
                                         required
-                                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChangeAlbumYear(e, data["@key"])}
-                                        rounded border backgroundTransparent />
-                                    <Button type="button" onClick={(event: React.MouseEvent<HTMLButtonElement>) => handleClickChangeAlbumYear(event, data["@key"])} icon editBackgroundColor flex justifyCenter itemsCenter rounded textWhite>
+                                        backgroundTransparent
+                                        maxWidth70PercentDesktop
+                                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                            setData({ ...data, country: e.target.value })
+                                            handleChangeCountryState(e, data["@key"]);
+                                        }}
+                                    />
+                                    <Button type="button" onClick={(event: React.MouseEvent<HTMLButtonElement>) => handleClickChangeArtistLocation(event, data["@key"])} icon editBackgroundColor flex justifyCenter itemsCenter rounded textWhite>
                                         <FontAwesomeIcon icon={faPen} />
                                     </Button>
-                                </Divider>
-                            </Fieldset>
-                        </>
-                    )}
+                                </Fieldset>
 
-                    {isArtist && handleChangeCountryState && handleClickChangeArtistLocation && (
-                        <>
-                            <Fieldset flex itemsCenter gapX2 height7>
-                                <FontAwesomeIcon icon={faLocationDot} />
-                                <Input
-                                    type="text"
-                                    id="artist-country"
-                                    name="country"
-                                    value={data.country || ""}
-                                    rounded
-                                    border
-                                    required
-                                    backgroundTransparent
-                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                                        setData({ ...data, country: e.target.value })
-                                        handleChangeCountryState(e, data["@key"]);
-                                    }}
-                                />
-                                <Button type="button" onClick={(event: React.MouseEvent<HTMLButtonElement>) => handleClickChangeArtistLocation(event, data["@key"])} icon editBackgroundColor flex justifyCenter itemsCenter rounded textWhite>
-                                    <FontAwesomeIcon icon={faPen} />
-                                </Button>
-                            </Fieldset>
+                                <Fieldset flex itemsCenter gapX2>
+                                    <H2 textXl>Albuns</H2>
+                                    <Span>{data.albuns?.length}</Span>
+                                </Fieldset>
+                            </>
+                        )}
 
-                            <Fieldset flex itemsCenter gapX2>
-                                <H2 textXl>Albuns</H2>
-                                <Span>{data.albuns?.length}</Span>
+                        {isPlaylist && handleChangePrivate && (
+                            <Fieldset flex gapX2>
+                                <Label for={`private`}>Private</Label>
+                                <Input type="checkbox"
+                                    id={`private`}
+                                    name={`private`}
+                                    checked={data.private || false}
+                                    //value={undefined}
+                                    onChange={handleChangePrivate} border />
                             </Fieldset>
-                        </>
-                    )}
+                        )}
+                    </Divider>
 
-                    {isPlaylist && handleChangePrivate && (
-                        <Fieldset flex gapX2>
-                            <Label for={`private`}>Private</Label>
-                            <Input type="checkbox"
-                                id={`private`}
-                                name={`private`}
-                                checked={data.private || false}
-                                //value={undefined}
-                                onChange={handleChangePrivate} border />
-                        </Fieldset>
-                    )}
+                    <Button type="button"
+                        onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
+                            console.log(event)
+                            if (isArtist && handleClickDeleteArtist) handleClickDeleteArtist(event, data["@key"])
+                            else if (isAlbum && handleDeleteAlbum) handleDeleteAlbum(event, data["@key"])
+                            else if (isPlaylist && handleDeletePlaylist) handleDeletePlaylist(event, data["@key"])
+                        }} deleteBackgroundColor flex justifyCenter itemsCenter roundedB roundedBNoneTablet roundedBrTablet textWhite gapX2>
+                        DELETE
+                        <FontAwesomeIcon icon={faTrash} />
+                    </Button>
                 </Divider>
 
-                <Button type="button"
-                    onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
-                        console.log(event)
-                        if (isArtist && handleClickDeleteArtist) handleClickDeleteArtist(event, data["@key"])
-                        else if (isAlbum && handleDeleteAlbum) handleDeleteAlbum(event, data["@key"])
-                        else if (isPlaylist && handleDeletePlaylist) handleDeletePlaylist(event, data["@key"])
-                    }} deleteBackgroundColor flex justifyCenter itemsCenter roundedB textWhite gapX2>
-                    DELETE
-                    <FontAwesomeIcon icon={faTrash} />
-                </Button>
             </Section>
             <Aside flex flexColumn widthFourFiveDesktop>
                 <Divider flex flexCol gap2>
@@ -259,33 +263,36 @@ const DetailContent: React.FC<DetailContentInterface> = ({ externalData, type, l
                             return "Add Item";
                         })()}</Button>
                     </Divider>
-                    <Divider flex flexColMobile flexRowDesktop gap2>
+                    <Divider flex={isAlbum || isPlaylist} grid={isArtist} gridColsAlbunsArtist={isArtist} gap2>
                         {isArtist && handleClickChangeAlbumYear && handleChangeAlbumYear && handleDeleteAlbum && (
                             <>
                                 {data && data.albuns && (
                                     data.albuns.map((element: ApiInformation, key: number) => {
                                         return <Divider flex flexCol backgroundGray border rounded gap2 key={key}>
                                             <Divider flex gapX2>
-                                                <Figure flex justifyCenter widthOneSixDesktop>
+                                                <Figure flex justifyCenter widthOneSixDesktop widthFullMobile width50PercentTablet>
                                                     <Image src={element.image} />
                                                 </Figure>
-                                                <Divider flex flexCol justifyBetween>
-                                                    <Fieldset flex flexColumn>
-                                                        <H1 text3xl>{element.name}</H1>
-                                                    </Fieldset>
-                                                    <Fieldset flex gapX2 height7>
-                                                        <Input
-                                                            type="number"
-                                                            id={`album-year-${element["@key"]}`}
-                                                            name={`album-year-${element["@key"]}`}
-                                                            value={element.year}
-                                                            required
-                                                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChangeAlbumYear(e, element["@key"])}
-                                                            rounded border backgroundTransparent />
-                                                        <Button type="button" onClick={(event: React.MouseEvent<HTMLButtonElement>) => handleClickChangeAlbumYear(event, element["@key"])} icon editBackgroundColor flex justifyCenter itemsCenter rounded textWhite>
-                                                            <FontAwesomeIcon icon={faPen} />
-                                                        </Button>
-                                                    </Fieldset>
+                                                <Divider flex flexCol flex1 justifyBetween>
+                                                    <Divider flex flexCol>
+                                                        <Fieldset flex flexColumn>
+                                                            <H1 text3xl>{element.name}</H1>
+                                                        </Fieldset>
+                                                        <Fieldset flex gapX2 height7>
+                                                            <Input
+                                                                type="number"
+                                                                id={`album-year-${element["@key"]}`}
+                                                                name={`album-year-${element["@key"]}`}
+                                                                value={element.year}
+                                                                required
+                                                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChangeAlbumYear(e, element["@key"])}
+                                                                rounded border backgroundTransparent />
+                                                            <Button type="button" onClick={(event: React.MouseEvent<HTMLButtonElement>) => handleClickChangeAlbumYear(event, element["@key"])} icon editBackgroundColor flex justifyCenter itemsCenter rounded textWhite>
+                                                                <FontAwesomeIcon icon={faPen} />
+                                                            </Button>
+                                                        </Fieldset>
+                                                    </Divider>
+
                                                     <Button type="button" onClick={(event: React.MouseEvent<HTMLButtonElement>) => handleDeleteAlbum(event, element["@key"])} deleteBackgroundColor flex justifyCenter itemsCenter textWhite gapX2>
                                                         DELETE
                                                         <FontAwesomeIcon icon={faTrash} /></Button>

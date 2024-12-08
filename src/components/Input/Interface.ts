@@ -12,6 +12,7 @@ export interface InputInterface {
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     width36?: boolean;
     widthFull?: boolean;
+    maxWidth70PercentDesktop?: boolean;
 }
 
 export interface InputField {

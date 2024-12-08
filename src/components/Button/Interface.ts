@@ -14,6 +14,8 @@ export interface ButtonInterface {
     border?: boolean;
     rounded?: boolean;
     roundedB?: boolean;
+    roundedBNoneTablet?: boolean;
+    roundedBrTablet?: boolean;
     padding2?: boolean;
     paddingX2?: boolean;
     backgroundColor?: string;

@@ -12,7 +12,7 @@ const Breadcrumb = () => {
     return (
         <>
             {location.pathname !== "/home" && (
-                <nav className="flex items-center px-10 text-gray-600 text-sm">
+                <nav className="flex items-center xs:px-5 xl:px-10 text-gray-600 text-sm">
                     <ol className="inline-flex items-center space-x-1">
                         <li className="gap-x-2">
                             <Link to="/" className="flex items-center gap-x-2 hover:text-blue-500">
