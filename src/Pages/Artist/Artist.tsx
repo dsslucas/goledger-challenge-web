@@ -4,7 +4,6 @@ import { Navigate, useLocation, useNavigate } from "react-router";
 import Section from "../../components/Section/Section";
 import H1 from "../../components/H1/H1";
 import getArtist from "../../api/artists";
-import Banjo from "../../assets/img/banjo.jpg";
 import Figure from "../../components/Figure/Figure";
 import Image from "../../components/Image/Image";
 import Fieldset from "../../components/Fieldset/Fieldset";
@@ -377,7 +376,7 @@ const Artist: React.FC<ArtistPageInterface> = () => {
             }
             <Section flex flexCol widthOneFiveDesktop>
                 <Figure flex justifyCenter itemsCenter>
-                    <Image src={Banjo} roundedT />
+                    <Image src={randomImage()} roundedT />
                 </Figure>
                 <Divider flex flexCol widthFull backgroundGray padding2>
                     <H2 textXl>{artist.name}</H2>
