@@ -47,7 +47,6 @@ const DetailContent: React.FC<DetailContentInterface> = ({ externalData, type, l
     const isPlaylist: boolean = type === "playlist";
 
     useEffect(() => {
-        console.log("TIVE ALTERACAO")
         setData(externalData);
     }, [externalData])
 
@@ -235,7 +234,6 @@ const DetailContent: React.FC<DetailContentInterface> = ({ externalData, type, l
 
                     <Button type="button"
                         onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
-                            console.log(event)
                             if (isArtist && handleClickDeleteArtist) handleClickDeleteArtist(event, data["@key"])
                             else if (isAlbum && handleDeleteAlbum) handleDeleteAlbum(event, data["@key"])
                             else if (isPlaylist && handleDeletePlaylist) handleDeletePlaylist(event, data["@key"])
