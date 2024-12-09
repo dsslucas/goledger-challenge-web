@@ -1,46 +1,93 @@
-# Getting Started with Create React App
+# Challenge - GoLedger
+The challenge set forth by GoLedger company requires the implementation of a system capable of performing CRUD operations on their API.  
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Packages
 
-## Available Scripts
+ - React.js (version 18.3.1);
+ - React Router V7;
+ - TypeScript;
+ - TailwindCSS (styling);
+ - Webpack-env (for renderize random image);
+ - Axios (requests to API);
+ - Sweetalert2 (popup for show response message).
+ 
+## Instructions
+ - Clone this repository;
+ - Access the cloned project in the terminal and type `npm i` for download the dependencies;
+ - After, start using the command `npm start`.
 
-In the project directory, you can run:
+## Features
 
-### `npm start`
+### Home
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+On the **Home** page, users can view a list of artists, albums, songs, and playlists. They can access these items and also create new ones—be it an artist, album, song, or playlist—provided they are in the selected category.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+### Artist
 
-### `npm test`
+On the **Artist** page, users can:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+ - Edit the artist country;
+ - View the list of albuns and their songs;
+ - Add new album;
+ - Remove individual songs and/or album;
+ - Delete the artist along with its albums and songs.
 
-### `npm run build`
+### Album
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+On the **Album** page, users can:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+-   Edit the album's release year.
+-   View the list of songs associated with the album.
+-   Add new songs.
+-   Remove individual songs.
+-   Delete the album along with its associated songs.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+On the **Home (option Album)** or **Artist** page, users have the option to add a new album. During album creation, they can choose to include selected songs immediately, or they can create an empty album, making the addition of songs optional.
 
-### `npm run eject`
+After an album is created, users can still add more songs. In this case, the system retrieves the songs already associated with the album and combines them with any newly added tracks.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+When deleting a sound, its references are automatically removed from the album and any playlists to which it is linked.
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### Song
+At **Home (option Song)** or **Album** page, the user can create new songs, **since them were associated with an album**.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+If the user access the Song option at Home page, on click, the user will be redirected for Album where that song were associated.
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+### Playlist
+On the **Playlist** page, users can:
 
-## Learn More
+-   View the name of playlist, if its private (within change option);
+-   View the list of songs associated, each of them within album and artist name;
+-   Add new songs;
+-   Remove individual songs.
+-   Delete the playlist along with its associated songs.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+On the **Home (option Playlist)** or **Playlist** page, upon clicking the 'Add' button, a modal appears prompting for the required data. Additionally, the modal may include an interactive table listing previously recorded sounds, each linked to a specific artist and album.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Screens
+These are the project pages, with responsiveness provided by TailwindCSS.
+
+### Home
+![HomeScreen](src/assets/markdown/home.gif)
+
+### Artist info
+![ArtistScreen](src/assets/markdown/artist.gif)
+
+### Album info
+![AlbumScreen](src/assets/markdown/album.gif)
+
+### Playlist
+![PlaylistScreen](src/assets/markdown/playlist.gif)
+
+## Observations
+
+**Images**
+For represent images for artists, albums, songs, and playlists, **I have adopted the use of random images generated by Meta's artificial intelligence**, strictly for non-commercial purposes.
+
+**Artist, Album and Playlist pages**
+Both of that pages have using reusable component with similar styling, opening possibilities for easy and fast maintenance.
+
+**Delete Operations**
+I chose not to use the "cascade" attribute for delete operations, as this feature deletes all records linked to the assetType. For example, deleting a song from an album could unintentionally remove it from all associated playlists. The same principle applies to the deletion of artists and albums.
+
+To delete an artist, album, or song, specific validations are performed to ensure individualized removal of songs, albums, or artists. After the deletion process is complete, the system redirects the user to the "/home" page.
