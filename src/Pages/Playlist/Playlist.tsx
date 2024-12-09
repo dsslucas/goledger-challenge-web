@@ -139,7 +139,6 @@ const Playlist: React.FC<PlaylistInterface> = () => {
     }
 
     const handleDeletePlaylist = async (event: React.MouseEvent<HTMLButtonElement>, idPlaylist: string) => {
-        console.log("entrei aqui")
         await sweetAlertHandler(
             "Are you sure?",
             "This action is irreversible.",
