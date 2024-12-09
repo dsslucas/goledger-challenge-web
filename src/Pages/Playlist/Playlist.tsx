@@ -59,10 +59,7 @@ const Playlist: React.FC<PlaylistInterface> = () => {
 
             await playlistApi().getPlaylistInfo(id)
                 .then((response: any) => {
-                    if (response.status) {
-                        setPlaylist(response)
-                    }
-                    else throw new Error(response);
+                    setPlaylist(response);
                 });
         } catch (err) {
             console.error(err);
@@ -142,6 +139,7 @@ const Playlist: React.FC<PlaylistInterface> = () => {
     }
 
     const handleDeletePlaylist = async (event: React.MouseEvent<HTMLButtonElement>, idPlaylist: string) => {
+        console.log("entrei aqui")
         await sweetAlertHandler(
             "Are you sure?",
             "This action is irreversible.",

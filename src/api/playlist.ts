@@ -105,14 +105,10 @@ const playlistApi = () => {
                 if (response.data && response.data.songs) {
                     for (let i = 0; i < response.data.songs.length; i++) {
                         const element = response.data.songs[i];
-
                         const getSongDetail = await songApi().getSongInfo(element["@key"]);
                         element.name = await getSongDetail.name;
-                        
                         const getAlbum = await albumApi().getAlbumById(getSongDetail.album["@key"])
-
                         const artist = getAlbum.artist;
-
                         element.artist = artist;
                         element.album = getAlbum;                        
                     }                    
@@ -120,6 +116,9 @@ const playlistApi = () => {
                 response.data.image = randomImage();
 
                 return response.data;
+            }).catch((error: any) => {
+                console.error(error);
+                return null;
             })
         }
         catch (error: any) {
