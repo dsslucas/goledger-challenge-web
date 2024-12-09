@@ -77,6 +77,7 @@ These are the project pages, with responsiveness provided by TailwindCSS.
 ![AlbumScreen](src/assets/markdown/album.gif)
 
 ### Playlist
+![PlaylistScreen](src/assets/markdown/playlist.gif)
 
 ## Observations
 
